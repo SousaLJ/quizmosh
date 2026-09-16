@@ -1,0 +1,9 @@
+**/target
+**/node_modules
+**/dist
+.git
+.env
+data
+releases
+*.log
+input

@@ -1,0 +1,15 @@
+{
+    admin off
+}
+{$SITE_ADDRESS:80} {
+    encode zstd gzip
+    request_body {
+        max_size 8KB
+    }
+    reverse_proxy game:8080
+    header {
+        -Server
+        X-Content-Type-Options nosniff
+        Referrer-Policy no-referrer
+    }
+}

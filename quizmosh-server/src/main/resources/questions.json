@@ -1,0 +1,1076 @@
+[
+  {
+    "id": "cinema-001",
+    "category": "cinema",
+    "type": "choice",
+    "prompt": "Qual objeto leva Marty McFly a viajar no tempo?",
+    "options": [
+      "Um DeLorean",
+      "Uma cabine telefônica",
+      "Um trem-bala",
+      "Um elevador"
+    ],
+    "correctIndex": 0,
+    "explanation": "Em De Volta para o Futuro, o DeLorean foi transformado em máquina do tempo por Doc Brown."
+  },
+  {
+    "id": "cinema-002",
+    "category": "cinema",
+    "type": "choice",
+    "prompt": "Em qual filme um ogro verde vive em um pântano?",
+    "options": [
+      "A Era do Gelo",
+      "Monstros S.A.",
+      "Ratatouille",
+      "Shrek"
+    ],
+    "correctIndex": 3,
+    "explanation": "Shrek é o ogro protagonista da animação lançada pela DreamWorks em 2001."
+  },
+  {
+    "id": "cinema-003",
+    "category": "cinema",
+    "type": "choice",
+    "prompt": "Quem dirigiu Jurassic Park, de 1993?",
+    "options": [
+      "George Lucas",
+      "Tim Burton",
+      "Steven Spielberg",
+      "James Cameron"
+    ],
+    "correctIndex": 2,
+    "explanation": "Spielberg levou à tela a história do parque de dinossauros inspirado no romance de Michael Crichton."
+  },
+  {
+    "id": "cinema-004",
+    "category": "cinema",
+    "type": "choice",
+    "prompt": "Qual é o nome do peixe que Marlin procura?",
+    "options": [
+      "Dory",
+      "Bruce",
+      "Luca",
+      "Nemo"
+    ],
+    "correctIndex": 3,
+    "explanation": "Procurando Nemo acompanha Marlin em uma viagem pelo oceano para encontrar seu filho."
+  },
+  {
+    "id": "cinema-005",
+    "category": "cinema",
+    "type": "choice",
+    "prompt": "Em Matrix, qual personagem é interpretado por Keanu Reeves?",
+    "options": [
+      "Smith",
+      "Morpheus",
+      "Cypher",
+      "Neo"
+    ],
+    "correctIndex": 3,
+    "explanation": "Neo é o nome usado por Thomas Anderson, protagonista interpretado por Keanu Reeves."
+  },
+  {
+    "id": "cinema-006",
+    "category": "cinema",
+    "type": "choice",
+    "prompt": "Qual estúdio produziu Toy Story?",
+    "options": [
+      "DreamWorks",
+      "Studio Ghibli",
+      "Pixar",
+      "Illumination"
+    ],
+    "correctIndex": 2,
+    "explanation": "A Pixar produziu Toy Story, distribuído pela Disney em 1995."
+  },
+  {
+    "id": "cinema-007",
+    "category": "cinema",
+    "type": "choice",
+    "prompt": "Qual destes filmes foi dirigido por Hayao Miyazaki?",
+    "options": [
+      "Ghost in the Shell",
+      "Your Name",
+      "A Viagem de Chihiro",
+      "Akira"
+    ],
+    "correctIndex": 2,
+    "explanation": "A Viagem de Chihiro é uma animação do Studio Ghibli dirigida por Hayao Miyazaki."
+  },
+  {
+    "id": "cinema-008",
+    "category": "cinema",
+    "type": "choice",
+    "prompt": "Quem interpreta Jack em Titanic, de 1997?",
+    "options": [
+      "Leonardo DiCaprio",
+      "Johnny Depp",
+      "Matt Damon",
+      "Brad Pitt"
+    ],
+    "correctIndex": 0,
+    "explanation": "Leonardo DiCaprio interpreta Jack Dawson ao lado de Kate Winslet, que interpreta Rose."
+  },
+  {
+    "id": "cinema-009",
+    "category": "cinema",
+    "type": "choice",
+    "prompt": "Qual cidade é o cenário principal de Ratatouille?",
+    "options": [
+      "Madri",
+      "Paris",
+      "Roma",
+      "Londres"
+    ],
+    "correctIndex": 1,
+    "explanation": "Remy busca realizar seu sonho de cozinhar em Paris."
+  },
+  {
+    "id": "cinema-010",
+    "category": "cinema",
+    "type": "choice",
+    "prompt": "Qual herói é o alter ego de Bruce Wayne?",
+    "options": [
+      "Superman",
+      "Homem-Aranha",
+      "Batman",
+      "Homem de Ferro"
+    ],
+    "correctIndex": 2,
+    "explanation": "Bruce Wayne é a identidade civil do Batman."
+  },
+  {
+    "id": "cinema-011",
+    "category": "cinema",
+    "type": "choice",
+    "prompt": "Qual instrumento é central na história de Whiplash?",
+    "options": [
+      "Violino",
+      "Saxofone",
+      "Piano",
+      "Bateria"
+    ],
+    "correctIndex": 3,
+    "explanation": "O filme acompanha um jovem baterista e sua relação com um professor exigente."
+  },
+  {
+    "id": "cinema-012",
+    "category": "cinema",
+    "type": "choice",
+    "prompt": "Qual filme apresenta as emoções Alegria e Tristeza?",
+    "options": [
+      "Soul",
+      "Viva",
+      "Encanto",
+      "Divertida Mente"
+    ],
+    "correctIndex": 3,
+    "explanation": "As emoções de Riley ganham personagens em Divertida Mente."
+  },
+  {
+    "id": "cinema-013",
+    "category": "cinema",
+    "type": "choice",
+    "prompt": "Quem dirigiu O Poderoso Chefão, de 1972?",
+    "options": [
+      "Martin Scorsese",
+      "Stanley Kubrick",
+      "Alfred Hitchcock",
+      "Francis Ford Coppola"
+    ],
+    "correctIndex": 3,
+    "explanation": "Francis Ford Coppola dirigiu o filme baseado no romance de Mario Puzo."
+  },
+  {
+    "id": "cinema-014",
+    "category": "cinema",
+    "type": "choice",
+    "prompt": "Em qual franquia aparece o personagem Darth Vader?",
+    "options": [
+      "Duna",
+      "Star Trek",
+      "Star Wars",
+      "Guardiões da Galáxia"
+    ],
+    "correctIndex": 2,
+    "explanation": "Darth Vader é um dos personagens centrais da saga Star Wars."
+  },
+  {
+    "id": "cinema-015",
+    "category": "cinema",
+    "type": "choice",
+    "prompt": "Qual destes filmes brasileiros foi dirigido por Fernando Meirelles e Kátia Lund?",
+    "options": [
+      "Central do Brasil",
+      "Cidade de Deus",
+      "Tropa de Elite",
+      "O Auto da Compadecida"
+    ],
+    "correctIndex": 1,
+    "explanation": "Cidade de Deus, de 2002, foi dirigido por Fernando Meirelles e codirigido por Kátia Lund."
+  },
+  {
+    "id": "cinema-016",
+    "category": "cinema",
+    "type": "choice",
+    "prompt": "Qual personagem de O Senhor dos Anéis recebe a missão de levar o Um Anel a Mordor?",
+    "options": [
+      "Gimli",
+      "Frodo",
+      "Legolas",
+      "Boromir"
+    ],
+    "correctIndex": 1,
+    "explanation": "Frodo Bolseiro assume a missão, acompanhado por Sam e outros integrantes da Sociedade do Anel."
+  },
+  {
+    "id": "cinema-017",
+    "category": "cinema",
+    "type": "guess",
+    "prompt": "Que filme é este?",
+    "answers": [
+      "Matrix",
+      "The Matrix"
+    ],
+    "clues": [
+      "O cotidiano esconde uma realidade construída.",
+      "Um grupo de rebeldes questiona esse mundo.",
+      "O protagonista precisa escolher entre duas pílulas.",
+      "Neo aprende a enxergar além da simulação."
+    ],
+    "explanation": "Matrix foi lançado em 1999 e dirigido pelas irmãs Wachowski."
+  },
+  {
+    "id": "cinema-018",
+    "category": "cinema",
+    "type": "guess",
+    "prompt": "Que filme é este?",
+    "answers": [
+      "Titanic"
+    ],
+    "clues": [
+      "Uma viagem luxuosa termina de forma trágica.",
+      "Duas pessoas de classes sociais diferentes se apaixonam.",
+      "A história se passa a bordo de um grande navio.",
+      "Jack e Rose enfrentam o naufrágio após a colisão com um iceberg."
+    ],
+    "explanation": "Titanic, de James Cameron, combina uma história de ficção com o naufrágio ocorrido em 1912."
+  },
+  {
+    "id": "cinema-019",
+    "category": "cinema",
+    "type": "guess",
+    "prompt": "Que filme é este?",
+    "answers": [
+      "Jurassic Park",
+      "Parque dos Dinossauros",
+      "Jurassic Park O Parque dos Dinossauros"
+    ],
+    "clues": [
+      "Uma descoberta científica vira uma atração turística.",
+      "O projeto está localizado em uma ilha.",
+      "Falhas de segurança colocam os visitantes em perigo.",
+      "Dinossauros escapam de um parque criado por John Hammond."
+    ],
+    "explanation": "O primeiro Jurassic Park chegou aos cinemas em 1993."
+  },
+  {
+    "id": "cinema-020",
+    "category": "cinema",
+    "type": "guess",
+    "prompt": "Que filme é este?",
+    "answers": [
+      "Shrek"
+    ],
+    "clues": [
+      "Um personagem prefere viver isolado.",
+      "Seu sossego é interrompido por criaturas de contos de fadas.",
+      "Um burro falante vira seu companheiro de viagem.",
+      "Um ogro verde vai resgatar a princesa Fiona."
+    ],
+    "explanation": "Shrek estreou em 2001 e se tornou uma franquia da DreamWorks."
+  },
+  {
+    "id": "cinema-021",
+    "category": "cinema",
+    "type": "guess",
+    "prompt": "Que filme é este?",
+    "answers": [
+      "Toy Story"
+    ],
+    "clues": [
+      "Um grupo teme ser substituído por uma novidade.",
+      "Os personagens só se movem quando os humanos não observam.",
+      "Um caubói disputa espaço com um patrulheiro espacial.",
+      "Woody e Buzz Lightyear são os protagonistas."
+    ],
+    "explanation": "Toy Story foi o primeiro longa-metragem inteiramente animado por computador."
+  },
+  {
+    "id": "cinema-022",
+    "category": "cinema",
+    "type": "guess",
+    "prompt": "Que filme é este?",
+    "answers": [
+      "Procurando Nemo",
+      "Finding Nemo",
+      "Nemo"
+    ],
+    "clues": [
+      "Um pai sai de casa para encontrar o filho.",
+      "Uma companheira de viagem tem dificuldades de memória.",
+      "O destino da busca envolve um aquário em Sydney.",
+      "Marlin e Dory cruzam o oceano atrás de um peixe-palhaço."
+    ],
+    "explanation": "Procurando Nemo é uma animação da Pixar lançada em 2003."
+  },
+  {
+    "id": "cinema-023",
+    "category": "cinema",
+    "type": "guess",
+    "prompt": "Que filme é este?",
+    "answers": [
+      "De Volta para o Futuro",
+      "Back to the Future"
+    ],
+    "clues": [
+      "Um encontro inesperado coloca uma família em risco.",
+      "Um jovem conhece seus pais antes de seu nascimento.",
+      "Um cientista usa um carro para atravessar o tempo.",
+      "Marty McFly e Doc Brown tentam voltar de 1955 para 1985."
+    ],
+    "explanation": "O primeiro filme da trilogia foi lançado em 1985."
+  },
+  {
+    "id": "cinema-024",
+    "category": "cinema",
+    "type": "guess",
+    "prompt": "Que filme é este?",
+    "answers": [
+      "O Rei Leão",
+      "Rei Leão",
+      "The Lion King"
+    ],
+    "clues": [
+      "Um herdeiro foge após uma tragédia familiar.",
+      "Dois amigos ensinam uma vida sem preocupações.",
+      "O vilão é o tio do protagonista.",
+      "Simba precisa enfrentar Scar e retornar à Pedra do Rei."
+    ],
+    "explanation": "A animação original O Rei Leão estreou em 1994."
+  },
+  {
+    "id": "cinema-025",
+    "category": "cinema",
+    "type": "guess",
+    "prompt": "Que filme é este?",
+    "answers": [
+      "Ratatouille"
+    ],
+    "clues": [
+      "Um talento improvável encontra uma oportunidade escondida.",
+      "A trama envolve uma cozinha em Paris.",
+      "Linguini recebe ajuda para preparar pratos.",
+      "Remy é um rato que sonha em ser chef."
+    ],
+    "explanation": "Ratatouille foi lançado pela Pixar em 2007."
+  },
+  {
+    "id": "cinema-026",
+    "category": "cinema",
+    "type": "guess",
+    "prompt": "Que filme é este?",
+    "answers": [
+      "Divertida Mente",
+      "Inside Out"
+    ],
+    "clues": [
+      "Uma mudança de cidade abala a rotina de uma menina.",
+      "Lembranças têm um papel fundamental na história.",
+      "Os personagens principais vivem dentro da mente.",
+      "Alegria e Tristeza precisam ajudar Riley."
+    ],
+    "explanation": "Divertida Mente transforma emoções em personagens de animação."
+  },
+  {
+    "id": "cinema-027",
+    "category": "cinema",
+    "type": "guess",
+    "prompt": "Que filme é este?",
+    "answers": [
+      "E.T.",
+      "ET",
+      "E T O Extraterrestre",
+      "E.T. O Extraterrestre",
+      "E.T. the Extra-Terrestrial"
+    ],
+    "clues": [
+      "Uma amizade surge entre seres de mundos diferentes.",
+      "Um visitante fica para trás e quer voltar para casa.",
+      "Elliott tenta proteger seu novo amigo.",
+      "Uma bicicleta voa e um extraterrestre tenta telefonar para casa."
+    ],
+    "explanation": "E.T. — O Extraterrestre foi dirigido por Steven Spielberg e lançado em 1982."
+  },
+  {
+    "id": "cinema-028",
+    "category": "cinema",
+    "type": "guess",
+    "prompt": "Que filme é este?",
+    "answers": [
+      "A Viagem de Chihiro",
+      "Spirited Away",
+      "Sen to Chihiro no Kamikakushi"
+    ],
+    "clues": [
+      "Uma menina entra em um mundo que não compreende.",
+      "Seus pais passam por uma transformação.",
+      "Ela trabalha em uma casa de banhos para seres sobrenaturais.",
+      "Chihiro precisa enfrentar Yubaba e salvar seus pais."
+    ],
+    "explanation": "A Viagem de Chihiro foi lançado no Japão em 2001."
+  },
+  {
+    "id": "cinema-029",
+    "category": "cinema",
+    "type": "numeric",
+    "prompt": "Em que ano estreou o primeiro Toy Story?",
+    "value": 1995,
+    "unit": "ano",
+    "explanation": "Toy Story chegou aos cinemas em 1995."
+  },
+  {
+    "id": "cinema-030",
+    "category": "cinema",
+    "type": "numeric",
+    "prompt": "Em que ano foi lançado Matrix?",
+    "value": 1999,
+    "unit": "ano",
+    "explanation": "Matrix foi lançado em 1999."
+  },
+  {
+    "id": "cinema-031",
+    "category": "cinema",
+    "type": "numeric",
+    "prompt": "Quantos filmes formam a trilogia original de O Senhor dos Anéis, de Peter Jackson?",
+    "value": 3,
+    "unit": "filmes",
+    "explanation": "A Sociedade do Anel, As Duas Torres e O Retorno do Rei formam a trilogia."
+  },
+  {
+    "id": "cinema-032",
+    "category": "cinema",
+    "type": "numeric",
+    "prompt": "Quantos Oscars Titanic ganhou na cerimônia de 1998?",
+    "value": 11,
+    "unit": "prêmios",
+    "explanation": "Titanic conquistou 11 Oscars, incluindo melhor filme e direção."
+  },
+  {
+    "id": "cinema-033",
+    "category": "cinema",
+    "type": "numeric",
+    "prompt": "Em que ano estreou Jurassic Park?",
+    "value": 1993,
+    "unit": "ano",
+    "explanation": "O primeiro Jurassic Park estreou em 1993."
+  },
+  {
+    "id": "cinema-034",
+    "category": "cinema",
+    "type": "numeric",
+    "prompt": "Em que ano foi lançado o primeiro Star Wars nos cinemas?",
+    "value": 1977,
+    "unit": "ano",
+    "explanation": "O filme foi lançado em 1977 e depois recebeu o subtítulo Uma Nova Esperança."
+  },
+  {
+    "id": "cinema-035",
+    "category": "cinema",
+    "type": "numeric",
+    "prompt": "Quantos filmes compõem a adaptação principal de Harry Potter, de 2001 a 2011?",
+    "value": 8,
+    "unit": "filmes",
+    "explanation": "Os sete livros foram adaptados em oito filmes; Relíquias da Morte foi dividido em duas partes."
+  },
+  {
+    "id": "cinema-036",
+    "category": "cinema",
+    "type": "numeric",
+    "prompt": "Em que ano foi lançado De Volta para o Futuro?",
+    "value": 1985,
+    "unit": "ano",
+    "explanation": "O filme de Robert Zemeckis chegou aos cinemas em 1985."
+  },
+  {
+    "id": "cinema-037",
+    "category": "cinema",
+    "type": "numeric",
+    "prompt": "Quantos anões acompanham Branca de Neve no título da animação da Disney?",
+    "value": 7,
+    "unit": "anões",
+    "explanation": "O título é Branca de Neve e os Sete Anões."
+  },
+  {
+    "id": "cinema-038",
+    "category": "cinema",
+    "type": "numeric",
+    "prompt": "Em que ano estreou a animação original O Rei Leão?",
+    "value": 1994,
+    "unit": "ano",
+    "explanation": "A animação original da Disney foi lançada em 1994."
+  },
+  {
+    "id": "cinema-039",
+    "category": "cinema",
+    "type": "numeric",
+    "prompt": "Em que ano estreou o primeiro Shrek?",
+    "value": 2001,
+    "unit": "ano",
+    "explanation": "Shrek estreou em 2001."
+  },
+  {
+    "id": "cinema-040",
+    "category": "cinema",
+    "type": "numeric",
+    "prompt": "Quantas emoções principais são personificadas no primeiro Divertida Mente?",
+    "value": 5,
+    "unit": "emoções",
+    "explanation": "Alegria, Tristeza, Raiva, Medo e Nojinho são as cinco emoções do primeiro filme."
+  },
+  {
+    "id": "geral-041",
+    "category": "geral",
+    "type": "choice",
+    "prompt": "Qual planeta é conhecido como planeta vermelho?",
+    "options": [
+      "Mercúrio",
+      "Marte",
+      "Júpiter",
+      "Vênus"
+    ],
+    "correctIndex": 1,
+    "explanation": "Óxidos de ferro na superfície dão a Marte sua coloração avermelhada."
+  },
+  {
+    "id": "geral-042",
+    "category": "geral",
+    "type": "choice",
+    "prompt": "Qual elemento químico tem símbolo Au?",
+    "options": [
+      "Ouro",
+      "Prata",
+      "Argônio",
+      "Alumínio"
+    ],
+    "correctIndex": 0,
+    "explanation": "Au vem de aurum, nome latino do ouro."
+  },
+  {
+    "id": "geral-043",
+    "category": "geral",
+    "type": "choice",
+    "prompt": "Qual linguagem é executada diretamente pelos navegadores para interatividade?",
+    "options": [
+      "Java",
+      "SQL",
+      "C",
+      "JavaScript"
+    ],
+    "correctIndex": 3,
+    "explanation": "JavaScript é uma das tecnologias centrais da Web, junto com HTML e CSS."
+  },
+  {
+    "id": "geral-044",
+    "category": "geral",
+    "type": "choice",
+    "prompt": "Qual órgão bombeia o sangue pelo corpo humano?",
+    "options": [
+      "Pulmão",
+      "Coração",
+      "Rim",
+      "Fígado"
+    ],
+    "correctIndex": 1,
+    "explanation": "O coração impulsiona o sangue pelas circulações pulmonar e sistêmica."
+  },
+  {
+    "id": "geral-045",
+    "category": "geral",
+    "type": "choice",
+    "prompt": "Qual oceano banha a costa brasileira?",
+    "options": [
+      "Pacífico",
+      "Atlântico",
+      "Índico",
+      "Ártico"
+    ],
+    "correctIndex": 1,
+    "explanation": "O litoral brasileiro está voltado para o oceano Atlântico."
+  },
+  {
+    "id": "geral-046",
+    "category": "geral",
+    "type": "choice",
+    "prompt": "Quem escreveu Dom Casmurro?",
+    "options": [
+      "Lima Barreto",
+      "José de Alencar",
+      "Jorge Amado",
+      "Machado de Assis"
+    ],
+    "correctIndex": 3,
+    "explanation": "Machado de Assis é o autor do romance Dom Casmurro."
+  },
+  {
+    "id": "geral-047",
+    "category": "geral",
+    "type": "choice",
+    "prompt": "Qual é a capital do Japão?",
+    "options": [
+      "Osaka",
+      "Kyoto",
+      "Seul",
+      "Tóquio"
+    ],
+    "correctIndex": 3,
+    "explanation": "Tóquio é a capital do Japão; Seul é a capital da Coreia do Sul."
+  },
+  {
+    "id": "geral-048",
+    "category": "geral",
+    "type": "choice",
+    "prompt": "Em qual unidade se mede a resistência elétrica no SI?",
+    "options": [
+      "Ohm",
+      "Ampere",
+      "Watt",
+      "Volt"
+    ],
+    "correctIndex": 0,
+    "explanation": "A resistência elétrica é medida em ohms, símbolo Ω."
+  },
+  {
+    "id": "geral-049",
+    "category": "geral",
+    "type": "choice",
+    "prompt": "Qual destes animais é um mamífero?",
+    "options": [
+      "Polvo",
+      "Golfinho",
+      "Pinguim",
+      "Tubarão"
+    ],
+    "correctIndex": 1,
+    "explanation": "Golfinhos respiram por pulmões e amamentam seus filhotes."
+  },
+  {
+    "id": "geral-050",
+    "category": "geral",
+    "type": "choice",
+    "prompt": "Qual é o maior planeta do Sistema Solar?",
+    "options": [
+      "Netuno",
+      "Terra",
+      "Saturno",
+      "Júpiter"
+    ],
+    "correctIndex": 3,
+    "explanation": "Júpiter é o planeta de maior massa e diâmetro do Sistema Solar."
+  },
+  {
+    "id": "geral-051",
+    "category": "geral",
+    "type": "choice",
+    "prompt": "Qual estrutura armazena pares de chave e valor em uma tabela hash?",
+    "options": [
+      "Lista ligada",
+      "Mapa",
+      "Fila",
+      "Pilha"
+    ],
+    "correctIndex": 1,
+    "explanation": "Mapas associam chaves a valores; tabelas hash são uma de suas implementações."
+  },
+  {
+    "id": "geral-052",
+    "category": "geral",
+    "type": "choice",
+    "prompt": "Qual processo transforma um líquido em vapor?",
+    "options": [
+      "Fusão",
+      "Solidificação",
+      "Vaporização",
+      "Condensação"
+    ],
+    "correctIndex": 2,
+    "explanation": "Vaporização é a passagem do estado líquido para o gasoso."
+  },
+  {
+    "id": "geral-053",
+    "category": "geral",
+    "type": "choice",
+    "prompt": "Qual peça do xadrez se move em L?",
+    "options": [
+      "Rei",
+      "Torre",
+      "Bispo",
+      "Cavalo"
+    ],
+    "correctIndex": 3,
+    "explanation": "O cavalo combina duas casas em uma direção e uma perpendicularmente."
+  },
+  {
+    "id": "geral-054",
+    "category": "geral",
+    "type": "choice",
+    "prompt": "Qual é o símbolo químico do oxigênio?",
+    "options": [
+      "Ox",
+      "O",
+      "Os",
+      "Og"
+    ],
+    "correctIndex": 1,
+    "explanation": "O é o símbolo do oxigênio; O₂ representa sua molécula diatômica."
+  },
+  {
+    "id": "geral-055",
+    "category": "geral",
+    "type": "choice",
+    "prompt": "Qual protocolo é usado para transferir páginas Web com criptografia TLS?",
+    "options": [
+      "HTTPS",
+      "SMTP",
+      "FTP",
+      "DHCP"
+    ],
+    "correctIndex": 0,
+    "explanation": "HTTPS combina HTTP com a proteção de transporte fornecida por TLS."
+  },
+  {
+    "id": "geral-056",
+    "category": "geral",
+    "type": "choice",
+    "prompt": "Em qual continente fica o deserto do Saara?",
+    "options": [
+      "Ásia",
+      "América do Sul",
+      "África",
+      "Oceania"
+    ],
+    "correctIndex": 2,
+    "explanation": "O Saara se estende por uma grande faixa do norte da África."
+  },
+  {
+    "id": "geral-057",
+    "category": "geral",
+    "type": "guess",
+    "prompt": "Descubra o que está por trás das pistas.",
+    "answers": [
+      "Água",
+      "Agua",
+      "H2O"
+    ],
+    "clues": [
+      "É uma substância abundante na Terra.",
+      "Participa de muitos processos biológicos.",
+      "Sua molécula tem três átomos.",
+      "Sua fórmula química é H₂O."
+    ],
+    "explanation": "Cada molécula de água contém dois átomos de hidrogênio e um de oxigênio."
+  },
+  {
+    "id": "geral-058",
+    "category": "geral",
+    "type": "guess",
+    "prompt": "Descubra o que está por trás das pistas.",
+    "answers": [
+      "Python"
+    ],
+    "clues": [
+      "É muito usada em automação.",
+      "Também aparece em ciência de dados.",
+      "A indentação tem significado na sua sintaxe.",
+      "Seu nome é o mesmo de um grupo de serpentes, mas a inspiração veio de Monty Python."
+    ],
+    "explanation": "Python é uma linguagem de programação criada por Guido van Rossum."
+  },
+  {
+    "id": "geral-059",
+    "category": "geral",
+    "type": "guess",
+    "prompt": "Descubra o que está por trás das pistas.",
+    "answers": [
+      "Lua",
+      "A Lua"
+    ],
+    "clues": [
+      "Sua aparência muda ao longo do mês.",
+      "Não emite luz própria visível como uma estrela.",
+      "Influencia as marés terrestres.",
+      "É o satélite natural da Terra."
+    ],
+    "explanation": "As fases da Lua dependem de sua posição em relação à Terra e ao Sol."
+  },
+  {
+    "id": "geral-060",
+    "category": "geral",
+    "type": "guess",
+    "prompt": "Descubra o que está por trás das pistas.",
+    "answers": [
+      "Fotossíntese",
+      "Fotossintese"
+    ],
+    "clues": [
+      "É um processo de transformação de energia.",
+      "Pode ocorrer em plantas e algas.",
+      "Utiliza luz e participa do ciclo do carbono.",
+      "Nas plantas, produz açúcares a partir de água e dióxido de carbono."
+    ],
+    "explanation": "Na fotossíntese oxigênica, a energia luminosa é convertida em energia química e ocorre liberação de oxigênio."
+  },
+  {
+    "id": "geral-061",
+    "category": "geral",
+    "type": "guess",
+    "prompt": "Descubra o que está por trás das pistas.",
+    "answers": [
+      "Xadrez"
+    ],
+    "clues": [
+      "É um jogo de estratégia.",
+      "Não depende de lançamento de dados.",
+      "Seu tabuleiro tem 64 casas.",
+      "Reis, rainhas, torres e cavalos disputam um xeque-mate."
+    ],
+    "explanation": "O xadrez começa com 16 peças para cada jogador."
+  },
+  {
+    "id": "geral-062",
+    "category": "geral",
+    "type": "guess",
+    "prompt": "Descubra o que está por trás das pistas.",
+    "answers": [
+      "Vulcão",
+      "Vulcao"
+    ],
+    "clues": [
+      "Pode modificar a paisagem rapidamente.",
+      "Está relacionado a processos internos da Terra.",
+      "Pode liberar gases e cinzas.",
+      "Durante uma erupção, pode expelir lava."
+    ],
+    "explanation": "Vulcões conectam regiões do interior da Terra à superfície por onde materiais podem ser expelidos."
+  },
+  {
+    "id": "geral-063",
+    "category": "geral",
+    "type": "guess",
+    "prompt": "Descubra o que está por trás das pistas.",
+    "answers": [
+      "Saturno"
+    ],
+    "clues": [
+      "É um planeta do Sistema Solar.",
+      "Está além de Júpiter em relação ao Sol.",
+      "É um gigante gasoso.",
+      "Seu sistema de anéis é muito visível."
+    ],
+    "explanation": "Saturno é o sexto planeta a partir do Sol."
+  },
+  {
+    "id": "geral-064",
+    "category": "geral",
+    "type": "guess",
+    "prompt": "Descubra o que está por trás das pistas.",
+    "answers": [
+      "DNA",
+      "ADN",
+      "Ácido desoxirribonucleico"
+    ],
+    "clues": [
+      "Está relacionado à hereditariedade.",
+      "Armazena informação biológica.",
+      "Sua estrutura pode ser descrita como uma dupla hélice.",
+      "Suas bases incluem adenina, timina, citosina e guanina."
+    ],
+    "explanation": "DNA é a sigla em inglês para ácido desoxirribonucleico."
+  },
+  {
+    "id": "geral-065",
+    "category": "geral",
+    "type": "guess",
+    "prompt": "Descubra o que está por trás das pistas.",
+    "answers": [
+      "Bússola",
+      "Bussola"
+    ],
+    "clues": [
+      "É um instrumento de orientação.",
+      "Pode funcionar sem bateria.",
+      "Usa uma agulha magnetizada.",
+      "Indica a direção aproximada do norte magnético."
+    ],
+    "explanation": "A bússola responde ao campo magnético terrestre."
+  },
+  {
+    "id": "geral-066",
+    "category": "geral",
+    "type": "guess",
+    "prompt": "Descubra o que está por trás das pistas.",
+    "answers": [
+      "Triângulo",
+      "Triangulo"
+    ],
+    "clues": [
+      "É uma figura geométrica plana.",
+      "É usada em estruturas pela rigidez de sua forma.",
+      "Pode ser equilátera, isósceles ou escalena.",
+      "Tem exatamente três lados."
+    ],
+    "explanation": "Na geometria euclidiana, os ângulos internos de um triângulo somam 180 graus."
+  },
+  {
+    "id": "geral-067",
+    "category": "geral",
+    "type": "guess",
+    "prompt": "Descubra o que está por trás das pistas.",
+    "answers": [
+      "Linux"
+    ],
+    "clues": [
+      "Está presente em servidores e dispositivos.",
+      "É associado ao software livre.",
+      "Foi iniciado por Linus Torvalds.",
+      "Seu mascote é o pinguim Tux."
+    ],
+    "explanation": "Linux é um kernel utilizado por diversas distribuições de sistemas operacionais."
+  },
+  {
+    "id": "geral-068",
+    "category": "geral",
+    "type": "guess",
+    "prompt": "Descubra o que está por trás das pistas.",
+    "answers": [
+      "Arco-íris",
+      "Arco iris",
+      "Arcoiris"
+    ],
+    "clues": [
+      "É um fenômeno óptico da atmosfera.",
+      "Envolve dispersão da luz.",
+      "Pode ser observado quando luz solar interage com gotas de água.",
+      "É conhecido por apresentar várias cores em um arco."
+    ],
+    "explanation": "O arco-íris envolve refração, reflexão interna e dispersão da luz em gotas de água."
+  },
+  {
+    "id": "geral-069",
+    "category": "geral",
+    "type": "numeric",
+    "prompt": "Quantos minutos existem em um dia de 24 horas?",
+    "value": 1440,
+    "unit": "minutos",
+    "explanation": "24 × 60 = 1.440 minutos."
+  },
+  {
+    "id": "geral-070",
+    "category": "geral",
+    "type": "numeric",
+    "prompt": "Quantos elementos químicos tem a tabela periódica reconhecida com os elementos de 1 a 118?",
+    "value": 118,
+    "unit": "elementos",
+    "explanation": "Os números atômicos dessa tabela vão de 1 a 118."
+  },
+  {
+    "id": "geral-071",
+    "category": "geral",
+    "type": "numeric",
+    "prompt": "Quantas casas existem em um tabuleiro de xadrez?",
+    "value": 64,
+    "unit": "casas",
+    "explanation": "O tabuleiro tem 8 linhas e 8 colunas: 8 × 8 = 64."
+  },
+  {
+    "id": "geral-072",
+    "category": "geral",
+    "type": "numeric",
+    "prompt": "Qual é a soma dos ângulos internos de um triângulo na geometria euclidiana?",
+    "value": 180,
+    "unit": "graus",
+    "explanation": "A soma dos três ângulos internos é 180 graus."
+  },
+  {
+    "id": "geral-073",
+    "category": "geral",
+    "type": "numeric",
+    "prompt": "Quantos ossos tem o esqueleto humano adulto na contagem anatômica usual?",
+    "value": 206,
+    "unit": "ossos",
+    "explanation": "A contagem usual é 206, embora existam variações anatômicas individuais."
+  },
+  {
+    "id": "geral-074",
+    "category": "geral",
+    "type": "numeric",
+    "prompt": "Qual é a velocidade da luz no vácuo, arredondada ao km/s mais próximo?",
+    "value": 299792,
+    "unit": "km/s",
+    "explanation": "O valor exato é 299.792.458 metros por segundo."
+  },
+  {
+    "id": "geral-075",
+    "category": "geral",
+    "type": "numeric",
+    "prompt": "Quantos bits formam um byte de oito bits?",
+    "value": 8,
+    "unit": "bits",
+    "explanation": "Um byte moderno corresponde a oito bits."
+  },
+  {
+    "id": "geral-076",
+    "category": "geral",
+    "type": "numeric",
+    "prompt": "Em que ano ocorreu a chegada da Apollo 11 à Lua?",
+    "value": 1969,
+    "unit": "ano",
+    "explanation": "Neil Armstrong e Buzz Aldrin caminharam na Lua em julho de 1969."
+  },
+  {
+    "id": "geral-077",
+    "category": "geral",
+    "type": "numeric",
+    "prompt": "Quantos estados existem no Brasil, sem contar o Distrito Federal?",
+    "value": 26,
+    "unit": "estados",
+    "explanation": "O Brasil é formado por 26 estados e pelo Distrito Federal."
+  },
+  {
+    "id": "geral-078",
+    "category": "geral",
+    "type": "numeric",
+    "prompt": "Quantos lados tem um dodecágono?",
+    "value": 12,
+    "unit": "lados",
+    "explanation": "O prefixo dodeca indica doze."
+  },
+  {
+    "id": "geral-079",
+    "category": "geral",
+    "type": "numeric",
+    "prompt": "Quantos segundos existem em uma hora?",
+    "value": 3600,
+    "unit": "segundos",
+    "explanation": "60 minutos × 60 segundos = 3.600 segundos."
+  },
+  {
+    "id": "geral-080",
+    "category": "geral",
+    "type": "numeric",
+    "prompt": "Quantos prótons possui o núcleo de um átomo de carbono?",
+    "value": 6,
+    "unit": "prótons",
+    "explanation": "O número atômico do carbono é 6."
+  }
+]
