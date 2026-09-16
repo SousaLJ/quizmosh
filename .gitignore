@@ -1,0 +1,10 @@
+**/target/
+**/node_modules/
+**/dist/
+.env
+data/
+*.log
+quizmosh-server/src/main/resources/static/
+releases/
+.idea/
+*.iml
