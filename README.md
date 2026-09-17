@@ -1,8 +1,18 @@
-# QuizMosh — beta jogável para PC · 0.3.0
+# QuizMosh — beta jogável para PC · 0.4.0
 
-Jogo para reunir amigos, com interface em português, quatro modos, 80 perguntas e salas sincronizadas pelo servidor Java. Esta entrega amplia o core original, preservando as regras nos módulos de domínio e aplicação.
+Jogo para reunir amigos, com interface em português e inglês, quatro modos, 92 perguntas e salas sincronizadas pelo servidor Java. Esta entrega amplia o core original, preservando as regras nos módulos de domínio e aplicação.
 
 **Jogue no navegador do PC**, sem conta ou instalação de engine. Outros computadores e celulares podem entrar na sala. O modo de treino adiciona três bots identificados para você experimentar sozinho.
+
+## Idioma e conteúdo cultural
+
+A interface sugere um idioma a partir das preferências do navegador; o seletor PT/EN pode ser usado a qualquer momento. A escolha manual é lembrada por jogador/aba. O idioma da interface não altera as perguntas de uma sala já criada.
+
+Ao criar a sala, o anfitrião escolhe o idioma das perguntas e o conteúdo: global, global + Brasil ou regional brasileiro. Navegadores cuja preferência principal indica BR recebem a sugestão global + Brasil; os demais começam em global. Não há consulta por IP, GPS ou permissão de localização. A escolha cultural manual é lembrada. Um navegador pt-PT usa a tradução portuguesa disponível, mas começa no pacote global.
+
+Cada pergunta tem um ID canônico e versões equivalentes nos dois idiomas. O catálogo inclui 76 perguntas globais e 16 brasileiras. Todos recebem a mesma pergunta, no idioma da sala, independentemente da interface individual. As quantidades por tipo aparecem na criação, e o servidor recusa combinações sem conteúdo suficiente antes de começar.
+
+Guia para novas mensagens, idiomas e pacotes: [docs/INTERNACIONALIZACAO.md](docs/INTERNACIONALIZACAO.md).
 
 ## Novo: Mosh Arena
 

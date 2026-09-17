@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { t, formatNumber } from "./i18n";
 import { computed } from "vue";
 import type { State } from "./types";
 import MoshAvatar from "./MoshAvatar.vue";
@@ -97,11 +98,11 @@ function position(index: number, id: string) {
       <span class="live-dot"></span
       >{{
         state.mosh?.encore
-          ? "B I S · RISCO E BÔNUS ×2"
+          ? t("ui.encoreRisksAndBonuses2")
           : state.phase === "BACKSTAGE"
-            ? "BASTIDORES · JOGADAS SECRETAS"
+            ? t("ui.backstageSecretMoves")
             : state.phase === "FINISHED"
-              ? "VALEU PELO SHOW!"
+              ? t("ui.thanksForTheShow")
               : "MOSH LIVE"
       }}
     </div>
@@ -141,7 +142,7 @@ function position(index: number, id: string) {
           class="floating-score"
           :class="{ loss: (state.reveal.deltas[player.id] || 0) < 0 }"
           >{{ (state.reveal.deltas[player.id] || 0) > 0 ? "+" : ""
-          }}{{ state.reveal.deltas[player.id] || 0 }}</span
+          }}{{ formatNumber(state.reveal.deltas[player.id] || 0) }}</span
         >
         <span
           v-else-if="state.phase === 'ROUND' && state.mosh?.plans[player.id]"
@@ -149,10 +150,10 @@ function position(index: number, id: string) {
           :title="
             cardInfo(state.mosh.plans[player.id].card).name +
             (state.mosh.plans[player.id].target
-              ? ' com ' +
+              ? t('ui.with3') +
                 (players.find(
                   (p) => p.id === state.mosh?.plans[player.id].target,
-                )?.nickname || 'parceiro')
+                )?.nickname || t('ui.partner'))
               : '')
           "
           >{{ cardInfo(state.mosh.plans[player.id].card).mark }}</span
@@ -166,7 +167,7 @@ function position(index: number, id: string) {
           "
         />
         <span class="arena-name"
-          >{{ player.id === state.you.id ? "VOCÊ · " : ""
+          >{{ player.id === state.you.id ? t("ui.you2") : ""
           }}{{ player.nickname }}</span
         >
       </div>
@@ -174,7 +175,7 @@ function position(index: number, id: string) {
     <div
       v-if="choices.length"
       class="answer-platforms"
-      aria-label="Plataformas de resposta"
+      :aria-label="t('ui.answerPlatforms')"
     >
       <button
         v-for="(choice, index) in choices"
@@ -193,10 +194,10 @@ function position(index: number, id: string) {
         ><strong>{{ choice.text }}</strong
         ><small>{{
           state.you.answer === choice.id
-            ? "TRAVADA ✓"
+            ? t("ui.locked")
             : selected === choice.id
-              ? "VOCÊ ESTÁ AQUI"
-              : "IR PARA CÁ"
+              ? t("ui.youAreHere")
+              : t("ui.moveHere")
         }}</small>
       </button>
     </div>
@@ -207,10 +208,10 @@ function position(index: number, id: string) {
       <p>
         {{
           state.you.locked
-            ? "Resposta travada. Agora segura a ansiedade…"
+            ? t("ui.answerLockedNowHoldThatSuspense")
             : selected
-              ? "Pode trocar de plataforma antes de travar."
-              : "Escolha uma plataforma para mover seu personagem."
+              ? t("ui.youCanSwitchPlatformsBeforeLockingYour")
+              : t("ui.chooseAPlatformToMoveYourCharacter")
         }}
       </p>
       <button
@@ -218,7 +219,7 @@ function position(index: number, id: string) {
         :disabled="!selected || !canAnswer"
         @click="emit('confirm')"
       >
-        {{ state.you.locked ? "No palco!" : "Travar resposta" }}
+        {{ state.you.locked ? t("ui.onStage") : t("ui.lockAnswer") }}
         <kbd>Enter</kbd>
       </button>
     </div>

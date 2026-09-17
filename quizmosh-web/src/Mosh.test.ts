@@ -1,4 +1,5 @@
-import { describe, it, expect } from "vitest";
+import { setLocale } from "./i18n";
+import { beforeEach, describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 import MoshArena from "./MoshArena.vue";
 import MoshBackstage from "./MoshBackstage.vue";
@@ -54,6 +55,7 @@ function room(): State {
     },
   };
 }
+beforeEach(() => setLocale("pt-BR"));
 describe("Mosh controls", () => {
   it("requires a partner before committing duet and emits its identity", async () => {
     const w = mount(MoshBackstage, {

@@ -21,7 +21,7 @@ jobs:
       - run: POSTGRES_PASSWORD=ci-ephemeral-password docker compose config --quiet
       - run: POSTGRES_PASSWORD=ci-ephemeral-password docker compose up -d --build --wait
       - run: python3 scripts/smoke.py http://127.0.0.1:8080
-      - run: python3 scripts/mosh-smoke.py http://127.0.0.1:8080
+      - run: python3 scripts/mosh-smoke.py http://127.0.0.1:8080 en REGIONAL
       - run: node scripts/websocket-smoke.mjs http://127.0.0.1:8080
       - if: always()
         run: POSTGRES_PASSWORD=ci-ephemeral-password docker compose down -v

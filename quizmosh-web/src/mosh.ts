@@ -1,3 +1,4 @@
+import { t, locale } from "./i18n";
 import type { Card } from "./types";
 export const cards: {
   id: Card;
@@ -9,38 +10,59 @@ export const cards: {
 }[] = [
   {
     id: "STEADY",
-    name: "Na minha",
+    get name() {
+      return t("ui.keepItCool");
+    },
     cost: 0,
     mark: "●",
-    description: "Guarde suas batidas. Sua resposta vale os pontos normais.",
-    short: "Guardando energia",
+    get description() {
+      return t("ui.saveYourBeatsYourAnswerEarnsThe");
+    },
+    get short() {
+      return t("ui.savingEnergy");
+    },
   },
   {
     id: "SPOTLIGHT",
-    name: "Holofote",
+    get name() {
+      return t("ui.spotlight");
+    },
     cost: 1,
     mark: "✦",
-    description:
-      "Acertou? Divida 600 pontos extras com quem também acertar usando esta carta. Se for só você, leva tudo.",
-    short: "Disputando o holofote",
+    get description() {
+      return t("ui.gotItRightSplit600ExtraPoints");
+    },
+    get short() {
+      return t("ui.chasingTheSpotlight");
+    },
   },
   {
     id: "DUET",
-    name: "Dueto",
+    get name() {
+      return t("ui.duet");
+    },
     cost: 1,
     mark: "∞",
-    description:
-      "Seu parceiro acertou? +250. Vocês dois? +500. Escolheram um ao outro e acertaram? +600 para cada.",
-    short: "Tocando em dueto",
+    get description() {
+      return t("ui.yourPartnerGotItRight250Both");
+    },
+    get short() {
+      return t("ui.playingADuet");
+    },
   },
   {
     id: "ALL_IN",
-    name: "Tudo ou nada",
+    get name() {
+      return t("ui.allIn");
+    },
     cost: 2,
     mark: "ϟ",
-    description:
-      "Acertou? Ganhe de novo os pontos positivos da resposta. Errou ou não respondeu? −300.",
-    short: "Apostando alto",
+    get description() {
+      return t("ui.gotItRightEarnYourPositiveAnswer");
+    },
+    get short() {
+      return t("ui.bettingBig");
+    },
   },
 ];
 export const cardInfo = (id?: Card) =>

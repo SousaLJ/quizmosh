@@ -1,57 +1,39 @@
-# Validação da beta PC 0.3.0
+# Validação da beta PC 0.4.0
 
-Verificação realizada em 16/09/2026. Não confundir testes locais com homologação em produção.
+Verificação local realizada em 17/09/2026. A branch prepara uma atualização da beta 0.3; este relatório não representa homologação da nova versão no Railway.
 
 | Verificação | Resultado |
 | --- | --- |
-| Maven verify, Java 25, seis módulos | Aprovado |
-| Testes Java | 26 aprovados, zero falhas e erros |
-| Testes de interface Vue em DOM simulado | 11 aprovados |
+| Maven verify em Java 25 | 31 testes aprovados, zero falhas/erros/skips |
+| Vue/Vitest em DOM simulado | 18 testes aprovados |
 | TypeScript e build de produção Vite | Aprovados |
-| JAR executável com cliente e assets locais | Compilado e inicializado com sucesso |
-| Partida clássica por HTTP real | Quatro modos, dois jogadores e uma tela coletiva concluídos |
-| Mosh Arena por HTTP real | Quatro modos, dueto recíproco, holofote dividido, aposta, BIS, totais finais e revanche aprovados |
-| WebSocket real | Autenticação, atualização personalizada e rejeição de token inválido aprovadas |
-| Docker Compose | Estrutura da versão 0.2 preservada; configuração anteriormente validada pelo Compose v2.39.4 |
-| Scripts shell | Sintaxe validada com bash -n |
+| Partida clássica por HTTP real | Português, quatro modos, dois jogadores e display; concluída |
+| Mosh Arena por HTTP real | Inglês + pacote Brasil, quatro modos, dueto, holofote, aposta, BIS e revanche; concluída |
+| Idiomas diferentes entre participantes | Mesmo conteúdo da sala nas requisições pt-BR/en |
+| WebSocket real | Autenticação, broadcast personalizado e rejeição de credencial inválida aprovados |
+| JAR executável com cliente local | Inicialização e entrega do cliente via HTTP aprovadas |
+| Diff | Sem erros de whitespace |
 
-## Regras verificadas
+## O que foi verificado
 
-- Projeções públicas não contêm respostas corretas nem pistas futuras.
-- Um participante não recebe a resposta privada de outro.
-- Palpites concorrentes/repetidos são aplicados uma única vez.
-- Respostas com roundId antigo são rejeitadas.
-- Espectadores e displays não pontuam.
-- Apenas o anfitrião inicia/avança; ausência ou saída permite transferência.
-- Expiração de rodada e progresso das pistas são controlados pelo servidor.
-- Os quatro modos concluem a partida; placar final permanece disponível após recarregar.
-- Revanche gera outra partida e zera o placar.
-- As configurações de 12 rodadas têm conteúdo suficiente nos três filtros e quatro modos.
-- Migrations e gravação de resultados são idempotentes no banco H2 em modo PostgreSQL.
-- Falha no banco preserva o placar e o relatório pendente para nova tentativa, inclusive após revanche.
-- Origem externa, payload inválido e ausência de credencial são rejeitados pela API.
+- Idioma sugerido pela lista do navegador; região cultural derivada apenas de país explicitamente indicado na preferência principal.
+- Navegadores pt-BR/en-BR sugerem global + Brasil; pt-PT e demais regiões começam em global. Override manual é lembrado.
+- Trocar a interface não altera idioma/região das perguntas nem perde nome digitado ou carta selecionada.
+- Mensagens PT/EN têm chaves correspondentes e valores não vazios; parâmetros, pontos e estado de conexão acompanham o idioma.
+- HTTP envia Accept-Language, recebe erros estruturados, traduz autenticação/origem inválida e preserva configuração da sala.
+- Catálogo carrega 92 IDs com versões nos dois idiomas; filtros globais/regionais conseguem 12 rodadas únicas no mix padrão.
+- Clássico e velocidade compartilham a capacidade de perguntas de alternativas. Cinema regional e outros conjuntos insuficientes são recusados antes do início.
+- Aliases de ambos os idiomas são aceitos; resposta revelada usa o idioma da sala. Exclusão funciona pelo ID canônico.
+- Perguntas, pistas e explicações são compartilhadas; projeções públicas e inventário não expõem gabaritos ou respostas privadas.
+- Os testes anteriores de pontuação, quatro modos, expiração, reconexão, transferência de anfitrião, cartas secretas, energia, BIS, idempotência e arquivo de resultados continuam passando.
 
-## Novas regras e controles verificados
+## Limites
 
-- Cartas e valor gasto pelos adversários ficam ocultos durante os bastidores, inclusive na tela coletiva.
-- Confirmação idêntica repetida é idempotente; trocar carta confirmada, agir como espectador e usar preparação antiga são rejeitados.
-- Reposição de batidas, teto de energia, saldo insuficiente, parceiro inválido e ausência de resposta são tratados pelo domínio.
-- Dueto recíproco, dueto com erro próprio, holofote compartilhado, aposta e BIS alteram os pontos conforme as regras.
-- BIS é anunciado antes das escolhas e dobra tanto os bônus quanto o risco da aposta.
-- Preparação e partida avançam mesmo com jogador ausente; treino com bots completa os quatro modos.
-- Pontuação final é igual à soma dos resultados; revanche reinicia cartas, energia e placar.
-- Componentes impedem cartas sem saldo e dueto sem parceiro; plataforma exige confirmação separada.
-- Interface envia stageId e roundId corretos; atalhos selecionam sem responder até Enter.
+O navegador remoto retornou `ERR_BLOCKED_BY_CLIENT` ao acessar a prévia local. O avatar/placar foi corrigido no CSS (dimensões explícitas, grid com pontos abaixo do nome e badge de pontuação) e o cliente compilou, mas ainda precisa de inspeção visual em navegador real, inclusive com 12 jogadores e nomes longos. Testes de componentes não comprovam a geometria do layout.
 
-## Limites da verificação
+O ambiente local não forneceu daemon Docker. A estrutura Docker/Railway existente foi preservada; o workflow do repositório executa build, Compose/PostgreSQL e testes reais de comunicação. O teste local usou H2. O resultado de CI deve ser consultado no pull request.
 
-O ambiente não disponibilizou um daemon Docker. A composição foi validada, mas as imagens e os containers não foram construídos/executados aqui. O fluxo completo do JAR foi executado com H2; PostgreSQL e emissão de certificados pelo Caddy precisam do ambiente de hospedagem. Há workflow de CI preparado para construir/iniciar o Compose e executar os três testes de comunicação. Esse workflow não foi executado aqui.
-
-O navegador remoto bloqueou o acesso à prévia local. A interface foi compilada, verificada pelo TypeScript e exercitada em onze testes de componentes; não foi possível concluir inspeção visual em navegador real neste ambiente.
-
-Não houve playtest com um grupo de pessoas; a diversão e o equilíbrio das cartas precisam dessa validação.
-
-Os scripts Windows foram preparados, mas não executados em Windows. Não foi realizado teste de carga, homologação Steam, recuperação de partidas ativas após restart ou teste em dispositivos Bluetooth.
+Ainda é necessário playtest com pessoas para avaliar diversão/equilíbrio e revisão editorial humana da equivalência cultural das traduções. Não foram realizados testes Windows, Steam, carga, Bluetooth ou recuperação de partidas ativas após reinício.
 
 ## Reproduzir
 
@@ -60,10 +42,10 @@ Os scripts Windows foram preparados, mas não executados em Windows. Não foi re
 npm ci --prefix quizmosh-web
 npm test --prefix quizmosh-web
 npm run build --prefix quizmosh-web
-# Com uma instância de teste já iniciada:
+# Instância descartável de teste já iniciada:
 python3 scripts/smoke.py http://127.0.0.1:8080
-python3 scripts/mosh-smoke.py http://127.0.0.1:8080
+python3 scripts/mosh-smoke.py http://127.0.0.1:8080 en REGIONAL
 node scripts/websocket-smoke.mjs http://127.0.0.1:8080
 ```
 
-O relatório de Maven usa o versionamento original dos módulos, 0.1.0-SNAPSHOT; a versão do produto e do cliente desta entrega é beta 0.3.0.
+Maven mantém o versionamento dos módulos `0.1.0-SNAPSHOT`; a versão do produto, metadados e cliente é `0.4.0`.

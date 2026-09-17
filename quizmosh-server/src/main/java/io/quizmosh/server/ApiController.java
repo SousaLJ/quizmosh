@@ -5,6 +5,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import java.util.Map;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/api")
@@ -29,24 +30,24 @@ public class ApiController {
     }
     @PostMapping("/rooms/{code}/leave") public Object leave(@PathVariable String code,@RequestHeader(value="Authorization",required=false) String token) {game.leave(auth(code,token));return Map.of("ok",true);}
     private GameService.Identity auth(String code,String header) {
-        if(header==null || !header.startsWith("Bearer ")) throw new ApiException(401,"Entre na sala para continuar.");
+        if(header==null || !header.startsWith("Bearer ")) throw new ApiException(401,"error.auth");
         return game.authenticate(code,header.substring(7));
     }
 
     @RestControllerAdvice
     public static class Errors {
-        @ExceptionHandler(ApiException.class) public ResponseEntity<?> api(ApiException ex) {return ResponseEntity.status(ex.status()).body(Map.of("message",ex.getMessage()));}
-        @ExceptionHandler({IllegalArgumentException.class,HttpMessageNotReadableException.class}) public ResponseEntity<?> invalid(Exception ex) {return ResponseEntity.badRequest().body(Map.of("message","Dados inválidos. Confira os campos e tente novamente."));}
-        @ExceptionHandler(DomainException.class) public ResponseEntity<?> domain(DomainException ex) {
+        @ExceptionHandler(ApiException.class) public ResponseEntity<?> api(ApiException ex,Locale locale) {return ResponseEntity.status(ex.status()).body(Messages.body(ex.getMessage(),locale,ex.arguments()));}
+        @ExceptionHandler({IllegalArgumentException.class,HttpMessageNotReadableException.class}) public ResponseEntity<?> invalid(Exception ex,Locale locale) {return ResponseEntity.badRequest().body(Messages.body("error.invalid",locale,Map.of()));}
+        @ExceptionHandler(DomainException.class) public ResponseEntity<?> domain(DomainException ex,Locale locale) {
             String message=switch(ex.getMessage()) {
-                case "nickname already in use" -> "Este apelido já está em uso na sala.";
-                case "room is full" -> "A sala já tem 12 jogadores.";
-                case "operation requires room owner" -> "Apenas o anfitrião pode fazer isso.";
-                case "round has expired" -> "O tempo desta rodada acabou.";
-                case "participant is not a player in this match" -> "Você está acompanhando esta partida como espectador.";
-                default -> "Esta ação não está disponível agora. Atualize a sala e tente novamente.";
+                case "nickname already in use" -> "error.nicknameTaken";
+                case "room is full" -> "error.roomFull";
+                case "operation requires room owner" -> "error.owner";
+                case "round has expired" -> "error.expiredRound";
+                case "participant is not a player in this match" -> "error.spectator";
+                default -> ex.getMessage().startsWith("error.")?ex.getMessage():"error.unavailable";
             };
-            return ResponseEntity.status(ex.getMessage().equals("operation requires room owner")?403:409).body(Map.of("message",message));
+            return ResponseEntity.status(ex.getMessage().equals("operation requires room owner")?403:409).body(Messages.body(message,locale,Map.of()));
         }
     }
 }

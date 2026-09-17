@@ -11,7 +11,8 @@
       "Um elevador"
     ],
     "correctIndex": 0,
-    "explanation": "Em De Volta para o Futuro, o DeLorean foi transformado em máquina do tempo por Doc Brown."
+    "explanation": "Em De Volta para o Futuro, o DeLorean foi transformado em máquina do tempo por Doc Brown.",
+    "regions": []
   },
   {
     "id": "cinema-002",
@@ -25,7 +26,8 @@
       "Shrek"
     ],
     "correctIndex": 3,
-    "explanation": "Shrek é o ogro protagonista da animação lançada pela DreamWorks em 2001."
+    "explanation": "Shrek é o ogro protagonista da animação lançada pela DreamWorks em 2001.",
+    "regions": []
   },
   {
     "id": "cinema-003",
@@ -39,7 +41,8 @@
       "James Cameron"
     ],
     "correctIndex": 2,
-    "explanation": "Spielberg levou à tela a história do parque de dinossauros inspirado no romance de Michael Crichton."
+    "explanation": "Spielberg levou à tela a história do parque de dinossauros inspirado no romance de Michael Crichton.",
+    "regions": []
   },
   {
     "id": "cinema-004",
@@ -53,7 +56,8 @@
       "Nemo"
     ],
     "correctIndex": 3,
-    "explanation": "Procurando Nemo acompanha Marlin em uma viagem pelo oceano para encontrar seu filho."
+    "explanation": "Procurando Nemo acompanha Marlin em uma viagem pelo oceano para encontrar seu filho.",
+    "regions": []
   },
   {
     "id": "cinema-005",
@@ -67,7 +71,8 @@
       "Neo"
     ],
     "correctIndex": 3,
-    "explanation": "Neo é o nome usado por Thomas Anderson, protagonista interpretado por Keanu Reeves."
+    "explanation": "Neo é o nome usado por Thomas Anderson, protagonista interpretado por Keanu Reeves.",
+    "regions": []
   },
   {
     "id": "cinema-006",
@@ -81,7 +86,8 @@
       "Illumination"
     ],
     "correctIndex": 2,
-    "explanation": "A Pixar produziu Toy Story, distribuído pela Disney em 1995."
+    "explanation": "A Pixar produziu Toy Story, distribuído pela Disney em 1995.",
+    "regions": []
   },
   {
     "id": "cinema-007",
@@ -95,7 +101,8 @@
       "Akira"
     ],
     "correctIndex": 2,
-    "explanation": "A Viagem de Chihiro é uma animação do Studio Ghibli dirigida por Hayao Miyazaki."
+    "explanation": "A Viagem de Chihiro é uma animação do Studio Ghibli dirigida por Hayao Miyazaki.",
+    "regions": []
   },
   {
     "id": "cinema-008",
@@ -109,7 +116,8 @@
       "Brad Pitt"
     ],
     "correctIndex": 0,
-    "explanation": "Leonardo DiCaprio interpreta Jack Dawson ao lado de Kate Winslet, que interpreta Rose."
+    "explanation": "Leonardo DiCaprio interpreta Jack Dawson ao lado de Kate Winslet, que interpreta Rose.",
+    "regions": []
   },
   {
     "id": "cinema-009",
@@ -123,7 +131,8 @@
       "Londres"
     ],
     "correctIndex": 1,
-    "explanation": "Remy busca realizar seu sonho de cozinhar em Paris."
+    "explanation": "Remy busca realizar seu sonho de cozinhar em Paris.",
+    "regions": []
   },
   {
     "id": "cinema-010",
@@ -137,7 +146,8 @@
       "Homem de Ferro"
     ],
     "correctIndex": 2,
-    "explanation": "Bruce Wayne é a identidade civil do Batman."
+    "explanation": "Bruce Wayne é a identidade civil do Batman.",
+    "regions": []
   },
   {
     "id": "cinema-011",
@@ -151,7 +161,8 @@
       "Bateria"
     ],
     "correctIndex": 3,
-    "explanation": "O filme acompanha um jovem baterista e sua relação com um professor exigente."
+    "explanation": "O filme acompanha um jovem baterista e sua relação com um professor exigente.",
+    "regions": []
   },
   {
     "id": "cinema-012",
@@ -165,7 +176,8 @@
       "Divertida Mente"
     ],
     "correctIndex": 3,
-    "explanation": "As emoções de Riley ganham personagens em Divertida Mente."
+    "explanation": "As emoções de Riley ganham personagens em Divertida Mente.",
+    "regions": []
   },
   {
     "id": "cinema-013",
@@ -179,7 +191,8 @@
       "Francis Ford Coppola"
     ],
     "correctIndex": 3,
-    "explanation": "Francis Ford Coppola dirigiu o filme baseado no romance de Mario Puzo."
+    "explanation": "Francis Ford Coppola dirigiu o filme baseado no romance de Mario Puzo.",
+    "regions": []
   },
   {
     "id": "cinema-014",
@@ -193,7 +206,8 @@
       "Guardiões da Galáxia"
     ],
     "correctIndex": 2,
-    "explanation": "Darth Vader é um dos personagens centrais da saga Star Wars."
+    "explanation": "Darth Vader é um dos personagens centrais da saga Star Wars.",
+    "regions": []
   },
   {
     "id": "cinema-015",
@@ -207,7 +221,10 @@
       "O Auto da Compadecida"
     ],
     "correctIndex": 1,
-    "explanation": "Cidade de Deus, de 2002, foi dirigido por Fernando Meirelles e codirigido por Kátia Lund."
+    "explanation": "Cidade de Deus, de 2002, foi dirigido por Fernando Meirelles e codirigido por Kátia Lund.",
+    "regions": [
+      "BR"
+    ]
   },
   {
     "id": "cinema-016",
@@ -221,7 +238,8 @@
       "Boromir"
     ],
     "correctIndex": 1,
-    "explanation": "Frodo Bolseiro assume a missão, acompanhado por Sam e outros integrantes da Sociedade do Anel."
+    "explanation": "Frodo Bolseiro assume a missão, acompanhado por Sam e outros integrantes da Sociedade do Anel.",
+    "regions": []
   },
   {
     "id": "cinema-017",
@@ -238,7 +256,8 @@
       "O protagonista precisa escolher entre duas pílulas.",
       "Neo aprende a enxergar além da simulação."
     ],
-    "explanation": "Matrix foi lançado em 1999 e dirigido pelas irmãs Wachowski."
+    "explanation": "Matrix foi lançado em 1999 e dirigido pelas irmãs Wachowski.",
+    "regions": []
   },
   {
     "id": "cinema-018",
@@ -254,7 +273,8 @@
       "A história se passa a bordo de um grande navio.",
       "Jack e Rose enfrentam o naufrágio após a colisão com um iceberg."
     ],
-    "explanation": "Titanic, de James Cameron, combina uma história de ficção com o naufrágio ocorrido em 1912."
+    "explanation": "Titanic, de James Cameron, combina uma história de ficção com o naufrágio ocorrido em 1912.",
+    "regions": []
   },
   {
     "id": "cinema-019",
@@ -272,7 +292,8 @@
       "Falhas de segurança colocam os visitantes em perigo.",
       "Dinossauros escapam de um parque criado por John Hammond."
     ],
-    "explanation": "O primeiro Jurassic Park chegou aos cinemas em 1993."
+    "explanation": "O primeiro Jurassic Park chegou aos cinemas em 1993.",
+    "regions": []
   },
   {
     "id": "cinema-020",
@@ -288,7 +309,8 @@
       "Um burro falante vira seu companheiro de viagem.",
       "Um ogro verde vai resgatar a princesa Fiona."
     ],
-    "explanation": "Shrek estreou em 2001 e se tornou uma franquia da DreamWorks."
+    "explanation": "Shrek estreou em 2001 e se tornou uma franquia da DreamWorks.",
+    "regions": []
   },
   {
     "id": "cinema-021",
@@ -304,7 +326,8 @@
       "Um caubói disputa espaço com um patrulheiro espacial.",
       "Woody e Buzz Lightyear são os protagonistas."
     ],
-    "explanation": "Toy Story foi o primeiro longa-metragem inteiramente animado por computador."
+    "explanation": "Toy Story foi o primeiro longa-metragem inteiramente animado por computador.",
+    "regions": []
   },
   {
     "id": "cinema-022",
@@ -322,7 +345,8 @@
       "O destino da busca envolve um aquário em Sydney.",
       "Marlin e Dory cruzam o oceano atrás de um peixe-palhaço."
     ],
-    "explanation": "Procurando Nemo é uma animação da Pixar lançada em 2003."
+    "explanation": "Procurando Nemo é uma animação da Pixar lançada em 2003.",
+    "regions": []
   },
   {
     "id": "cinema-023",
@@ -339,7 +363,8 @@
       "Um cientista usa um carro para atravessar o tempo.",
       "Marty McFly e Doc Brown tentam voltar de 1955 para 1985."
     ],
-    "explanation": "O primeiro filme da trilogia foi lançado em 1985."
+    "explanation": "O primeiro filme da trilogia foi lançado em 1985.",
+    "regions": []
   },
   {
     "id": "cinema-024",
@@ -357,7 +382,8 @@
       "O vilão é o tio do protagonista.",
       "Simba precisa enfrentar Scar e retornar à Pedra do Rei."
     ],
-    "explanation": "A animação original O Rei Leão estreou em 1994."
+    "explanation": "A animação original O Rei Leão estreou em 1994.",
+    "regions": []
   },
   {
     "id": "cinema-025",
@@ -373,7 +399,8 @@
       "Linguini recebe ajuda para preparar pratos.",
       "Remy é um rato que sonha em ser chef."
     ],
-    "explanation": "Ratatouille foi lançado pela Pixar em 2007."
+    "explanation": "Ratatouille foi lançado pela Pixar em 2007.",
+    "regions": []
   },
   {
     "id": "cinema-026",
@@ -390,7 +417,8 @@
       "Os personagens principais vivem dentro da mente.",
       "Alegria e Tristeza precisam ajudar Riley."
     ],
-    "explanation": "Divertida Mente transforma emoções em personagens de animação."
+    "explanation": "Divertida Mente transforma emoções em personagens de animação.",
+    "regions": []
   },
   {
     "id": "cinema-027",
@@ -410,7 +438,8 @@
       "Elliott tenta proteger seu novo amigo.",
       "Uma bicicleta voa e um extraterrestre tenta telefonar para casa."
     ],
-    "explanation": "E.T. — O Extraterrestre foi dirigido por Steven Spielberg e lançado em 1982."
+    "explanation": "E.T. — O Extraterrestre foi dirigido por Steven Spielberg e lançado em 1982.",
+    "regions": []
   },
   {
     "id": "cinema-028",
@@ -428,7 +457,8 @@
       "Ela trabalha em uma casa de banhos para seres sobrenaturais.",
       "Chihiro precisa enfrentar Yubaba e salvar seus pais."
     ],
-    "explanation": "A Viagem de Chihiro foi lançado no Japão em 2001."
+    "explanation": "A Viagem de Chihiro foi lançado no Japão em 2001.",
+    "regions": []
   },
   {
     "id": "cinema-029",
@@ -437,7 +467,8 @@
     "prompt": "Em que ano estreou o primeiro Toy Story?",
     "value": 1995,
     "unit": "ano",
-    "explanation": "Toy Story chegou aos cinemas em 1995."
+    "explanation": "Toy Story chegou aos cinemas em 1995.",
+    "regions": []
   },
   {
     "id": "cinema-030",
@@ -446,7 +477,8 @@
     "prompt": "Em que ano foi lançado Matrix?",
     "value": 1999,
     "unit": "ano",
-    "explanation": "Matrix foi lançado em 1999."
+    "explanation": "Matrix foi lançado em 1999.",
+    "regions": []
   },
   {
     "id": "cinema-031",
@@ -455,7 +487,8 @@
     "prompt": "Quantos filmes formam a trilogia original de O Senhor dos Anéis, de Peter Jackson?",
     "value": 3,
     "unit": "filmes",
-    "explanation": "A Sociedade do Anel, As Duas Torres e O Retorno do Rei formam a trilogia."
+    "explanation": "A Sociedade do Anel, As Duas Torres e O Retorno do Rei formam a trilogia.",
+    "regions": []
   },
   {
     "id": "cinema-032",
@@ -464,7 +497,8 @@
     "prompt": "Quantos Oscars Titanic ganhou na cerimônia de 1998?",
     "value": 11,
     "unit": "prêmios",
-    "explanation": "Titanic conquistou 11 Oscars, incluindo melhor filme e direção."
+    "explanation": "Titanic conquistou 11 Oscars, incluindo melhor filme e direção.",
+    "regions": []
   },
   {
     "id": "cinema-033",
@@ -473,7 +507,8 @@
     "prompt": "Em que ano estreou Jurassic Park?",
     "value": 1993,
     "unit": "ano",
-    "explanation": "O primeiro Jurassic Park estreou em 1993."
+    "explanation": "O primeiro Jurassic Park estreou em 1993.",
+    "regions": []
   },
   {
     "id": "cinema-034",
@@ -482,7 +517,8 @@
     "prompt": "Em que ano foi lançado o primeiro Star Wars nos cinemas?",
     "value": 1977,
     "unit": "ano",
-    "explanation": "O filme foi lançado em 1977 e depois recebeu o subtítulo Uma Nova Esperança."
+    "explanation": "O filme foi lançado em 1977 e depois recebeu o subtítulo Uma Nova Esperança.",
+    "regions": []
   },
   {
     "id": "cinema-035",
@@ -491,7 +527,8 @@
     "prompt": "Quantos filmes compõem a adaptação principal de Harry Potter, de 2001 a 2011?",
     "value": 8,
     "unit": "filmes",
-    "explanation": "Os sete livros foram adaptados em oito filmes; Relíquias da Morte foi dividido em duas partes."
+    "explanation": "Os sete livros foram adaptados em oito filmes; Relíquias da Morte foi dividido em duas partes.",
+    "regions": []
   },
   {
     "id": "cinema-036",
@@ -500,7 +537,8 @@
     "prompt": "Em que ano foi lançado De Volta para o Futuro?",
     "value": 1985,
     "unit": "ano",
-    "explanation": "O filme de Robert Zemeckis chegou aos cinemas em 1985."
+    "explanation": "O filme de Robert Zemeckis chegou aos cinemas em 1985.",
+    "regions": []
   },
   {
     "id": "cinema-037",
@@ -509,7 +547,8 @@
     "prompt": "Quantos anões acompanham Branca de Neve no título da animação da Disney?",
     "value": 7,
     "unit": "anões",
-    "explanation": "O título é Branca de Neve e os Sete Anões."
+    "explanation": "O título é Branca de Neve e os Sete Anões.",
+    "regions": []
   },
   {
     "id": "cinema-038",
@@ -518,7 +557,8 @@
     "prompt": "Em que ano estreou a animação original O Rei Leão?",
     "value": 1994,
     "unit": "ano",
-    "explanation": "A animação original da Disney foi lançada em 1994."
+    "explanation": "A animação original da Disney foi lançada em 1994.",
+    "regions": []
   },
   {
     "id": "cinema-039",
@@ -527,7 +567,8 @@
     "prompt": "Em que ano estreou o primeiro Shrek?",
     "value": 2001,
     "unit": "ano",
-    "explanation": "Shrek estreou em 2001."
+    "explanation": "Shrek estreou em 2001.",
+    "regions": []
   },
   {
     "id": "cinema-040",
@@ -536,7 +577,8 @@
     "prompt": "Quantas emoções principais são personificadas no primeiro Divertida Mente?",
     "value": 5,
     "unit": "emoções",
-    "explanation": "Alegria, Tristeza, Raiva, Medo e Nojinho são as cinco emoções do primeiro filme."
+    "explanation": "Alegria, Tristeza, Raiva, Medo e Nojinho são as cinco emoções do primeiro filme.",
+    "regions": []
   },
   {
     "id": "geral-041",
@@ -550,7 +592,8 @@
       "Vênus"
     ],
     "correctIndex": 1,
-    "explanation": "Óxidos de ferro na superfície dão a Marte sua coloração avermelhada."
+    "explanation": "Óxidos de ferro na superfície dão a Marte sua coloração avermelhada.",
+    "regions": []
   },
   {
     "id": "geral-042",
@@ -564,7 +607,8 @@
       "Alumínio"
     ],
     "correctIndex": 0,
-    "explanation": "Au vem de aurum, nome latino do ouro."
+    "explanation": "Au vem de aurum, nome latino do ouro.",
+    "regions": []
   },
   {
     "id": "geral-043",
@@ -578,7 +622,8 @@
       "JavaScript"
     ],
     "correctIndex": 3,
-    "explanation": "JavaScript é uma das tecnologias centrais da Web, junto com HTML e CSS."
+    "explanation": "JavaScript é uma das tecnologias centrais da Web, junto com HTML e CSS.",
+    "regions": []
   },
   {
     "id": "geral-044",
@@ -592,7 +637,8 @@
       "Fígado"
     ],
     "correctIndex": 1,
-    "explanation": "O coração impulsiona o sangue pelas circulações pulmonar e sistêmica."
+    "explanation": "O coração impulsiona o sangue pelas circulações pulmonar e sistêmica.",
+    "regions": []
   },
   {
     "id": "geral-045",
@@ -606,7 +652,10 @@
       "Ártico"
     ],
     "correctIndex": 1,
-    "explanation": "O litoral brasileiro está voltado para o oceano Atlântico."
+    "explanation": "O litoral brasileiro está voltado para o oceano Atlântico.",
+    "regions": [
+      "BR"
+    ]
   },
   {
     "id": "geral-046",
@@ -620,7 +669,10 @@
       "Machado de Assis"
     ],
     "correctIndex": 3,
-    "explanation": "Machado de Assis é o autor do romance Dom Casmurro."
+    "explanation": "Machado de Assis é o autor do romance Dom Casmurro.",
+    "regions": [
+      "BR"
+    ]
   },
   {
     "id": "geral-047",
@@ -634,7 +686,8 @@
       "Tóquio"
     ],
     "correctIndex": 3,
-    "explanation": "Tóquio é a capital do Japão; Seul é a capital da Coreia do Sul."
+    "explanation": "Tóquio é a capital do Japão; Seul é a capital da Coreia do Sul.",
+    "regions": []
   },
   {
     "id": "geral-048",
@@ -648,7 +701,8 @@
       "Volt"
     ],
     "correctIndex": 0,
-    "explanation": "A resistência elétrica é medida em ohms, símbolo Ω."
+    "explanation": "A resistência elétrica é medida em ohms, símbolo Ω.",
+    "regions": []
   },
   {
     "id": "geral-049",
@@ -662,7 +716,8 @@
       "Tubarão"
     ],
     "correctIndex": 1,
-    "explanation": "Golfinhos respiram por pulmões e amamentam seus filhotes."
+    "explanation": "Golfinhos respiram por pulmões e amamentam seus filhotes.",
+    "regions": []
   },
   {
     "id": "geral-050",
@@ -676,7 +731,8 @@
       "Júpiter"
     ],
     "correctIndex": 3,
-    "explanation": "Júpiter é o planeta de maior massa e diâmetro do Sistema Solar."
+    "explanation": "Júpiter é o planeta de maior massa e diâmetro do Sistema Solar.",
+    "regions": []
   },
   {
     "id": "geral-051",
@@ -690,7 +746,8 @@
       "Pilha"
     ],
     "correctIndex": 1,
-    "explanation": "Mapas associam chaves a valores; tabelas hash são uma de suas implementações."
+    "explanation": "Mapas associam chaves a valores; tabelas hash são uma de suas implementações.",
+    "regions": []
   },
   {
     "id": "geral-052",
@@ -704,7 +761,8 @@
       "Condensação"
     ],
     "correctIndex": 2,
-    "explanation": "Vaporização é a passagem do estado líquido para o gasoso."
+    "explanation": "Vaporização é a passagem do estado líquido para o gasoso.",
+    "regions": []
   },
   {
     "id": "geral-053",
@@ -718,7 +776,8 @@
       "Cavalo"
     ],
     "correctIndex": 3,
-    "explanation": "O cavalo combina duas casas em uma direção e uma perpendicularmente."
+    "explanation": "O cavalo combina duas casas em uma direção e uma perpendicularmente.",
+    "regions": []
   },
   {
     "id": "geral-054",
@@ -732,7 +791,8 @@
       "Og"
     ],
     "correctIndex": 1,
-    "explanation": "O é o símbolo do oxigênio; O₂ representa sua molécula diatômica."
+    "explanation": "O é o símbolo do oxigênio; O₂ representa sua molécula diatômica.",
+    "regions": []
   },
   {
     "id": "geral-055",
@@ -746,7 +806,8 @@
       "DHCP"
     ],
     "correctIndex": 0,
-    "explanation": "HTTPS combina HTTP com a proteção de transporte fornecida por TLS."
+    "explanation": "HTTPS combina HTTP com a proteção de transporte fornecida por TLS.",
+    "regions": []
   },
   {
     "id": "geral-056",
@@ -760,7 +821,8 @@
       "Oceania"
     ],
     "correctIndex": 2,
-    "explanation": "O Saara se estende por uma grande faixa do norte da África."
+    "explanation": "O Saara se estende por uma grande faixa do norte da África.",
+    "regions": []
   },
   {
     "id": "geral-057",
@@ -778,7 +840,8 @@
       "Sua molécula tem três átomos.",
       "Sua fórmula química é H₂O."
     ],
-    "explanation": "Cada molécula de água contém dois átomos de hidrogênio e um de oxigênio."
+    "explanation": "Cada molécula de água contém dois átomos de hidrogênio e um de oxigênio.",
+    "regions": []
   },
   {
     "id": "geral-058",
@@ -794,7 +857,8 @@
       "A indentação tem significado na sua sintaxe.",
       "Seu nome é o mesmo de um grupo de serpentes, mas a inspiração veio de Monty Python."
     ],
-    "explanation": "Python é uma linguagem de programação criada por Guido van Rossum."
+    "explanation": "Python é uma linguagem de programação criada por Guido van Rossum.",
+    "regions": []
   },
   {
     "id": "geral-059",
@@ -811,7 +875,8 @@
       "Influencia as marés terrestres.",
       "É o satélite natural da Terra."
     ],
-    "explanation": "As fases da Lua dependem de sua posição em relação à Terra e ao Sol."
+    "explanation": "As fases da Lua dependem de sua posição em relação à Terra e ao Sol.",
+    "regions": []
   },
   {
     "id": "geral-060",
@@ -828,7 +893,8 @@
       "Utiliza luz e participa do ciclo do carbono.",
       "Nas plantas, produz açúcares a partir de água e dióxido de carbono."
     ],
-    "explanation": "Na fotossíntese oxigênica, a energia luminosa é convertida em energia química e ocorre liberação de oxigênio."
+    "explanation": "Na fotossíntese oxigênica, a energia luminosa é convertida em energia química e ocorre liberação de oxigênio.",
+    "regions": []
   },
   {
     "id": "geral-061",
@@ -844,7 +910,8 @@
       "Seu tabuleiro tem 64 casas.",
       "Reis, rainhas, torres e cavalos disputam um xeque-mate."
     ],
-    "explanation": "O xadrez começa com 16 peças para cada jogador."
+    "explanation": "O xadrez começa com 16 peças para cada jogador.",
+    "regions": []
   },
   {
     "id": "geral-062",
@@ -861,7 +928,8 @@
       "Pode liberar gases e cinzas.",
       "Durante uma erupção, pode expelir lava."
     ],
-    "explanation": "Vulcões conectam regiões do interior da Terra à superfície por onde materiais podem ser expelidos."
+    "explanation": "Vulcões conectam regiões do interior da Terra à superfície por onde materiais podem ser expelidos.",
+    "regions": []
   },
   {
     "id": "geral-063",
@@ -877,7 +945,8 @@
       "É um gigante gasoso.",
       "Seu sistema de anéis é muito visível."
     ],
-    "explanation": "Saturno é o sexto planeta a partir do Sol."
+    "explanation": "Saturno é o sexto planeta a partir do Sol.",
+    "regions": []
   },
   {
     "id": "geral-064",
@@ -895,7 +964,8 @@
       "Sua estrutura pode ser descrita como uma dupla hélice.",
       "Suas bases incluem adenina, timina, citosina e guanina."
     ],
-    "explanation": "DNA é a sigla em inglês para ácido desoxirribonucleico."
+    "explanation": "DNA é a sigla em inglês para ácido desoxirribonucleico.",
+    "regions": []
   },
   {
     "id": "geral-065",
@@ -912,7 +982,8 @@
       "Usa uma agulha magnetizada.",
       "Indica a direção aproximada do norte magnético."
     ],
-    "explanation": "A bússola responde ao campo magnético terrestre."
+    "explanation": "A bússola responde ao campo magnético terrestre.",
+    "regions": []
   },
   {
     "id": "geral-066",
@@ -929,7 +1000,8 @@
       "Pode ser equilátera, isósceles ou escalena.",
       "Tem exatamente três lados."
     ],
-    "explanation": "Na geometria euclidiana, os ângulos internos de um triângulo somam 180 graus."
+    "explanation": "Na geometria euclidiana, os ângulos internos de um triângulo somam 180 graus.",
+    "regions": []
   },
   {
     "id": "geral-067",
@@ -945,7 +1017,8 @@
       "Foi iniciado por Linus Torvalds.",
       "Seu mascote é o pinguim Tux."
     ],
-    "explanation": "Linux é um kernel utilizado por diversas distribuições de sistemas operacionais."
+    "explanation": "Linux é um kernel utilizado por diversas distribuições de sistemas operacionais.",
+    "regions": []
   },
   {
     "id": "geral-068",
@@ -963,7 +1036,8 @@
       "Pode ser observado quando luz solar interage com gotas de água.",
       "É conhecido por apresentar várias cores em um arco."
     ],
-    "explanation": "O arco-íris envolve refração, reflexão interna e dispersão da luz em gotas de água."
+    "explanation": "O arco-íris envolve refração, reflexão interna e dispersão da luz em gotas de água.",
+    "regions": []
   },
   {
     "id": "geral-069",
@@ -972,7 +1046,8 @@
     "prompt": "Quantos minutos existem em um dia de 24 horas?",
     "value": 1440,
     "unit": "minutos",
-    "explanation": "24 × 60 = 1.440 minutos."
+    "explanation": "24 × 60 = 1.440 minutos.",
+    "regions": []
   },
   {
     "id": "geral-070",
@@ -981,7 +1056,8 @@
     "prompt": "Quantos elementos químicos tem a tabela periódica reconhecida com os elementos de 1 a 118?",
     "value": 118,
     "unit": "elementos",
-    "explanation": "Os números atômicos dessa tabela vão de 1 a 118."
+    "explanation": "Os números atômicos dessa tabela vão de 1 a 118.",
+    "regions": []
   },
   {
     "id": "geral-071",
@@ -990,7 +1066,8 @@
     "prompt": "Quantas casas existem em um tabuleiro de xadrez?",
     "value": 64,
     "unit": "casas",
-    "explanation": "O tabuleiro tem 8 linhas e 8 colunas: 8 × 8 = 64."
+    "explanation": "O tabuleiro tem 8 linhas e 8 colunas: 8 × 8 = 64.",
+    "regions": []
   },
   {
     "id": "geral-072",
@@ -999,7 +1076,8 @@
     "prompt": "Qual é a soma dos ângulos internos de um triângulo na geometria euclidiana?",
     "value": 180,
     "unit": "graus",
-    "explanation": "A soma dos três ângulos internos é 180 graus."
+    "explanation": "A soma dos três ângulos internos é 180 graus.",
+    "regions": []
   },
   {
     "id": "geral-073",
@@ -1008,7 +1086,8 @@
     "prompt": "Quantos ossos tem o esqueleto humano adulto na contagem anatômica usual?",
     "value": 206,
     "unit": "ossos",
-    "explanation": "A contagem usual é 206, embora existam variações anatômicas individuais."
+    "explanation": "A contagem usual é 206, embora existam variações anatômicas individuais.",
+    "regions": []
   },
   {
     "id": "geral-074",
@@ -1017,7 +1096,8 @@
     "prompt": "Qual é a velocidade da luz no vácuo, arredondada ao km/s mais próximo?",
     "value": 299792,
     "unit": "km/s",
-    "explanation": "O valor exato é 299.792.458 metros por segundo."
+    "explanation": "O valor exato é 299.792.458 metros por segundo.",
+    "regions": []
   },
   {
     "id": "geral-075",
@@ -1026,7 +1106,8 @@
     "prompt": "Quantos bits formam um byte de oito bits?",
     "value": 8,
     "unit": "bits",
-    "explanation": "Um byte moderno corresponde a oito bits."
+    "explanation": "Um byte moderno corresponde a oito bits.",
+    "regions": []
   },
   {
     "id": "geral-076",
@@ -1035,7 +1116,8 @@
     "prompt": "Em que ano ocorreu a chegada da Apollo 11 à Lua?",
     "value": 1969,
     "unit": "ano",
-    "explanation": "Neil Armstrong e Buzz Aldrin caminharam na Lua em julho de 1969."
+    "explanation": "Neil Armstrong e Buzz Aldrin caminharam na Lua em julho de 1969.",
+    "regions": []
   },
   {
     "id": "geral-077",
@@ -1044,7 +1126,10 @@
     "prompt": "Quantos estados existem no Brasil, sem contar o Distrito Federal?",
     "value": 26,
     "unit": "estados",
-    "explanation": "O Brasil é formado por 26 estados e pelo Distrito Federal."
+    "explanation": "O Brasil é formado por 26 estados e pelo Distrito Federal.",
+    "regions": [
+      "BR"
+    ]
   },
   {
     "id": "geral-078",
@@ -1053,7 +1138,8 @@
     "prompt": "Quantos lados tem um dodecágono?",
     "value": 12,
     "unit": "lados",
-    "explanation": "O prefixo dodeca indica doze."
+    "explanation": "O prefixo dodeca indica doze.",
+    "regions": []
   },
   {
     "id": "geral-079",
@@ -1062,7 +1148,8 @@
     "prompt": "Quantos segundos existem em uma hora?",
     "value": 3600,
     "unit": "segundos",
-    "explanation": "60 minutos × 60 segundos = 3.600 segundos."
+    "explanation": "60 minutos × 60 segundos = 3.600 segundos.",
+    "regions": []
   },
   {
     "id": "geral-080",
@@ -1071,6 +1158,201 @@
     "prompt": "Quantos prótons possui o núcleo de um átomo de carbono?",
     "value": 6,
     "unit": "prótons",
-    "explanation": "O número atômico do carbono é 6."
+    "explanation": "O número atômico do carbono é 6.",
+    "regions": []
+  },
+  {
+    "id": "br-001",
+    "category": "geral",
+    "type": "choice",
+    "regions": [
+      "BR"
+    ],
+    "correctIndex": 2,
+    "prompt": "Qual é a cor do losango na bandeira do Brasil?",
+    "options": [
+      "Azul",
+      "Branco",
+      "Amarelo",
+      "Verde"
+    ],
+    "explanation": "O losango amarelo fica sobre o fundo verde da bandeira brasileira."
+  },
+  {
+    "id": "br-002",
+    "category": "geral",
+    "type": "choice",
+    "regions": [
+      "BR"
+    ],
+    "correctIndex": 1,
+    "prompt": "Qual é o idioma oficial do Brasil?",
+    "options": [
+      "Espanhol",
+      "Português",
+      "Francês",
+      "Italiano"
+    ],
+    "explanation": "O português é o idioma oficial do Brasil."
+  },
+  {
+    "id": "br-003",
+    "category": "geral",
+    "type": "choice",
+    "regions": [
+      "BR"
+    ],
+    "correctIndex": 3,
+    "prompt": "Qual é a capital do estado da Bahia?",
+    "options": [
+      "Recife",
+      "Fortaleza",
+      "Natal",
+      "Salvador"
+    ],
+    "explanation": "Salvador é a capital da Bahia e foi a primeira capital do Brasil."
+  },
+  {
+    "id": "br-004",
+    "category": "geral",
+    "type": "choice",
+    "regions": [
+      "BR"
+    ],
+    "correctIndex": 0,
+    "prompt": "Qual moeda brasileira foi introduzida em julho de 1994?",
+    "options": [
+      "Real",
+      "Cruzeiro",
+      "Cruzado",
+      "Cruzeiro real"
+    ],
+    "explanation": "O real entrou em circulação em 1º de julho de 1994."
+  },
+  {
+    "id": "br-005",
+    "category": "geral",
+    "type": "guess",
+    "regions": [
+      "BR"
+    ],
+    "prompt": "Que cidade brasileira é esta?",
+    "answers": [
+      "Brasília",
+      "Brasilia"
+    ],
+    "clues": [
+      "Seu projeto urbano tem grandes eixos.",
+      "Fica no Planalto Central.",
+      "Abriga o Congresso Nacional.",
+      "É a capital federal do Brasil."
+    ],
+    "explanation": "Brasília foi inaugurada em 21 de abril de 1960."
+  },
+  {
+    "id": "br-006",
+    "category": "geral",
+    "type": "guess",
+    "regions": [
+      "BR"
+    ],
+    "prompt": "Que cidade brasileira é esta?",
+    "answers": [
+      "Rio de Janeiro",
+      "Rio"
+    ],
+    "clues": [
+      "É uma cidade litorânea.",
+      "Já foi a capital do Brasil.",
+      "Copacabana é uma de suas praias.",
+      "O Cristo Redentor fica em seu morro do Corcovado."
+    ],
+    "explanation": "O Rio de Janeiro foi a capital do Brasil antes de Brasília."
+  },
+  {
+    "id": "br-007",
+    "category": "geral",
+    "type": "guess",
+    "regions": [
+      "BR"
+    ],
+    "prompt": "Que estado brasileiro é este?",
+    "answers": [
+      "Amazonas"
+    ],
+    "clues": [
+      "Fica na Região Norte.",
+      "Grande parte de seu território é coberta por floresta.",
+      "É o maior estado brasileiro em área.",
+      "Sua capital é Manaus."
+    ],
+    "explanation": "O Amazonas é o maior estado do Brasil em extensão territorial."
+  },
+  {
+    "id": "br-008",
+    "category": "geral",
+    "type": "guess",
+    "regions": [
+      "BR"
+    ],
+    "prompt": "Que prática cultural brasileira é esta?",
+    "answers": [
+      "Capoeira"
+    ],
+    "clues": [
+      "Combina movimento corporal e música.",
+      "É uma tradição afro-brasileira.",
+      "Seus participantes formam uma roda.",
+      "O berimbau acompanha seus movimentos de luta e dança."
+    ],
+    "explanation": "A roda de capoeira reúne luta, dança, música e uma tradição coletiva afro-brasileira."
+  },
+  {
+    "id": "br-009",
+    "category": "geral",
+    "type": "numeric",
+    "regions": [
+      "BR"
+    ],
+    "value": 1822,
+    "prompt": "Em que ano foi proclamada a Independência do Brasil?",
+    "unit": "ano",
+    "explanation": "A Independência do Brasil foi proclamada em 7 de setembro de 1822."
+  },
+  {
+    "id": "br-010",
+    "category": "geral",
+    "type": "numeric",
+    "regions": [
+      "BR"
+    ],
+    "value": 1889,
+    "prompt": "Em que ano foi proclamada a República no Brasil?",
+    "unit": "ano",
+    "explanation": "A República foi proclamada em 15 de novembro de 1889."
+  },
+  {
+    "id": "br-011",
+    "category": "geral",
+    "type": "numeric",
+    "regions": [
+      "BR"
+    ],
+    "value": 1960,
+    "prompt": "Em que ano Brasília foi inaugurada?",
+    "unit": "ano",
+    "explanation": "Brasília foi inaugurada em 21 de abril de 1960."
+  },
+  {
+    "id": "br-012",
+    "category": "geral",
+    "type": "numeric",
+    "regions": [
+      "BR"
+    ],
+    "value": 1994,
+    "prompt": "Em que ano o real entrou em circulação no Brasil?",
+    "unit": "ano",
+    "explanation": "O real entrou em circulação em 1º de julho de 1994."
   }
 ]

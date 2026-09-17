@@ -33,8 +33,12 @@ public final class GameService {
     private final ResultArchive archive;
     private final int maxRooms;
     private volatile Consumer<String> broadcaster=ignored->{};
-    public record Config(int rounds,int seconds,String category,List<String> modes,Boolean mosh) {
+    public record Config(int rounds,int seconds,String category,List<String> modes,Boolean mosh,
+                         String questionLanguage,String contentScope,String questionRegion) {
         public Config(int rounds,int seconds,String category,List<String> modes) {this(rounds,seconds,category,modes,false);}
+        public Config(int rounds,int seconds,String category,List<String> modes,Boolean mosh) {
+            this(rounds,seconds,category,modes,mosh,"pt-BR","ALL","BR");
+        }
     }
     public record CreateRequest(String nickname,boolean practice,Config config) {}
     public record JoinRequest(String nickname,String role) {}
@@ -89,10 +93,12 @@ public final class GameService {
         this.catalog=catalog;this.archive=archive;this.maxRooms=maxRooms;this.clock=clock;
     }
     public void setBroadcaster(Consumer<String> broadcaster) {this.broadcaster=broadcaster;}
-    public Map<String,Object> metadata() {return obj("name","QuizMosh","version","0.3.0","questions",catalog.size(),"modes",MODES);}
+    public Map<String,Object> metadata() {return obj("name","QuizMosh","version","0.4.0","questions",catalog.size(),"modes",MODES,
+            "questionLanguages",List.of("pt-BR","en"),"questionRegions",List.of("BR"),"contentScopes",List.of("ALL","GLOBAL","REGIONAL"),
+            "catalog",catalog.inventory());}
 
     public synchronized Map<String,Object> create(CreateRequest request) {
-        if(rooms.size()>=maxRooms) throw new ApiException(503,"Todas as salas estão ocupadas. Tente novamente em instantes.");
+        if(rooms.size()>=maxRooms) throw new ApiException(503,"error.roomsBusy");
         Config config=validate(request.config());
         String name=nickname(request.nickname());
         LiveRoom r;
@@ -116,13 +122,13 @@ public final class GameService {
     public Map<String,Object> join(String code,JoinRequest request) {
         LiveRoom r=require(code);
         synchronized(r) {
-            if(r.room.participants().size()>=24) throw new ApiException(409,"Esta sala atingiu o limite de participantes.");
+            if(r.room.participants().size()>=24) throw new ApiException(409,"error.roomCapacity");
             ParticipantRole role;
             try {role=ParticipantRole.valueOf(request.role()==null?"PLAYER":request.role());}
-            catch(IllegalArgumentException e) {throw new ApiException(400,"Papel inválido.");}
+            catch(IllegalArgumentException e) {throw new ApiException(400,"error.role");}
             // Current match players are fixed by the core. Late arrivals can watch and play the rematch.
             if(!r.phase.equals("LOBBY") && !r.phase.equals("FINISHED") && role==ParticipantRole.PLAYER)
-                throw new ApiException(409,"A partida já começou. Entre como espectador e jogue na próxima sala.");
+                throw new ApiException(409,"error.lateJoin");
             var joined=r.app.joinRoom(new JoinRoomCommand(r.room.code(),nickname(request.nickname()),role));
             r.names.put(joined.participantId(),nickname(request.nickname()));
             Map<String,Object> result=issue(r,joined.participantId());
@@ -140,7 +146,7 @@ public final class GameService {
         synchronized(r) {
             Guest guest=r.guests.get(token);
             if(guest==null || !clock.instant().isBefore(guest.expires) || r.room.participant(guest.id).isEmpty())
-                throw new ApiException(401,"Sua sessão expirou. Entre novamente na sala.");
+                throw new ApiException(401,"error.sessionExpired");
             guest.seen=clock.instant();
             return new Identity(r.room.code().value(),guest.id,token);
         }
@@ -153,10 +159,10 @@ public final class GameService {
         LiveRoom r=require(identity.code());
         synchronized(r) {
             r.room.requireOwner(identity.player());
-            if(!Set.of("LOBBY","FINISHED").contains(r.phase)) throw new ApiException(409,"A partida já está em andamento.");
+            if(!Set.of("LOBBY","FINISHED").contains(r.phase)) throw new ApiException(409,"error.matchStarted");
             Config config=validate(requested==null?r.config:requested);
             MatchSettings settings=settings(config);catalog.validateCapacity(settings);
-            if(r.room.players().size()<2) throw new ApiException(409,"Convide pelo menos mais um jogador para começar.");
+            if(r.room.players().size()<2) throw new ApiException(409,"error.needPlayers");
             var started=r.app.startMatch(new StartMatchCommand(r.room.id(),identity.player(),settings));
             r.match=r.matchStore.find(started.id()).orElseThrow();
             r.mosh=config.mosh()?new MoshSession(r.match.players()):null;r.stageId=null;
@@ -168,16 +174,16 @@ public final class GameService {
     public AnswerReceipt answer(Identity identity,AnswerRequest request) {
         LiveRoom r=require(identity.code());
         synchronized(r) {
-            if(!r.phase.equals("ROUND")) throw new ApiException(409,"Esta rodada já terminou.");
+            if(!r.phase.equals("ROUND")) throw new ApiException(409,"error.roundClosed");
             GameRound round=r.match.currentRound().orElseThrow();
-            if(!round.id().value().equals(request.roundId())) throw new ApiException(409,"A rodada mudou. Aguarde a atualização da tela.");
+            if(!round.id().value().equals(request.roundId())) throw new ApiException(409,"error.staleRound");
             String value=request.value();
-            if(value==null || value.isBlank() || value.length()>160) throw new ApiException(400,"Digite uma resposta com até 160 caracteres.");
+            if(value==null || value.isBlank() || value.length()>160) throw new ApiException(400,"error.answerLength");
             AnswerValue answer;
             if(round.question().content() instanceof ChoiceContent) answer=new ChoiceAnswer(value);
             else if(round.question().content() instanceof GuessContent) answer=new TextAnswer(value);
             else {
-                if(!value.matches("-?\\d{1,9}([.,]\\d{1,4})?")) throw new ApiException(400,"Digite um número válido, com até quatro casas decimais.");
+                if(!value.matches("-?\\d{1,9}([.,]\\d{1,4})?")) throw new ApiException(400,"error.numeric");
                 answer=new NumericAnswer(new BigDecimal(value.replace(',','.')));
             }
             AnswerReceipt receipt=r.app.submitAnswer(new SubmitAnswerCommand(r.room.id(),identity.player(),answer));
@@ -188,13 +194,13 @@ public final class GameService {
         LiveRoom r=require(identity.code());
         synchronized(r) {
             if(!r.phase.equals("BACKSTAGE") || !Objects.equals(r.stageId,request.stageId()) || !clock.instant().isBefore(r.transitionAt))
-                throw new ApiException(409,"A preparação mudou ou o tempo terminou.");
-            if(!r.match.players().contains(identity.player())) throw new ApiException(403,"Somente jogadores podem escolher cartas.");
+                throw new ApiException(409,"error.staleStage");
+            if(!r.match.players().contains(identity.player())) throw new ApiException(403,"error.playersOnly");
             MoshSession.Card card;
             try {card=MoshSession.Card.valueOf(request.card());}
-            catch(Exception e) {throw new ApiException(400,"Carta inválida.");}
+            catch(Exception e) {throw new ApiException(400,"error.card");}
             ParticipantId target=request.target()==null?null:ParticipantId.of(request.target());
-            if(target!=null && r.room.participant(target).isEmpty()) throw new ApiException(400,"Este parceiro saiu da sala.");
+            if(target!=null && r.room.participant(target).isEmpty()) throw new ApiException(400,"error.partnerLeft");
             try {r.mosh.commit(identity.player(),card,target);}
             catch(DomainException e) {throw new ApiException(409,e.getMessage());}
             changed(r);
@@ -213,32 +219,40 @@ public final class GameService {
         LiveRoom r=require(identity.code());
         synchronized(r) {
             r.room.requireOwner(identity.player());
-            if(!r.phase.equals("REVEAL")) throw new ApiException(409,"A próxima rodada ainda não está disponível.");
+            if(!r.phase.equals("REVEAL")) throw new ApiException(409,"error.nextRound");
             prepareRound(r);changed(r);
         }
     }
     private Config validate(Config config) {
         if(config==null) config=new Config(8,25,"all",MODES,true);
-        if(config.rounds()<4 || config.rounds()>12) throw new ApiException(400,"Escolha de 4 a 12 rodadas.");
-        if(config.seconds()<15 || config.seconds()>60) throw new ApiException(400,"O tempo deve ficar entre 15 e 60 segundos.");
-        if(!Set.of("all","cinema","geral").contains(config.category()==null?"":config.category())) throw new ApiException(400,"Categoria inválida.");
+        if(config.rounds()<4 || config.rounds()>12) throw new ApiException(400,"error.rounds");
+        if(config.seconds()<15 || config.seconds()>60) throw new ApiException(400,"error.duration");
+        if(!Set.of("all","cinema","geral").contains(config.category()==null?"":config.category())) throw new ApiException(400,"error.category");
         if(config.modes()==null || config.modes().isEmpty() || config.modes().size()>4 || !MODES.containsAll(config.modes()) || new HashSet<>(config.modes()).size()!=config.modes().size())
-            throw new ApiException(400,"Escolha ao menos um modo válido, sem repetições.");
-        return new Config(config.rounds(),config.seconds(),config.category(),List.copyOf(config.modes()),!Boolean.FALSE.equals(config.mosh()));
+            throw new ApiException(400,"error.modes");
+        String language=config.questionLanguage()==null?"pt-BR":config.questionLanguage();
+        String scope=config.contentScope()==null?"ALL":config.contentScope();
+        String region=config.questionRegion()==null?"BR":config.questionRegion();
+        if(!Set.of("pt-BR","en").contains(language)) throw new ApiException(400,"error.questionLanguage");
+        if(!Set.of("ALL","GLOBAL","REGIONAL").contains(scope)) throw new ApiException(400,"error.contentScope");
+        if(!"BR".equals(region)) throw new ApiException(400,"error.questionRegion");
+        Config validated=new Config(config.rounds(),config.seconds(),config.category(),List.copyOf(config.modes()),!Boolean.FALSE.equals(config.mosh()),language,scope,region);
+        catalog.validateCapacity(settings(validated));
+        return validated;
     }
     private MatchSettings settings(Config c) {
         return new MatchSettings(c.rounds(),c.category().equals("all")?Set.of():Set.of(CategoryId.of(c.category())),
-                c.modes().stream().map(GameModeId::of).toList(),Duration.ofSeconds(c.seconds()));
+                c.modes().stream().map(GameModeId::of).toList(),Duration.ofSeconds(c.seconds()),c.questionLanguage(),c.contentScope(),c.questionRegion());
     }
     private LiveRoom require(String code) {
-        if(code==null || !code.matches("[a-zA-Z0-9]{4,8}")) throw new ApiException(404,"Sala não encontrada. Confira o código.");
+        if(code==null || !code.matches("[a-zA-Z0-9]{4,8}")) throw new ApiException(404,"error.roomCode");
         LiveRoom r=rooms.get(code.toUpperCase(Locale.ROOT));
-        if(r==null || r.room.status()==RoomStatus.CLOSED) throw new ApiException(404,"Esta sala não existe ou já foi encerrada.");
+        if(r==null || r.room.status()==RoomStatus.CLOSED) throw new ApiException(404,"error.roomMissing");
         return r;
     }
     private String nickname(String value) {
         if(value==null || value.strip().isEmpty() || value.strip().length()>24 || value.codePoints().anyMatch(Character::isISOControl))
-            throw new ApiException(400,"Use um apelido de 1 a 24 caracteres.");
+            throw new ApiException(400,"error.nickname");
         return value.strip();
     }
     private void prepareRound(LiveRoom r) {
@@ -259,7 +273,7 @@ public final class GameService {
         RoundResult outcome=r.match.history().getLast();
         Map<String,Integer> delta=new LinkedHashMap<>();outcome.scoreDeltas().forEach((id,v)->delta.put(id.value(),v));
         r.reveal=obj("roundId",round.id().value(),"number",round.number(),"prompt",round.question().prompt(),
-                "answer",catalog.answer(round.question()),"explanation",catalog.entry(round.question().id()).explanation(),
+                "answer",catalog.answer(round.question()),"explanation",catalog.entry(round.question().id(),r.config.questionLanguage()).explanation(),
                 "deltas",delta,"correctOption",round.question().content() instanceof ChoiceContent c?c.correctOptionId():null);
         r.phase=r.match.status()==MatchStatus.FINISHED?"FINISHED":"REVEAL";
         r.transitionAt=r.phase.equals("REVEAL")?clock.instant().plusSeconds(7):null;
@@ -363,7 +377,7 @@ public final class GameService {
                 plans.put(id.value(),obj("card",p.card(),"target",p.target()==null?null:p.target().value()));
         });
         r.mosh.results().forEach((id,b)->results.put(id.value(),obj("base",b.base(),"bonus",b.bonus(),"total",b.total(),
-                "card",b.card(),"target",b.target()==null?null:b.target().value(),"success",b.success(),"reason",b.reason())));
+                "card",b.card(),"target",b.target()==null?null:b.target().value(),"success",b.success(),"reasonKey",b.reason(),"reason",Messages.text(b.reason(),Locale.forLanguageTag("pt-BR"),Map.of()))));
         int nextIndex=Math.min(r.match.completedRounds(),r.config.rounds()-1);
         return obj("stageId",r.stageId,"number",r.mosh.number(),"heat",r.mosh.heat(),"encore",r.mosh.encore(),
                 "mode",r.match.settings().modeForRound(nextIndex).value(),"energy",energy,"plans",plans,
@@ -386,14 +400,15 @@ public final class GameService {
     }
     private Map<String,Object> snapshot(LiveRoom r,ParticipantId viewer) {
         Instant now=clock.instant();
-        var participant=r.room.participant(viewer).orElseThrow(()->new ApiException(401,"Entre novamente na sala."));
+        var participant=r.room.participant(viewer).orElseThrow(()->new ApiException(401,"error.joinAgain"));
         GameRound round=r.match==null?null:r.match.currentRound().orElse(null);
         Map<String,Object> question=null;
         if(round!=null) {
             var q=r.app.match(r.room.id()).currentRound().question();
             question=obj("id",round.id().value(),"number",round.number(),"mode",round.modeId().value(),"prompt",q.prompt(),
                     "type",q.contentType(),"choices",q.choices(),"clues",q.visibleClues(),"unit",q.unit(),
-                    "category",round.question().categoryId().value(),"startedAt",round.startedAt(),"endsAt",round.endsAt(),
+                    "category",round.question().categoryId().value(),"language",r.config.questionLanguage(),
+                    "regions",catalog.entry(round.question().id()).regions(),"startedAt",round.startedAt(),"endsAt",round.endsAt(),
                     "clueIndex",round.clueIndex(),"clueCount",round.question().content() instanceof GuessContent g?g.clues().size():0,
                     "answeredCount",round.allSubmissions().size(),"playerCount",round.players().size());
         }

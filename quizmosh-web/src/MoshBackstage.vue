@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { t } from "./i18n";
 import { computed, ref } from "vue";
 import type { Card, State, Tactic } from "./types";
 import { cards, cardInfo } from "./mosh";
@@ -29,10 +30,10 @@ const canPlan = computed(
 const modeName = computed(
   () =>
     ({
-      "classic-trivia": "Na mosca",
-      "quick-fire": "Bate-pronto",
-      "guess-it": "Qual é a boa?",
-      "closest-wins": "Quase lá",
+      "classic-trivia": t("ui.bullseye"),
+      "quick-fire": t("ui.quickfire"),
+      "guess-it": t("ui.whatSTheAnswer"),
+      "closest-wins": t("ui.closeEnough"),
     })[props.state.mosh?.mode || ""] || "Mosh",
 );
 </script>
@@ -40,44 +41,46 @@ const modeName = computed(
   <section class="backstage">
     <div class="backstage-heading">
       <div>
-        <span class="eyebrow"
-          >RODADA {{ state.mosh?.number }} · {{ modeName }}</span
+        <span class="eyebrow">
+          {{ t("ui.round") }} {{ state.mosh?.number }} · {{ modeName }}</span
         >
         <h1>
           {{
-            state.mosh?.encore ? "A plateia pediu BIS." : "Qual é a sua jogada?"
+            state.mosh?.encore
+              ? t("ui.theCrowdWantsAnEncore")
+              : t("ui.whatSYourMove")
           }}
         </h1>
         <p>
           {{
             state.mosh?.encore
-              ? "Bônus das cartas e penalidade da aposta em dobro. Escolha com cuidado."
-              : "Leia a turma. Escolha em segredo. Revelem as cartas juntos."
+              ? t("ui.doubleCardBonusesAndBettingPenaltiesChoose")
+              : t("ui.readTheRoomChooseInSecretReveal")
           }}
         </p>
       </div>
       <div
         class="backstage-clock"
         role="timer"
-        aria-label="Segundos para escolher a carta"
+        :aria-label="t('ui.secondsToChooseACard')"
       >
-        {{ seconds }}<small>SEG</small>
+        {{ seconds }}<small> {{ t("ui.sec") }} </small>
       </div>
     </div>
     <MoshArena :state="state" compact />
     <template v-if="canPlan">
       <div class="energy-line">
-        <span
-          >SUAS BATIDAS <b>{{ energy }}/5</b></span
-        ><span class="energy-pips" :aria-label="energy + ' batidas'"
+        <span>
+          {{ t("ui.yourBeats") }} <b>{{ energy }}/5</b></span
+        ><span class="energy-pips" :aria-label="energy + t('ui.beats')"
           ><i
             v-for="n in 5"
             :key="n"
             :class="{ filled: n <= energy }"
           ></i></span
-        ><small>Acerto repõe 1 · erro repõe 2 · máximo 5</small>
+        ><small> {{ t("ui.aHitRestores1AMissRestores") }} </small>
       </div>
-      <div class="tactic-cards" aria-label="Escolha uma carta">
+      <div class="tactic-cards" :aria-label="t('ui.chooseACard')">
         <button
           v-for="card in cards"
           :key="card.id"
@@ -94,21 +97,20 @@ const modeName = computed(
             ><span class="card-symbol">{{ card.mark }}</span
             ><small>{{
               card.cost === 0
-                ? "GRÁTIS"
-                : card.cost + " BATIDA" + (card.cost > 1 ? "S" : "")
+                ? t("ui.free")
+                : card.cost + t("ui.beat") + (card.cost > 1 ? "S" : "")
             }}</small></span
           ><strong>{{ card.name }}</strong>
           <p>{{ card.description }}</p>
         </button>
       </div>
       <p v-if="state.mosh?.mode === 'closest-wins'" class="tactic-hint">
-        No Quase lá, ficar nas duas primeiras posições por proximidade conta
-        como acerto para as cartas e a plateia. Empates contam.
+        {{ t("ui.inCloseEnoughTheTopTwoRanks") }}
       </p>
       <div v-if="selected === 'DUET' && !own" class="duet-picker">
-        <label for="duet-partner">Em quem você confia?</label
+        <label for="duet-partner"> {{ t("ui.whoDoYouTrust") }} </label
         ><select id="duet-partner" v-model="partner" :disabled="disabled">
-          <option value="" disabled>Escolha seu parceiro</option>
+          <option value="" disabled>{{ t("ui.chooseYourPartner") }}</option>
           <option
             v-for="player in partners"
             :key="player.id"
@@ -120,10 +122,10 @@ const modeName = computed(
       </div>
       <div class="backstage-action">
         <p v-if="own" role="status">
-          ✓ {{ cardInfo(own.card).name }} confirmada. As cartas ainda estão em
-          segredo.
+          ✓ {{ cardInfo(own.card).name }}
+          {{ t("ui.lockedTheCardsAreStillSecret") }}
         </p>
-        <p v-else>Sem escolha até o fim do tempo? Você joga “Na minha”.</p>
+        <p v-else>{{ t("ui.noChoiceByTheTimeLimitYou") }}</p>
         <button
           v-if="!own"
           class="primary-button"
@@ -140,17 +142,17 @@ const modeName = computed(
             })
           "
         >
-          Confirmar jogada <span>→</span></button
-        ><span v-else class="locked-plan">JOGADA TRAVADA</span>
+          {{ t("ui.lockInMove") }} <span>→</span></button
+        ><span v-else class="locked-plan"> {{ t("ui.moveLocked") }} </span>
       </div>
     </template>
     <p v-else class="answer-status">
-      A turma está escolhendo as cartas. Acompanhe a revelação no palco.
+      {{ t("ui.theCrewIsChoosingCardsWatchThe") }}
     </p>
     <p class="backstage-ready">
       {{ state.mosh?.ready.length }} /
-      {{ Object.keys(state.mosh?.energy || {}).length }} jogadas confirmadas · O
-      show começa quando todos estiverem prontos.
+      {{ Object.keys(state.mosh?.energy || {}).length }}
+      {{ t("ui.movesLockedTheShowBeginsWhenEveryone") }}
     </p>
   </section>
 </template>

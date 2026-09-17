@@ -1,3 +1,4 @@
+import { setLocale } from "./i18n";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mount, flushPromises, type VueWrapper } from "@vue/test-utils";
 import App from "./App.vue";
@@ -70,6 +71,7 @@ function button(text: string) {
   return wrapper!.findAll("button").find((b) => b.text().includes(text))!;
 }
 beforeEach(() => {
+  setLocale("pt-BR");
   vi.clearAllMocks();
   state.value = null;
   connected.value = true;
@@ -275,5 +277,75 @@ describe("PC player flows", () => {
       roundId: "r-arena",
       value: "B",
     });
+  });
+  it("switches interface language without changing room content or losing a typed nickname", async () => {
+    wrapper = mount(App);
+    await wrapper.get("#nickname").setValue("Leandro");
+    await wrapper.get("#question-language").setValue("pt-BR");
+    await wrapper.get("#content-scope").setValue("REGIONAL");
+    await wrapper.get("#interface-language").setValue("en");
+    expect(button("Create my room")).toBeDefined();
+    expect((wrapper.get("#nickname").element as HTMLInputElement).value).toBe(
+      "Leandro",
+    );
+    expect(
+      (wrapper.get("#question-language").element as HTMLSelectElement).value,
+    ).toBe("pt-BR");
+    expect(
+      (wrapper.get("#content-scope").element as HTMLSelectElement).value,
+    ).toBe("REGIONAL");
+  });
+  it("shows catalog shortages and prevents starting an impossible mix", async () => {
+    vi.mocked(api).mockResolvedValue({
+      catalog: [
+        {
+          language: "pt-BR",
+          category: "all",
+          scope: "REGIONAL",
+          region: "BR",
+          counts: { choice: 7, guess: 1, numeric: 5 },
+        },
+      ],
+    });
+    wrapper = mount(App);
+    await flushPromises();
+    await wrapper.get("#content-scope").setValue("REGIONAL");
+    expect(wrapper.get(".catalog-count").text()).toContain("7 alternativas");
+    expect(
+      wrapper.get("button[type=submit]").attributes("disabled"),
+    ).toBeDefined();
+    expect(wrapper.get(".form-error").text()).toContain("precisamos de 2");
+    await wrapper.get("#nickname").setValue("Player");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+    expect(api).not.toHaveBeenCalledWith("/rooms", expect.anything());
+    await wrapper.get("#content-scope").setValue("GLOBAL");
+    expect(
+      wrapper.get("button[type=submit]").attributes("disabled"),
+    ).toBeUndefined();
+  });
+  it("translates backstage controls in place without resetting a chosen card", async () => {
+    const s = lobby();
+    s.phase = "BACKSTAGE";
+    s.config.mosh = true;
+    s.mosh = {
+      stageId: "s1",
+      number: 1,
+      mode: "classic-trivia",
+      heat: 0,
+      encore: false,
+      energy: { p1: 3 },
+      plans: {},
+      ready: [],
+      results: {},
+    };
+    s.transitionAt = new Date(Date.now() + 25000).toISOString();
+    state.value = s;
+    wrapper = mount(App);
+    await button("Holofote").trigger("click");
+    await wrapper.get("#interface-language").setValue("en");
+    expect(wrapper.get(".tactic-card.selected").text()).toContain("Spotlight");
+    expect(button("Lock in move")).toBeDefined();
+    expect(state.value.mosh!.plans).toEqual({});
   });
 });

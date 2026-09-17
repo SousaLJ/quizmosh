@@ -1,11 +1,16 @@
-import { ref } from "vue";
+import { t, locale, hasMessage } from "./i18n";
+import { ref, computed } from "vue";
 import type { State, Session } from "./types";
 
 export const state = ref<State | null>(null);
 export const connected = ref(false);
-export const connectionMode = ref("conectando");
+const connectionKey = ref("ui.connecting");
+export const connectionMode = computed(() => t(connectionKey.value));
 export const session = ref<Session | null>(loadSession());
-export const failure = ref("");
+const failureKey = ref("");
+export const failure = computed(() =>
+  failureKey.value ? t(failureKey.value) : "",
+);
 export const clockOffset = ref(0);
 let socket: WebSocket | null = null;
 let reconnect: ReturnType<typeof setTimeout> | undefined;
@@ -32,11 +37,12 @@ export function accept(next: State) {
   state.value = next;
   lastReceived = Date.now();
   connected.value = true;
-  failure.value = "";
+  failureKey.value = "";
 }
 export async function api(path: string, body?: unknown, method?: string) {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
+    "Accept-Language": locale.value,
   };
   if (session.value) headers.Authorization = `Bearer ${session.value.token}`;
   const response = await fetch("/api" + path, {
@@ -48,9 +54,17 @@ export async function api(path: string, body?: unknown, method?: string) {
   const data = await response.json();
   if (!response.ok) {
     const error = new Error(
-      data.message || "Não foi possível concluir a ação.",
-    ) as Error & { status: number };
+      data.message || t("ui.weCouldnTCompleteTheAction"),
+    ) as Error & {
+      status: number;
+      code?: string;
+      arguments?: Record<string, unknown>;
+    };
     error.status = response.status;
+    if (typeof data.code === "string" && hasMessage(data.code)) {
+      error.code = data.code;
+      error.arguments = data.arguments || {};
+    }
     throw error;
   }
   return data;
@@ -74,10 +88,9 @@ export async function resume() {
   } catch (error) {
     if ([401, 404].includes((error as any).status)) {
       forget();
-      failure.value = "A sala anterior foi encerrada. Vamos começar outra?";
+      failureKey.value = "ui.yourPreviousRoomHasClosedStartA";
     } else {
-      failure.value =
-        "Não conseguimos conectar ao servidor. Tentando novamente…";
+      failureKey.value = "ui.weCouldnTConnectToTheServer";
       connect();
     }
   }
@@ -85,7 +98,7 @@ export async function resume() {
 function connect() {
   if (!session.value) return;
   const current = ++generation;
-  connectionMode.value = "conectando";
+  connectionKey.value = "ui.connecting";
   socket = new WebSocket(
     `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/ws`,
   );
@@ -94,15 +107,15 @@ function connect() {
     if (current !== generation) return;
     try {
       accept(JSON.parse(event.data));
-      connectionMode.value = "ao vivo";
+      connectionKey.value = "ui.live";
     } catch {}
   };
   socket.onerror = () => {
-    connectionMode.value = "reconectando";
+    connectionKey.value = "ui.reconnecting2";
   };
   socket.onclose = () => {
     if (current !== generation) return;
-    connectionMode.value = "reconectando";
+    connectionKey.value = "ui.reconnecting2";
     reconnect = setTimeout(connect, 2000);
   };
   if (heartbeat) clearInterval(heartbeat);
@@ -112,13 +125,13 @@ function connect() {
     if (Date.now() - lastReceived > 5000) {
       try {
         accept(await api(`/rooms/${session.value.code}`));
-        connectionMode.value = "sincronizado";
+        connectionKey.value = "ui.synced";
       } catch (error) {
         connected.value = false;
-        failure.value = "Conexão interrompida. Reconectando…";
+        failureKey.value = "ui.connectionInterruptedReconnecting";
         if ([401, 404].includes((error as any).status)) {
           forget();
-          failure.value = "A sala foi encerrada. Crie ou entre em outra sala.";
+          failureKey.value = "ui.thisRoomHasClosedCreateOrJoin";
         }
       }
     }

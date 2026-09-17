@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Real multiplayer Mosh match: tactics, secrets, all four modes, BIS, and rematch."""
-from smoke import request, wait_state, CATALOG
+from smoke import request, wait_state, CATALOG, LANGUAGE, SCOPE
 
-h = request('/api/rooms', {'nickname': 'Arena host', 'config': {'rounds': 4, 'seconds': 15, 'category': 'all', 'modes': ['classic-trivia', 'quick-fire', 'guess-it', 'closest-wins'], 'mosh': True}})
+h = request('/api/rooms', {'nickname': 'Arena host', 'config': {'rounds': 4, 'seconds': 15, 'category': 'all', 'modes': ['classic-trivia', 'quick-fire', 'guess-it', 'closest-wins'], 'mosh': True, 'questionLanguage': LANGUAGE, 'contentScope': SCOPE, 'questionRegion': 'BR'}})
 code, token = h['code'], h['token']
 g = request(f'/api/rooms/{code}/join', {'nickname': 'Arena guest', 'role': 'PLAYER'})
 tv = request(f'/api/rooms/{code}/join', {'nickname': 'Arena TV', 'role': 'DISPLAY'})
@@ -26,6 +26,10 @@ for index, card in enumerate(['DUET', 'SPOTLIGHT', 'ALL_IN', 'ALL_IN']):
     state = wait_state(code, token, 'ROUND')
     assert len(state['mosh']['plans']) == 2
     q = state['round']
+    assert q['language'] == LANGUAGE
+    if SCOPE == 'REGIONAL': assert q['regions'] == ['BR']
+    alternate = request(f'/api/rooms/{code}', token=g['token'], language='pt-BR' if LANGUAGE == 'en' else 'en')
+    assert alternate['round'] == q
     entry = next(x for x in CATALOG if x['prompt'] == q['prompt'] and (q['type'] != 'guess' or x['clues'][0] == q['clues'][0]))
     value = chr(65+entry['correctIndex']) if q['type'] == 'choice' else entry['answers'][0] if q['type'] == 'guess' else str(entry['value'])
     request(f'/api/rooms/{code}/answer', {'roundId': q['id'], 'value': value}, token)
@@ -33,6 +37,7 @@ for index, card in enumerate(['DUET', 'SPOTLIGHT', 'ALL_IN', 'ALL_IN']):
     assert state['phase'] == ('FINISHED' if index == 3 else 'REVEAL')
     for player_id, result in state['mosh']['results'].items():
         assert result['bonus'] == (600 if index == 0 else 300 if index == 1 else result['base'] * (2 if index == 3 else 1))
+        assert result['reasonKey'].startswith('mosh.result.')
         assert result['total'] == result['base'] + result['bonus']
         assert state['reveal']['deltas'][player_id] == result['total']
         expected_scores[player_id] += result['total']

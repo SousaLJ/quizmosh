@@ -8,11 +8,14 @@ import urllib.request
 from pathlib import Path
 
 BASE = (sys.argv[1] if len(sys.argv) > 1 else 'http://127.0.0.1:8080').rstrip('/')
-CATALOG = json.loads((Path(__file__).resolve().parents[1] / 'quizmosh-server/src/main/resources/questions.json').read_text(encoding='utf-8'))
+LANGUAGE = sys.argv[2] if len(sys.argv) > 2 else 'pt-BR'
+SCOPE = sys.argv[3] if len(sys.argv) > 3 else 'ALL'
+RESOURCE = 'questions.en.json' if LANGUAGE == 'en' else 'questions.json'
+CATALOG = json.loads((Path(__file__).resolve().parents[1] / 'quizmosh-server/src/main/resources' / RESOURCE).read_text(encoding='utf-8'))
 opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
 
-def request(path, body=None, token=None, method=None, expected=200):
-    headers = {'Content-Type': 'application/json'}
+def request(path, body=None, token=None, method=None, expected=200, language=None):
+    headers = {'Content-Type': 'application/json', 'Accept-Language': language or LANGUAGE}
     if token:
         headers['Authorization'] = 'Bearer ' + token
     req = urllib.request.Request(BASE + path, data=None if body is None else json.dumps(body).encode(), headers=headers, method=method or ('GET' if body is None else 'POST'))
@@ -36,7 +39,11 @@ def wait_state(code, token, phase, timeout=8):
 
 def run():
     assert request('/actuator/health')['status'] == 'UP'
-    h = request('/api/rooms', {'nickname': 'Host smoke', 'config': {'rounds': 4, 'seconds': 15, 'category': 'all', 'modes': ['classic-trivia', 'quick-fire', 'guess-it', 'closest-wins'], 'mosh': False}})
+    metadata = request('/api/meta')
+    assert metadata['questionLanguages'] == ['pt-BR', 'en']
+    assert len(metadata['catalog']) == 18
+    assert not any(key in json.dumps(metadata) for key in ['correctIndex','answers','explanation'])
+    h = request('/api/rooms', {'nickname': 'Host smoke', 'config': {'rounds': 4, 'seconds': 15, 'category': 'all', 'modes': ['classic-trivia', 'quick-fire', 'guess-it', 'closest-wins'], 'mosh': False, 'questionLanguage': LANGUAGE, 'contentScope': SCOPE, 'questionRegion': 'BR'}})
     code, token = h['code'], h['token']
     p = request(f'/api/rooms/{code}/join', {'nickname': 'Guest smoke', 'role': 'PLAYER'})
     tv = request(f'/api/rooms/{code}/join', {'nickname': 'TV smoke', 'role': 'DISPLAY'})
@@ -47,6 +54,11 @@ def run():
     for index in range(4):
         q = state['round']
         assert q['number'] == index + 1
+        assert q['language'] == LANGUAGE
+        if SCOPE == 'GLOBAL': assert q['regions'] == []
+        if SCOPE == 'REGIONAL': assert q['regions'] == ['BR']
+        other_ui = request(f'/api/rooms/{code}', token=p['token'], language='en' if LANGUAGE == 'pt-BR' else 'pt-BR')
+        assert other_ui['round'] == q
         assert not any(key in json.dumps(q) for key in ['correctOptionId', 'acceptedAnswers', 'correctValue'])
         entry = next(x for x in CATALOG if x['prompt'] == q['prompt'] and (q['type'] != 'guess' or x['clues'][0] == q['clues'][0]))
         if q['type'] == 'choice':

@@ -106,7 +106,7 @@ class GameServiceTest {
         assertTrue(game.answer(host,new GameService.AnswerRequest(rid,"incorreto")).accepted());
     }
     @Test void allSupportedContentConfigurationsHaveCapacity() {
-        assertEquals(80,catalog.size());
+        assertEquals(92,catalog.size());
         for(String category:List.of("all","cinema","geral"))for(String mode:List.of("classic-trivia","quick-fire","guess-it","closest-wins")) {
             var h=game.create(new GameService.CreateRequest("Player",true,new GameService.Config(12,25,category,List.of(mode))));
             var id=game.authenticate((String)h.get("code"),(String)h.get("token"));assertDoesNotThrow(()->game.start(id,null));
@@ -123,5 +123,24 @@ class GameServiceTest {
         doNothing().when(archive).save(anyString(),anyString(),any());
         clock.advance(31);game.tick();
         verify(archive,atLeast(2)).save(eq(oldMatch),eq(code),any());
+    }
+    @Test void englishRegionalRoomKeepsTheSameContentForPlayersAndRematches() {
+        var cfg=new GameService.Config(4,15,"all",List.of("classic-trivia","quick-fire","guess-it","closest-wins"),false,"en","REGIONAL","BR");
+        var created=game.create(new GameService.CreateRequest("Host",false,cfg));code=(String)created.get("code");
+        host=game.authenticate(code,(String)created.get("token"));
+        var joined=game.join(code,new GameService.JoinRequest("Friend","PLAYER"));guest=game.authenticate(code,(String)joined.get("token"));
+        game.start(host,null);clock.advance(3);game.tick();
+        for(int round=0;round<4;round++) {
+            var shared=map(game.state(host).get("round"));
+            assertEquals(shared,map(game.state(guest).get("round")));
+            assertEquals("en",shared.get("language"));assertEquals(List.of("BR"),shared.get("regions"));
+            clock.advance(16);game.tick();
+            assertFalse(((String)map(game.state(host).get("reveal")).get("explanation")).isBlank());
+            if(round<3) game.next(host);
+        }
+        assertEquals("FINISHED",game.state(host).get("phase"));
+        game.start(host,null);assertEquals(cfg,game.state(host).get("config"));
+        var insufficient=new GameService.Config(12,15,"cinema",List.of("guess-it"),false,"en","REGIONAL","BR");
+        assertEquals("error.catalogCapacity",assertThrows(ApiException.class,()->game.create(new GameService.CreateRequest("Host",false,insufficient))).getMessage());
     }
 }

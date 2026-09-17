@@ -8,3 +8,7 @@ quizmosh-server/src/main/resources/static/
 releases/
 .idea/
 *.iml
+
+# Python smoke-test bytecode
+**/__pycache__/
+*.pyc

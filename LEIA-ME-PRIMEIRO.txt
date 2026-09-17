@@ -1,7 +1,13 @@
-QUIZMOSH — BETA PC 0.3.0
+QUIZMOSH — BETA PC 0.4.0
 
-Jogo para PC pelo navegador. Interface em português, 80 perguntas, quatro modos,
+Jogo para PC pelo navegador. Interface em português e inglês, 92 perguntas, quatro modos,
 salas multiplayer, treino com bots e tela coletiva.
+
+IDIOMAS E CULTURA
+O idioma do navegador sugere a interface, e você pode alterá-lo no cabeçalho.
+Ao criar a sala, escolha o idioma das perguntas e conteúdo global, brasileiro
+ou misto. Todos disputam as mesmas perguntas, mesmo usando interfaces diferentes.
+Detalhes: docs/INTERNACIONALIZACAO.md.
 
 NOVO: MOSH ARENA
 Palco animado, personagens, plataformas, cartas secretas e duetos.

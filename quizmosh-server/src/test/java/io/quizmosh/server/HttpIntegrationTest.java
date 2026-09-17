@@ -41,4 +41,23 @@ class HttpIntegrationTest {
         archive.save("test-match","ABCD",java.util.Map.of("ranking",java.util.List.of()));
         assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM match_results WHERE id='test-match'",Integer.class));
     }
+    @Test void errorsFollowRequestLanguageButRoomContentUsesItsOwnSetting() throws Exception {
+        http.perform(get("/api/rooms/ABCD").header("Accept-Language","en-US"))
+            .andExpect(status().isUnauthorized()).andExpect(jsonPath("$.code").value("error.auth"))
+            .andExpect(jsonPath("$.message").value(Messages.text("error.auth",java.util.Locale.ENGLISH,java.util.Map.of())));
+        http.perform(get("/api/rooms/ABCD").header("Accept-Language","pt-BR"))
+            .andExpect(status().isUnauthorized()).andExpect(jsonPath("$.message").value(Messages.text("error.auth",java.util.Locale.forLanguageTag("pt-BR"),java.util.Map.of())));
+        http.perform(post("/api/rooms").header("Accept-Language","en").contentType("application/json").content("not-json"))
+            .andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("error.invalid"));
+        http.perform(post("/api/rooms").header("Accept-Language","en").header("Origin","https://evil.example").header("Host","localhost").contentType("application/json").content("{}"))
+            .andExpect(status().isForbidden()).andExpect(jsonPath("$.message").value(Messages.text("error.origin",java.util.Locale.ENGLISH,java.util.Map.of())));
+        var cfg=new GameService.Config(8,25,"all",java.util.List.of("classic-trivia","quick-fire","guess-it","closest-wins"),true,"pt-BR","REGIONAL","BR");
+        http.perform(post("/api/rooms").header("Accept-Language","en").contentType("application/json").content(json.writeValueAsString(new GameService.CreateRequest("English UI",true,cfg))))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.state.config.questionLanguage").value("pt-BR"))
+            .andExpect(jsonPath("$.state.config.contentScope").value("REGIONAL"));
+        var insufficient=new GameService.Config(12,25,"cinema",java.util.List.of("guess-it"),true,"en","REGIONAL","BR");
+        http.perform(post("/api/rooms").header("Accept-Language","en").contentType("application/json").content(json.writeValueAsString(new GameService.CreateRequest("Blocked",true,insufficient))))
+            .andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("error.catalogCapacity"))
+            .andExpect(jsonPath("$.arguments.available").value(0)).andExpect(jsonPath("$.arguments.required").value(12));
+    }
 }

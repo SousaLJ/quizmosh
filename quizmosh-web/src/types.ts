@@ -4,6 +4,9 @@ export type Config = {
   category: string;
   modes: string[];
   mosh?: boolean;
+  questionLanguage?: "pt-BR" | "en";
+  contentScope?: "ALL" | "GLOBAL" | "REGIONAL";
+  questionRegion?: "BR";
 };
 export type Player = {
   id: string;
@@ -33,6 +36,7 @@ export type Mosh = {
       total: number;
       success: boolean;
       reason: string;
+      reasonKey?: string;
     }
   >;
 };
@@ -94,3 +98,11 @@ export type State = {
   mosh?: Mosh | null;
 };
 export type Session = { token: string; code: string; playerId: string };
+
+export type CatalogInventory = {
+  language: string;
+  category: string;
+  scope: string;
+  region: string;
+  counts: Record<"choice" | "guess" | "numeric", number>;
+};

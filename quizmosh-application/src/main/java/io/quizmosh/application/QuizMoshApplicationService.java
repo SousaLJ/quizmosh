@@ -107,7 +107,8 @@ public final class QuizMoshApplicationService {
         GameMode mode = gameModes.require(modeId);
 
         QuestionDefinition q = questions.next(new QuestionCatalog.QuestionQuery(
-                modeId, match.settings().categories(), match.usedQuestionIds()
+                modeId, match.settings().categories(), match.usedQuestionIds(),
+                match.settings().questionLanguage(), match.settings().contentScope(), match.settings().questionRegion()
         )).orElseThrow(() -> new DomainException("no compatible question available"));
 
         GameRound round = mode.openRound(ids.newRoundId(), nextIndex + 1, q,

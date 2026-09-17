@@ -38,9 +38,41 @@
 .mosh-game .score-row {
   gap: 9px;
 }
-.score-avatar {
-  width: 38px;
-  flex: 0 0 38px;
+.mosh-avatar.score-avatar {
+  width: 32px;
+  height: 38px;
+  flex: 0 0 32px;
+}
+.mosh-game .arena-score-row {
+  display: grid;
+  grid-template-columns: 17px 32px minmax(0, 1fr);
+  grid-template-areas: "rank avatar name" "rank avatar points";
+  column-gap: 9px;
+  row-gap: 3px;
+  padding: 12px 5px;
+}
+.arena-score-row .rank-number {
+  grid-area: rank;
+}
+.arena-score-row .score-avatar {
+  grid-area: avatar;
+}
+.arena-score-row > div {
+  grid-area: name;
+  min-width: 0;
+}
+.arena-score-row > b {
+  grid-area: points;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.mosh-game .arena-score-row strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mosh-game .arena-score-row small {
+  margin-top: 2px;
 }
 .mosh-game .score-row strong {
   font-size: 13px;
@@ -470,9 +502,15 @@
 .floating-score {
   position: absolute;
   z-index: 5;
-  top: -14px;
-  left: 0;
-  width: 100%;
+  top: -20px;
+  left: 50%;
+  translate: -50% 0;
+  width: max-content;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  padding: 2px 6px;
+  border-radius: 8px;
+  background: #171627e6;
   color: var(--lime);
   font-size: 21px;
   font-weight: 900;

@@ -1,4 +1,11 @@
 <script setup lang="ts">
+import {
+  t,
+  locale,
+  setLocale,
+  formatNumber,
+  preferredContentScope,
+} from "./i18n";
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import {
   Zap,
@@ -44,50 +51,50 @@ import {
   forget,
   resume,
 } from "./game";
-import type { Config, Tactic } from "./types";
+import type { Config, Tactic, CatalogInventory } from "./types";
 import MoshArena from "./MoshArena.vue";
 import MoshAvatar from "./MoshAvatar.vue";
 import MoshBackstage from "./MoshBackstage.vue";
 import { cardInfo, cards } from "./mosh";
 
-const modes = [
+const modes = computed(() => [
   {
     id: "classic-trivia",
-    name: "Na mosca",
-    tag: "TRIVIA CLÁSSICA",
-    description: "Quatro opções. Uma certeza. Mostre que você sabe.",
+    name: t("ui.bullseye"),
+    tag: t("ui.classicTrivia"),
+    description: t("ui.fourOptionsOneRightAnswerShowWhat"),
     icon: Brain,
     color: "purple",
-    rule: "Uma resposta por rodada. Cada acerto vale 1.000 pontos.",
+    rule: t("ui.oneAnswerPerRoundEachCorrectAnswer"),
   },
   {
     id: "quick-fire",
-    name: "Bate-pronto",
-    tag: "VELOCIDADE",
-    description: "Pensou, clicou. Aqui, cada segundo vale pontos.",
+    name: t("ui.quickfire"),
+    tag: t("ui.speed"),
+    description: t("ui.thinkFastClickFastEverySecondCounts"),
     icon: Zap,
     color: "orange",
-    rule: "Uma resposta por rodada. Acerte para ganhar de 500 a 1.000 pontos: quanto mais rápido, melhor.",
+    rule: t("ui.oneAnswerPerRoundCorrectAnswersEarn"),
   },
   {
     id: "guess-it",
-    name: "Qual é a boa?",
-    tag: "PISTAS E PALPITES",
-    description: "Conecte as pistas e descubra antes da turma.",
+    name: t("ui.whatSTheAnswer"),
+    tag: t("ui.cluesAndGuesses"),
+    description: t("ui.connectTheCluesAndBeatYourFriends"),
     icon: Lightbulb,
     color: "green",
-    rule: "Uma tentativa por pista. Acerto vale 1.000, 800, 600 ou 400 pontos conforme a pista; cada erro tira 100. Acentos e maiúsculas não atrapalham.",
+    rule: t("ui.oneAttemptPerClueACorrectAnswer"),
   },
   {
     id: "closest-wins",
-    name: "Quase lá",
-    tag: "APROXIMAÇÃO",
-    description: "Não precisa cravar. Chegar mais perto já conta.",
+    name: t("ui.closeEnough"),
+    tag: t("ui.estimation"),
+    description: t("ui.youDonTNeedToBeExact"),
     icon: Target,
     color: "pink",
-    rule: "Os mais próximos recebem 1.000, 600, 300 e 100 pontos. Empates recebem a mesma posição; acerto exato soma 200.",
+    rule: t("ui.theClosestGuessesEarn1000600"),
   },
-];
+]);
 const tab = ref(
   new URLSearchParams(location.search).has("room") ? "join" : "create",
 );
@@ -100,10 +107,76 @@ const config = ref<Config>({
   rounds: 8,
   seconds: 25,
   category: "all",
-  modes: modes.map((m) => m.id),
+  modes: modes.value.map((m) => m.id),
   mosh: true,
+  questionLanguage: locale.value,
+  contentScope: preferredContentScope(),
+  questionRegion: "BR",
 });
+watch(
+  () => config.value.contentScope,
+  (scope) => {
+    try {
+      localStorage.setItem("quizmosh-content-scope", scope || "GLOBAL");
+    } catch {
+      /* This room still uses the selected scope. */
+    }
+  },
+);
 const selectedMode = ref("mix");
+const inventory = ref<CatalogInventory[]>([]);
+const catalogUnavailable = ref(false);
+const availableContent = computed(() =>
+  inventory.value.find(
+    (item) =>
+      item.language === config.value.questionLanguage &&
+      item.category === config.value.category &&
+      item.scope === config.value.contentScope &&
+      item.region === config.value.questionRegion,
+  ),
+);
+const contentShortage = computed(() => {
+  const available = availableContent.value;
+  if (!available) return null;
+  const selected =
+    selectedMode.value === "mix"
+      ? modes.value.map((mode) => mode.id)
+      : [selectedMode.value];
+  const required = { choice: 0, guess: 0, numeric: 0 };
+  for (let round = 0; round < config.value.rounds; round++) {
+    const mode = selected[round % selected.length];
+    required[
+      mode === "guess-it"
+        ? "guess"
+        : mode === "closest-wins"
+          ? "numeric"
+          : "choice"
+    ]++;
+  }
+  for (const type of ["choice", "guess", "numeric"] as const) {
+    if (available.counts[type] < required[type])
+      return {
+        type: t("content." + type),
+        available: available.counts[type],
+        required: required[type],
+      };
+  }
+  return null;
+});
+async function loadCatalog() {
+  try {
+    const metadata = await api("/meta");
+    inventory.value = metadata?.catalog || [];
+    catalogUnavailable.value = !inventory.value.length;
+  } catch {
+    catalogUnavailable.value = true;
+  }
+}
+function questionLanguageName(language?: string) {
+  return t(language === "en" ? "language.english" : "language.portuguese");
+}
+
+const errorArguments = ref<Record<string, unknown>>({});
 const busy = ref(false),
   error = ref(""),
   toast = ref(""),
@@ -123,7 +196,9 @@ let clock: ReturnType<typeof setInterval>,
   toastTimer: ReturnType<typeof setTimeout>;
 const sounds: Record<string, HTMLAudioElement> = {};
 const activeMode = computed(
-  () => modes.find((m) => m.id === state.value?.round?.mode) || modes[0],
+  () =>
+    modes.value.find((m) => m.id === state.value?.round?.mode) ||
+    modes.value[0],
 );
 const playerList = computed(
   () => state.value?.players.filter((p) => p.role === "PLAYER") || [],
@@ -207,22 +282,29 @@ async function perform(work: () => Promise<void>) {
     await work();
   } catch (e) {
     error.value =
-      e instanceof Error ? e.message : "Algo deu errado. Tente novamente.";
+      e instanceof Error
+        ? (e as Error & { code?: string }).code || e.message
+        : "ui.somethingWentWrongPleaseTryAgain";
+    errorArguments.value =
+      e instanceof Error
+        ? (e as Error & { arguments?: Record<string, unknown> }).arguments || {}
+        : {};
     play("error");
   } finally {
     busy.value = false;
   }
 }
 async function create(practice = false) {
+  if (contentShortage.value) return;
   if (!nickname.value.trim()) {
-    error.value = "Escolha um apelido para começar.";
+    error.value = "ui.chooseANicknameToGetStarted";
     document.getElementById("nickname")?.focus();
     return;
   }
   await perform(async () => {
     config.value.modes =
       selectedMode.value === "mix"
-        ? modes.map((m) => m.id)
+        ? modes.value.map((m) => m.id)
         : [selectedMode.value];
     const data = await api("/rooms", {
       nickname: nickname.value.trim(),
@@ -266,12 +348,11 @@ async function submit(value = answer.value) {
       error.value =
         (
           {
-            "answer.already_submitted": "Você já respondeu esta rodada.",
-            "answer.wait_for_next_clue": "Aguarde a próxima pista.",
-            "answer.player_locked": "Você já acertou!",
+            "answer.already_submitted": "ui.youHaveAlreadyAnsweredThisRound",
+            "answer.wait_for_next_clue": "ui.waitForTheNextClue",
+            "answer.player_locked": "ui.youAlreadyGotItRight",
           } as Record<string, string>
-        )[data.receipt.messageKey] ||
-        "Resposta não aceita. Confira e tente novamente.";
+        )[data.receipt.messageKey] || "ui.answerNotAcceptedCheckItAndTry";
   });
 }
 function selectPlatform(value: string) {
@@ -318,7 +399,7 @@ async function leave() {
 async function copy(text: string) {
   try {
     await navigator.clipboard.writeText(text);
-    notify("Convite copiado!");
+    notify("ui.inviteCopied");
   } catch {
     dialog.value = "invite";
   }
@@ -328,7 +409,7 @@ async function fullscreen() {
     if (document.fullscreenElement) await document.exitFullscreen();
     else await document.documentElement.requestFullscreen();
   } catch {
-    notify("Use F11 para alternar a tela cheia.");
+    notify("ui.useF11ToToggleFullScreen");
   }
 }
 function keyboard(e: KeyboardEvent) {
@@ -415,6 +496,7 @@ watch(
   { immediate: true },
 );
 onMounted(() => {
+  if (!state.value) void loadCatalog();
   void resume();
   clock = setInterval(() => (now.value = Date.now()), 150);
   document.addEventListener("keydown", keyboard);
@@ -436,31 +518,43 @@ onUnmounted(() => {
         class="brand"
         href="/"
         @click.prevent="state ? (dialog = 'leave') : undefined"
-        aria-label="QuizMosh, início"
+        :aria-label="t('ui.quizmoshHome')"
         ><span class="brand-mark"><Zap :size="24" fill="currentColor" /></span
         >quiz<span>mosh</span><sup>β</sup></a
       >
-      <nav v-if="!state" class="top-nav" aria-label="Navegação principal">
-        <span class="active-nav">Jogar</span
-        ><button @click="dialog = 'rules'">Como funciona</button
-        ><button @click="dialog = 'credits'">Créditos</button>
+      <nav v-if="!state" class="top-nav" :aria-label="t('ui.mainNavigation')">
+        <span class="active-nav"> {{ t("ui.play") }} </span
+        ><button @click="dialog = 'rules'">{{ t("ui.howItWorks") }}</button
+        ><button @click="dialog = 'credits'">{{ t("ui.credits") }}</button>
       </nav>
       <div v-else class="room-chip">
         <span class="live-dot" :class="{ offline: !connected }"></span
-        ><span>SALA</span><strong>{{ state.code }}</strong
+        ><span> {{ t("ui.room") }} </span><strong>{{ state.code }}</strong
         ><button
           class="icon-button"
-          aria-label="Copiar convite"
+          :aria-label="t('ui.copyInvite')"
           @click="copy(invite)"
         >
           <Copy :size="16" />
         </button>
       </div>
       <div class="header-actions">
+        <label class="language-switch" :title="t('language.personal')">
+          <Globe2 :size="16" aria-hidden="true" />
+          <span class="sr-only">{{ t("language.interface") }}</span>
+          <select
+            id="interface-language"
+            :value="locale"
+            @change="setLocale(($event.target as HTMLSelectElement).value)"
+          >
+            <option value="pt-BR" lang="pt-BR">PT</option>
+            <option value="en" lang="en">EN</option>
+          </select>
+        </label>
         <span v-if="state" class="connection-text">{{ connectionMode }}</span
         ><button
           class="icon-button"
-          :aria-label="sound ? 'Desativar som' : 'Ativar som'"
+          :aria-label="sound ? t('ui.muteSound') : t('ui.enableSound')"
           :aria-pressed="sound"
           @click="toggleSound"
         >
@@ -470,14 +564,15 @@ onUnmounted(() => {
           /></button
         ><button
           class="icon-button"
-          aria-label="Tela cheia"
+          :aria-label="t('ui.fullScreen')"
+          data-action="fullscreen"
           @click="fullscreen"
         >
           <Maximize2 :size="19" /></button
         ><button
           v-if="state"
           class="icon-button"
-          aria-label="Sair da sala"
+          :aria-label="t('ui.leaveRoom')"
           @click="dialog = 'leave'"
         >
           <LogOut :size="19" />
@@ -490,21 +585,22 @@ onUnmounted(() => {
       <div class="hero-grid">
         <section class="hero-copy">
           <div class="eyebrow">
-            <span class="live-dot"></span> O ROLÊ AGORA É AQUI
+            <span class="live-dot"></span> {{ t("ui.thePartyStartsHere") }}
           </div>
           <h1>
-            A turma reunida.<br />O caos <span>garantido.</span
+            {{ t("ui.yourFriendsTogether") }} <br />
+            {{ t("ui.theChaos") }} <span> {{ t("ui.isGuaranteed") }} </span
             ><Sparkles class="headline-star" :size="36" />
           </h1>
           <p class="hero-description">
-            Um palco. Sua turma. Ninguém joga sozinho.<br
-              class="desktop-break"
-            />
-            Forme duetos, dispute o holofote e faça a plateia pedir BIS.
+            {{ t("ui.oneStageYourFriendsNobodyPlaysAlone") }}
+            <br class="desktop-break" />
+            {{ t("ui.formDuetsClaimTheSpotlightAndMake") }}
           </p>
           <div class="hero-proof">
-            <span><Users :size="17" /> 2–12 jogadores</span><i></i
-            ><span>Sem cadastro</span><i></i><span>100% diversão</span>
+            <span><Users :size="17" /> {{ t("ui.212Players") }} </span><i></i
+            ><span> {{ t("ui.noSignUp") }} </span><i></i
+            ><span> {{ t("ui.100Fun") }} </span>
           </div>
           <div class="party-art" aria-hidden="true">
             <div class="art-orbit"></div>
@@ -512,7 +608,8 @@ onUnmounted(() => {
             <div class="doodle cross">×</div>
             <div class="doodle plus p2">+</div>
             <div class="speech-sticker">
-              <span>EU SEI ESSA!</span><span class="sticker-line"></span>
+              <span> {{ t("ui.iKnowThisOne") }} </span
+              ><span class="sticker-line"></span>
             </div>
             <div class="mascot mascot-lime">
               <div class="mascot-eyes"><b></b><b></b></div>
@@ -524,19 +621,26 @@ onUnmounted(() => {
               <div class="mascot-eyes"><b></b><b></b></div>
             </div>
             <div class="score-sticker">
-              <Trophy :size="18" /> +1.000 <span>PTS</span>
+              <Trophy :size="18" /> +{{ formatNumber(1000) }}
+              <span> {{ t("ui.pts") }} </span>
             </div>
             <div class="mini-sticker"><Gamepad2 :size="24" /></div>
-            <div class="art-caption">BOAS RESPOSTAS. MELHORES HISTÓRIAS.</div>
+            <div class="art-caption">
+              {{ t("ui.greatAnswersEvenBetterStories") }}
+            </div>
           </div>
         </section>
-        <section class="play-panel" aria-label="Começar a jogar">
+        <section class="play-panel" :aria-label="t('ui.startPlaying')">
           <div class="panel-top">
-            <span class="small-badge"><Radio :size="13" /> BORA JOGAR</span
+            <span class="small-badge"
+              ><Radio :size="13" /> {{ t("ui.letSPlay") }} </span
             ><span class="panel-number">01 / PLAY</span>
           </div>
-          <h2>O próximo desafio<br />começa com você.</h2>
-          <p class="muted">Chame a turma. A gente cuida das perguntas.</p>
+          <h2>
+            {{ t("ui.theNextChallenge") }} <br />
+            {{ t("ui.startsWithYou") }}
+          </h2>
+          <p class="muted">{{ t("ui.bringYourFriendsWeLlBringThe") }}</p>
           <div class="tabs" role="tablist">
             <button
               role="tab"
@@ -547,7 +651,7 @@ onUnmounted(() => {
                 error = '';
               "
             >
-              Criar sala</button
+              {{ t("ui.createRoom") }}</button
             ><button
               role="tab"
               :aria-selected="tab === 'join'"
@@ -557,45 +661,85 @@ onUnmounted(() => {
                 error = '';
               "
             >
-              Entrar com código
+              {{ t("ui.joinWithCode") }}
             </button>
           </div>
           <form @submit.prevent="tab === 'create' ? create() : join()">
-            <label for="nickname">Como a turma te chama?</label>
+            <label for="nickname">
+              {{ t("ui.whatDoYourFriendsCallYou") }}
+            </label>
             <div class="input-with-icon">
               <Users :size="18" /><input
                 id="nickname"
                 v-model="nickname"
                 maxlength="24"
                 autocomplete="nickname"
-                placeholder="Seu apelido"
+                :placeholder="t('ui.yourNickname')"
                 required
                 :disabled="busy"
               />
             </div>
             <template v-if="tab === 'create'">
-              <label class="field-label">Qual vai ser a mistura?</label>
+              <label class="field-label"> {{ t("ui.whatSInTheMix") }} </label>
               <div class="category-options">
                 <button
                   type="button"
                   :class="{ chosen: config.category === 'all' }"
                   @click="config.category = 'all'"
                 >
-                  <Sparkles :size="16" /> Tudo junto</button
+                  <Sparkles :size="16" /> {{ t("ui.aBitOfEverything") }}</button
                 ><button
                   type="button"
                   :class="{ chosen: config.category === 'cinema' }"
                   @click="config.category = 'cinema'"
                 >
-                  <Film :size="16" /> Cinema</button
+                  <Film :size="16" /> {{ t("ui.movies") }}</button
                 ><button
                   type="button"
                   :class="{ chosen: config.category === 'geral' }"
                   @click="config.category = 'geral'"
                 >
-                  <Globe2 :size="16" /> Geral
+                  <Globe2 :size="16" /> {{ t("ui.general") }}
                 </button>
               </div>
+              <div class="content-settings">
+                <label for="question-language"
+                  >{{ t("language.questions") }}
+                  <select
+                    id="question-language"
+                    v-model="config.questionLanguage"
+                  >
+                    <option value="pt-BR">
+                      {{ t("language.portuguese") }}
+                    </option>
+                    <option value="en">{{ t("language.english") }}</option>
+                  </select>
+                </label>
+                <label for="content-scope"
+                  >{{ t("content.label") }}
+                  <select id="content-scope" v-model="config.contentScope">
+                    <option value="ALL">{{ t("content.ALL") }}</option>
+                    <option value="GLOBAL">{{ t("content.GLOBAL") }}</option>
+                    <option value="REGIONAL">
+                      {{ t("content.REGIONAL") }}
+                    </option>
+                  </select>
+                </label>
+              </div>
+              <p class="content-hint">{{ t("language.shared") }}</p>
+              <p
+                v-if="availableContent"
+                class="catalog-count"
+                aria-live="polite"
+              >
+                {{ t("content.inventory", availableContent.counts) }}
+              </p>
+              <p v-if="catalogUnavailable" class="content-hint">
+                {{ t("content.unavailable") }}
+              </p>
+              <p v-if="contentShortage" class="form-error" role="status">
+                {{ t("content.shortage", contentShortage) }}
+              </p>
               <button
                 class="customize"
                 type="button"
@@ -603,15 +747,17 @@ onUnmounted(() => {
                 @click="advanced = !advanced"
               >
                 <span
-                  >{{ config.rounds }} rodadas <i>·</i> {{ config.seconds }}s
-                  por rodada <i>·</i>
-                  {{ selectedMode === "mix" ? "4 modos" : "1 modo" }}</span
+                  >{{ config.rounds }} {{ t("ui.rounds") }} <i>·</i>
+                  {{ config.seconds }} {{ t("ui.sPerRound") }} <i>·</i>
+                  {{
+                    selectedMode === "mix" ? t("ui.4Modes") : t("ui.1Mode")
+                  }}</span
                 ><span
-                  >{{ advanced ? "Fechar" : "Ajustar" }}
+                  >{{ advanced ? t("ui.close") : t("ui.customize") }}
                   <ChevronRight :size="14"
                 /></span>
               </button>
-              <div class="game-flavor" aria-label="Estilo da partida">
+              <div class="game-flavor" :aria-label="t('ui.matchStyle')">
                 <button
                   type="button"
                   :class="{ active: config.mosh }"
@@ -626,26 +772,31 @@ onUnmounted(() => {
                   :aria-pressed="!config.mosh"
                   @click="config.mosh = false"
                 >
-                  Quiz clássico
+                  {{ t("ui.classicQuiz") }}
                 </button>
               </div>
               <div v-if="advanced" class="advanced">
-                <label
-                  >Rodadas<select v-model.number="config.rounds">
-                    <option :value="4">4 rodadas</option>
-                    <option :value="8">8 rodadas</option>
-                    <option :value="12">12 rodadas</option>
+                <label>
+                  {{ t("ui.rounds2") }}
+                  <select v-model.number="config.rounds">
+                    <option :value="4">{{ t("ui.4Rounds") }}</option>
+                    <option :value="8">{{ t("ui.8Rounds") }}</option>
+                    <option :value="12">{{ t("ui.12Rounds") }}</option>
                   </select></label
-                ><label
-                  >Tempo<select v-model.number="config.seconds">
-                    <option :value="15">15 segundos</option>
-                    <option :value="25">25 segundos</option>
-                    <option :value="40">40 segundos</option>
-                    <option :value="60">60 segundos</option>
+                ><label>
+                  {{ t("ui.time") }}
+                  <select v-model.number="config.seconds">
+                    <option :value="15">{{ t("ui.15Seconds") }}</option>
+                    <option :value="25">{{ t("ui.25Seconds") }}</option>
+                    <option :value="40">{{ t("ui.40Seconds") }}</option>
+                    <option :value="60">{{ t("ui.60Seconds") }}</option>
                   </select></label
-                ><label class="span-two"
-                  >Modo de jogo<select v-model="selectedMode">
-                    <option value="mix">Mosh completo · os quatro modos</option>
+                ><label class="span-two">
+                  {{ t("ui.gameMode") }}
+                  <select v-model="selectedMode">
+                    <option value="mix">
+                      {{ t("ui.fullMoshAllFourModes") }}
+                    </option>
                     <option
                       v-for="mode in modes"
                       :key="mode.id"
@@ -658,7 +809,7 @@ onUnmounted(() => {
               </div>
             </template>
             <template v-else
-              ><label for="room-code">Código da sala</label
+              ><label for="room-code"> {{ t("ui.roomCode") }} </label
               ><input
                 id="room-code"
                 v-model="code"
@@ -669,21 +820,27 @@ onUnmounted(() => {
                 autocapitalize="characters"
                 autocomplete="off"
                 required
-              /><label for="join-role">Quero participar como</label
+              /><label for="join-role"> {{ t("ui.iWantToJoinAs") }} </label
               ><select id="join-role" v-model="role">
-                <option value="PLAYER">Jogador</option>
-                <option value="SPECTATOR">Espectador</option>
-                <option value="DISPLAY">Tela coletiva</option>
+                <option value="PLAYER">{{ t("ui.player") }}</option>
+                <option value="SPECTATOR">{{ t("ui.spectator") }}</option>
+                <option value="DISPLAY">{{ t("ui.sharedScreen") }}</option>
               </select></template
             >
-            <p v-if="error" class="form-error" role="alert">{{ error }}</p>
-            <button class="primary-button" type="submit" :disabled="busy">
+            <p v-if="error" class="form-error" role="alert">
+              {{ t(error, errorArguments) }}
+            </p>
+            <button
+              class="primary-button"
+              type="submit"
+              :disabled="busy || (tab === 'create' && !!contentShortage)"
+            >
               <LoaderCircle v-if="busy" class="spin" :size="20" /><span>{{
                 busy
-                  ? "Preparando…"
+                  ? t("ui.gettingReady")
                   : tab === "create"
-                    ? "Criar minha sala"
-                    : "Entrar na sala"
+                    ? t("ui.createMyRoom")
+                    : t("ui.joinRoom")
               }}</span
               ><ArrowRight :size="21" />
             </button>
@@ -691,23 +848,27 @@ onUnmounted(() => {
           <button
             v-if="tab === 'create'"
             class="practice-button"
-            :disabled="busy"
+            :disabled="busy || !!contentShortage"
             @click="create(true)"
           >
-            <Gamepad2 :size="18" /> Só você por aí?
-            <strong>Treine com bots</strong><ArrowRight :size="15" />
+            <Gamepad2 :size="18" /> {{ t("ui.playingSolo") }}
+            <strong> {{ t("ui.practiceWithBots") }} </strong
+            ><ArrowRight :size="15" />
           </button>
           <div class="panel-foot">
-            <span class="tiny-dot"></span> No computador, no celular ou na tela
-            da sala.
+            <span class="tiny-dot"></span>
+            {{ t("ui.onYourComputerPhoneOrSharedScreen") }}
           </div>
         </section>
       </div>
       <section class="modes-section">
         <div class="section-heading">
-          <h2>Uma sala. <span>Quatro jeitos de causar.</span></h2>
+          <h2>
+            {{ t("ui.oneRoom") }}
+            <span> {{ t("ui.fourWaysToShakeItUp") }} </span>
+          </h2>
           <button class="text-button" @click="dialog = 'rules'">
-            Conheça as regras <ArrowRight :size="16" />
+            {{ t("ui.learnTheRules") }} <ArrowRight :size="16" />
           </button>
         </div>
         <div class="mode-grid">
@@ -738,13 +899,13 @@ onUnmounted(() => {
           ><Gamepad2 :size="16" />
           {{
             state.phase === "LOBBY"
-              ? "PONTO DE ENCONTRO"
+              ? t("ui.meetingPoint")
               : state.phase === "FINISHED"
-                ? "FIM DE PARTIDA"
-                : "MOSH EM ANDAMENTO"
+                ? t("ui.matchOver")
+                : t("ui.moshInProgress")
           }}</span
         ><button class="text-button" @click="dialog = 'rules'">
-          <HelpCircle :size="16" /> Regras
+          <HelpCircle :size="16" /> {{ t("ui.rules") }}
         </button>
       </div>
       <div
@@ -753,7 +914,7 @@ onUnmounted(() => {
         :class="{ 'is-encore': state.mosh.encore }"
       >
         <span>{{
-          state.mosh.encore ? "✦ RODADA BIS" : "✦ ENERGIA DA PLATEIA"
+          state.mosh.encore ? t("ui.encoreRound") : t("ui.crowdEnergy")
         }}</span>
         <div
           class="mosh-meter-track"
@@ -761,80 +922,93 @@ onUnmounted(() => {
           :aria-valuenow="state.mosh.heat"
           :aria-valuemin="0"
           :aria-valuemax="100"
-          aria-label="Energia coletiva"
+          :aria-label="t('ui.collectiveEnergy')"
         >
           <i :style="{ width: state.mosh.heat + '%' }"></i>
         </div>
         <b>{{ state.mosh.heat }}%</b
         ><small>{{
           state.mosh.encore
-            ? "Bônus e risco das cartas ×2 nesta rodada"
+            ? t("ui.cardBonusesAndRisks2ThisRound")
             : state.mosh.heat >= 100
-              ? "Próxima rodada: BIS com cartas ×2!"
-              : "Os acertos da turma carregam o próximo BIS"
+              ? t("ui.nextRoundEncoreWithCards2")
+              : t("ui.yourTeamSCorrectAnswersChargeThe")
         }}</small>
       </div>
       <section v-if="state.phase === 'LOBBY'" class="lobby-grid">
         <div class="lobby-stage">
           <div class="eyebrow">
-            <span class="live-dot"></span> TÁ QUASE TODO MUNDO AQUI
+            <span class="live-dot"></span> {{ t("ui.almostEveryoneIsHere") }}
           </div>
-          <h1>O mosh começa<br />com a <span>sua turma.</span></h1>
+          <h1>
+            {{ t("ui.theMoshStarts") }} <br />
+            {{ t("ui.with") }} <span> {{ t("ui.yourFriends") }} </span>
+          </h1>
           <p class="muted">
             {{
               state.config.mosh
-                ? "Um palco para acertar, arriscar e jogar junto."
-                : "Compartilhe o código e prepare seus melhores palpites."
+                ? t("ui.aStageToAnswerTakeRisksAnd")
+                : t("ui.shareTheCodeAndGetYourBest")
             }}
           </p>
           <MoshArena v-if="state.config.mosh" :state="state" compact />
-          <div class="big-code" aria-label="Código da sala">
+          <div class="big-code" :aria-label="t('ui.roomCode')">
             {{ state.code
             }}<button
               class="icon-button"
-              aria-label="Copiar link da sala"
+              :aria-label="t('ui.copyRoomLink')"
               @click="copy(invite)"
             >
               <Copy :size="22" />
             </button>
+          </div>
+          <div class="lobby-content">
+            <span
+              ><Globe2 :size="15" />{{
+                questionLanguageName(state.config.questionLanguage)
+              }}</span
+            >
+            <span>{{
+              t("content." + (state.config.contentScope || "ALL"))
+            }}</span>
+            <small>{{ t("language.shared") }}</small>
           </div>
           <div class="lobby-settings">
             <span
               ><Sparkles :size="16" />
               {{
                 state.config.category === "all"
-                  ? "Tudo junto"
+                  ? t("ui.aBitOfEverything")
                   : state.config.category === "cinema"
-                    ? "Cinema"
-                    : "Conhecimentos gerais"
+                    ? t("ui.movies")
+                    : t("ui.generalKnowledge")
               }}</span
-            ><span>{{ state.config.rounds }} rodadas</span
-            ><span>{{ state.config.seconds }} segundos</span>
+            ><span>{{ state.config.rounds }} {{ t("ui.rounds") }} </span
+            ><span>{{ state.config.seconds }} {{ t("ui.seconds") }} </span>
           </div>
           <div class="lobby-invite">
-            <img :src="qr" alt="QR code para entrar na sala" />
+            <img :src="qr" :alt="t('ui.qrCodeToJoinTheRoom')" />
             <div>
-              <h3>Escaneou. Entrou. Jogou.</h3>
-              <p>Quem vai disputar esse pódio com você?</p>
+              <h3>{{ t("ui.scanJoinPlay") }}</h3>
+              <p>{{ t("ui.whoWillChallengeYouForThePodium") }}</p>
               <button class="text-button" @click="dialog = 'invite'">
-                <Link :size="16" /> Compartilhar convite</button
+                <Link :size="16" /> {{ t("ui.shareInvite") }}</button
               ><a
                 :href="displayLink"
                 target="_blank"
                 rel="noopener"
                 class="text-button"
-                ><Monitor :size="16" /> Abrir tela coletiva</a
-              >
+                ><Monitor :size="16" /> {{ t("ui.openSharedScreen") }}
+              </a>
             </div>
           </div>
           <p v-if="localHost" class="local-note">
-            Para convidar pelo celular, abra o jogo pelo IP do PC na mesma rede.
-            Veja o guia incluído no projeto.
+            {{ t("ui.toInviteFriendsOnTheirPhonesOpen") }}
           </p>
         </div>
         <div class="lobby-players">
           <div class="players-title">
-            <h2>A turma</h2>
+            <h2>{{ t("ui.theCrew") }}</h2>
             <span>{{ playerList.length }} / 12</span>
           </div>
           <div class="player-list">
@@ -854,17 +1028,17 @@ onUnmounted(() => {
               <div>
                 <strong
                   >{{ player.nickname }}
-                  <span v-if="player.id === state.you.id" class="you-tag"
-                    >você</span
-                  ></strong
+                  <span v-if="player.id === state.you.id" class="you-tag">
+                    {{ t("ui.you") }}
+                  </span></strong
                 ><small>{{
                   player.bot
-                    ? "Bot de treino"
+                    ? t("ui.practiceBot")
                     : player.owner
-                      ? "Anfitrião"
+                      ? t("ui.host")
                       : player.online
-                        ? "Na área"
-                        : "Reconectando"
+                        ? t("ui.hereAndReady")
+                        : t("ui.reconnecting")
                 }}</small>
               </div>
               <Crown v-if="player.owner" class="crown" :size="19" /><Check
@@ -874,7 +1048,7 @@ onUnmounted(() => {
               />
             </div>
             <div v-if="playerList.length < 2" class="empty-player">
-              <span>+</span> Esperando o próximo jogador…
+              <span>+</span> {{ t("ui.waitingForTheNextPlayer") }}
             </div>
           </div>
           <p
@@ -882,7 +1056,8 @@ onUnmounted(() => {
             v-if="state.players.length > playerList.length"
           >
             <Eye :size="14" />
-            {{ state.players.length - playerList.length }} acompanhando
+            {{ state.players.length - playerList.length }}
+            {{ t("ui.watching") }}
           </p>
           <button
             v-if="state.you.owner"
@@ -890,32 +1065,32 @@ onUnmounted(() => {
             :disabled="busy || playerList.length < 2 || !connected"
             @click="start"
           >
-            <Play :size="19" fill="currentColor" /> Começar o mosh
+            <Play :size="19" fill="currentColor" /> {{ t("ui.startTheMosh") }}
             <ArrowRight :size="20" />
           </button>
           <p v-else class="waiting-host">
-            <LoaderCircle class="spin" :size="17" /> Esperando o anfitrião
-            começar
+            <LoaderCircle class="spin" :size="17" />
+            {{ t("ui.waitingForTheHostToStart") }}
           </p>
           <p class="small-help">
             {{
               state.you.owner
-                ? "Precisamos de pelo menos 2 jogadores."
-                : "A partida vai aparecer aqui automaticamente."
+                ? t("ui.weNeedAtLeast2Players")
+                : t("ui.theMatchWillAppearHereAutomatically")
             }}
           </p>
         </div>
       </section>
 
       <section v-else-if="state.phase === 'COUNTDOWN'" class="countdown-stage">
-        <div class="eyebrow">TODO MUNDO PRONTO?</div>
-        <h1>Que comece<br /><span>o mosh.</span></h1>
+        <div class="eyebrow">{{ t("ui.everyoneReady") }}</div>
+        <h1>
+          {{ t("ui.letThe") }} <br /><span> {{ t("ui.moshBegin") }} </span>
+        </h1>
         <div class="countdown-number" :key="transition">
-          {{ transition || "VAI!" }}
+          {{ transition || t("ui.go") }}
         </div>
-        <p>
-          {{ state.config.rounds }} rodadas para descobrir quem manda na turma.
-        </p>
+        <p>{{ state.config.rounds }} {{ t("ui.roundsToFindOutWhoRunsThe") }}</p>
       </section>
 
       <MoshBackstage
@@ -936,8 +1111,8 @@ onUnmounted(() => {
             <span class="mode-pill" :class="activeMode.color"
               ><component :is="activeMode.icon" :size="17" />
               {{ activeMode.name }}</span
-            ><span
-              >RODADA <b>{{ state.round.number }}</b> /
+            ><span>
+              {{ t("ui.round") }} <b>{{ state.round.number }}</b> /
               {{ state.config.rounds }}</span
             >
           </div>
@@ -952,8 +1127,8 @@ onUnmounted(() => {
             <div>
               <span class="question-category">{{
                 state.round.category === "cinema"
-                  ? "LUZ, CÂMERA, PALPITE"
-                  : "UM POUCO DE TUDO"
+                  ? t("ui.lightsCameraGuess")
+                  : t("ui.aBitOfEverything2")
               }}</span>
               <h1>{{ state.round.prompt }}</h1>
             </div>
@@ -962,9 +1137,11 @@ onUnmounted(() => {
               :class="{ urgent: remaining <= 5 }"
               :style="{ '--progress': fraction + '%' }"
               role="timer"
-              aria-label="Segundos restantes"
+              :aria-label="t('ui.secondsRemaining')"
             >
-              <span>{{ remaining }}<small>SEG</small></span>
+              <span
+                >{{ remaining }}<small> {{ t("ui.sec") }} </small></span
+              >
             </div>
           </div>
           <p class="round-rule">{{ activeMode.rule }}</p>
@@ -973,12 +1150,14 @@ onUnmounted(() => {
             ><span
               >{{ cardInfo(ownTactic.card).short
               }}<template v-if="ownTactic.target">
-                com
+                {{ t("ui.with2") }}
                 {{
                   state.players.find((p) => p.id === ownTactic?.target)
-                    ?.nickname || "seu parceiro"
+                    ?.nickname || t("ui.yourPartner")
                 }}</template
-              >{{ state.mosh?.encore ? " · BIS: bônus e risco ×2" : "" }}</span
+              >{{
+                state.mosh?.encore ? t("ui.encoreBonusesAndRisks2") : ""
+              }}</span
             >
           </div>
           <MoshArena
@@ -1007,7 +1186,8 @@ onUnmounted(() => {
               v-if="state.round.clues.length < state.round.clueCount"
               class="next-clue"
             >
-              <LoaderCircle :size="14" class="spin" /> A próxima pista vem aí…
+              <LoaderCircle :size="14" class="spin" />
+              {{ t("ui.theNextClueIsComing") }}
             </div>
           </div>
           <div
@@ -1039,8 +1219,8 @@ onUnmounted(() => {
           >
             <label for="answer-field">{{
               state.round.type === "numeric"
-                ? "Seu melhor palpite (" + state.round.unit + ")"
-                : "Qual é a sua resposta?"
+                ? t("ui.yourBestGuess") + state.round.unit + ")"
+                : t("ui.whatSYourAnswer")
             }}</label>
             <div
               v-if="state.mosh && state.round.type === 'numeric'"
@@ -1049,26 +1229,26 @@ onUnmounted(() => {
               <button
                 type="button"
                 :disabled="!liveAnswerAllowed"
-                aria-label="Diminuir palpite"
+                :aria-label="t('ui.decreaseGuess')"
                 @click="turnDial(-1)"
               >
                 −
               </button>
               <select
                 v-model.number="dialStep"
-                aria-label="Passo do controle numérico"
+                :aria-label="t('ui.numericControlStep')"
                 :disabled="!liveAnswerAllowed"
               >
-                <option :value="1">Passo: 1</option>
-                <option :value="10">Passo: 10</option>
-                <option :value="100">Passo: 100</option>
-                <option :value="1000">Passo: 1.000</option>
-                <option :value="0.1">Passo: 0,1</option>
+                <option :value="1">{{ t("ui.step1") }}</option>
+                <option :value="10">{{ t("ui.step10") }}</option>
+                <option :value="100">{{ t("ui.step100") }}</option>
+                <option :value="1000">{{ t("ui.step1000") }}</option>
+                <option :value="0.1">{{ t("ui.step01") }}</option>
               </select>
               <button
                 type="button"
                 :disabled="!liveAnswerAllowed"
-                aria-label="Aumentar palpite"
+                :aria-label="t('ui.increaseGuess')"
                 @click="turnDial(1)"
               >
                 +
@@ -1083,64 +1263,66 @@ onUnmounted(() => {
                 :maxlength="state.round.type === 'numeric' ? 16 : 160"
                 :placeholder="
                   state.round.type === 'numeric'
-                    ? 'Digite um número'
-                    : 'Digite seu palpite'
+                    ? t('ui.enterANumber')
+                    : t('ui.enterYourGuess')
                 "
                 autocomplete="off"
               /><button
                 class="primary-button"
                 :disabled="!liveAnswerAllowed || !answer.trim()"
               >
-                <span>Mandar palpite</span><ArrowRight :size="19" />
+                <span> {{ t("ui.sendGuess") }} </span><ArrowRight :size="19" />
               </button>
             </div>
           </form>
           <div v-if="state.you.role !== 'PLAYER'" class="answer-status">
-            <Monitor :size="20" /><span
-              >Acompanhe a disputa. Os jogadores respondem nos próprios
-              dispositivos.</span
-            >
+            <Monitor :size="20" /><span>
+              {{ t("ui.watchTheGamePlayersAnswerOnTheir") }}
+            </span>
           </div>
           <div v-else-if="state.you.locked" class="answer-status success">
             <Check :size="20" /><span>{{
               state.round.type === "guess"
-                ? "Acertou! Agora é só esperar a turma."
-                : "Resposta enviada! O resultado vem no fim da rodada."
+                ? t("ui.correctNowWaitForYourFriends")
+                : t("ui.answerLockedTheResultAppearsAtThe")
             }}</span>
           </div>
           <div v-else-if="state.you.submitted" class="answer-status">
-            <Lightbulb :size="20" /><span
-              >Ainda não foi dessa vez. −100 pontos. Tente com a próxima
-              pista.</span
-            >
+            <Lightbulb :size="20" /><span>
+              {{ t("ui.notThisTime100PointsTryAgain") }}
+            </span>
           </div>
           <div class="question-foot">
             <span
-              ><Users :size="16" /> {{ state.round.answeredCount }} de
-              {{ state.round.playerCount }} já responderam</span
+              ><Users :size="16" /> {{ state.round.answeredCount }}
+              {{ t("ui.of") }} {{ state.round.playerCount }}
+              {{ t("ui.haveAnswered") }} </span
             ><span v-if="state.round.type === 'choice'"
-              >{{ state.mosh ? "Mover" : "Atalhos" }} <kbd>1</kbd><kbd>2</kbd
-              ><kbd>3</kbd><kbd>4</kbd
+              >{{ state.mosh ? t("ui.move") : t("ui.shortcuts") }} <kbd>1</kbd
+              ><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd
               ><template v-if="state.mosh">
-                · Travar <kbd>Enter</kbd></template
+                {{ t("ui.lock") }} <kbd>Enter</kbd></template
               ></span
-            ><span v-else-if="state.round.type === 'guess'"
-              >Pista {{ state.round.clueIndex + 1 }} de
-              {{ state.round.clueCount }}</span
+            ><span v-else-if="state.round.type === 'guess'">
+              {{ t("ui.clue") }} {{ state.round.clueIndex + 1 }}
+              {{ t("ui.of") }} {{ state.round.clueCount }}</span
             >
           </div>
         </div>
         <aside class="scoreboard">
           <div class="players-title">
-            <h2><Trophy :size="18" /> Na disputa</h2>
-            <span>PTS</span>
+            <h2><Trophy :size="18" /> {{ t("ui.inTheGame") }}</h2>
+            <span> {{ t("ui.pts") }} </span>
           </div>
           <TransitionGroup name="ranking" tag="div"
             ><div
               v-for="player in state.ranking"
               :key="player.id"
               class="score-row"
-              :class="{ isyou: player.id === state.you.id }"
+              :class="{
+                isyou: player.id === state.you.id,
+                'arena-score-row': !!state.mosh,
+              }"
             >
               <span class="rank-number">{{ player.rank }}</span>
               <MoshAvatar
@@ -1150,16 +1332,19 @@ onUnmounted(() => {
               />
               <div>
                 <strong>{{ player.nickname }}</strong
-                ><small v-if="player.id === state.you.id"
-                  >Você tá no jogo</small
-                >
+                ><small v-if="player.id === state.you.id">
+                  {{ t("ui.youReInTheGame") }}
+                </small>
               </div>
-              <b>{{ player.score.toLocaleString("pt-BR") }}</b>
+              <b>{{ player.score.toLocaleString(locale) }}</b>
             </div></TransitionGroup
           >
           <div class="scoreboard-bottom">
             <Sparkles :size="22" />
-            <p>A próxima resposta<br />pode mudar tudo.</p>
+            <p>
+              {{ t("ui.theNextAnswer") }} <br />
+              {{ t("ui.couldChangeEverything") }}
+            </p>
           </div>
         </aside>
       </section>
@@ -1170,21 +1355,26 @@ onUnmounted(() => {
       >
         <div class="reveal-card">
           <MoshArena v-if="state.mosh" :state="state" compact />
-          <span class="small-badge"
-            >RODADA {{ state.reveal.number }} · RESULTADO</span
-          >
+          <span class="small-badge">
+            {{ t("ui.round") }} {{ state.reveal.number }} {{ t("ui.result") }}
+          </span>
           <div class="reveal-check"><Check :size="36" /></div>
           <p class="muted">{{ state.reveal.prompt }}</p>
           <h1>{{ state.reveal.answer }}</h1>
           <p class="explanation">{{ state.reveal.explanation }}</p>
           <div v-if="ownBreakdown" class="mosh-breakdown">
-            <strong>{{ ownBreakdown.reason }}</strong>
+            <strong>{{
+              ownBreakdown.reasonKey
+                ? t(ownBreakdown.reasonKey)
+                : ownBreakdown.reason
+            }}</strong>
             <p>
-              {{ ownBreakdown.base.toLocaleString("pt-BR") }} da resposta ·
+              {{ ownBreakdown.base.toLocaleString(locale) }}
+              {{ t("ui.fromYourAnswer") }}
               {{ ownBreakdown.bonus >= 0 ? "+" : ""
-              }}{{ ownBreakdown.bonus.toLocaleString("pt-BR") }} da carta
-              {{ cardInfo(ownBreakdown.card).name
-              }}{{ state.mosh?.encore ? " (BIS ×2)" : "" }}
+              }}{{ ownBreakdown.bonus.toLocaleString(locale) }}
+              {{ t("ui.fromYourCard") }} {{ cardInfo(ownBreakdown.card).name
+              }}{{ state.mosh?.encore ? t("ui.encore2") : "" }}
             </p>
           </div>
           <div
@@ -1192,12 +1382,13 @@ onUnmounted(() => {
             class="delta"
             :class="{ negative: ownDelta < 0 }"
           >
-            {{ ownDelta > 0 ? "+" : "" }}{{ ownDelta.toLocaleString("pt-BR") }}
-            <span>pontos para você</span>
+            {{ ownDelta > 0 ? "+" : "" }}{{ ownDelta.toLocaleString(locale) }}
+            <span> {{ t("ui.pointsForYou") }} </span>
           </div>
           <div class="next-round">
-            <LoaderCircle class="spin" :size="17" /> Próxima rodada em
-            {{ transition }}s<button
+            <LoaderCircle class="spin" :size="17" /> {{ t("ui.nextRoundIn") }}
+            {{ transition }} {{ t("ui.s") }}
+            <button
               v-if="state.you.owner"
               class="text-button"
               :disabled="busy"
@@ -1207,14 +1398,14 @@ onUnmounted(() => {
                 )
               "
             >
-              Bora! <ArrowRight :size="17" />
+              {{ t("ui.letSGo") }} <ArrowRight :size="17" />
             </button>
           </div>
         </div>
         <aside class="scoreboard reveal-scoreboard">
           <div class="players-title">
-            <h2><Trophy :size="18" /> Olha o placar</h2>
-            <span>PTS</span>
+            <h2><Trophy :size="18" /> {{ t("ui.checkTheScores") }}</h2>
+            <span> {{ t("ui.pts") }} </span>
           </div>
           <TransitionGroup name="ranking" tag="div"
             ><div
@@ -1228,11 +1419,11 @@ onUnmounted(() => {
                 <strong>{{ player.nickname }}</strong
                 ><small class="gain"
                   >{{ (state.reveal.deltas[player.id] || 0) > 0 ? "+" : ""
-                  }}{{ state.reveal.deltas[player.id] || 0 }} nesta
-                  rodada</small
-                >
+                  }}{{ state.reveal.deltas[player.id] || 0 }}
+                  {{ t("ui.thisRound") }}
+                </small>
               </div>
-              <b>{{ player.score.toLocaleString("pt-BR") }}</b>
+              <b>{{ player.score.toLocaleString(locale) }}</b>
             </div></TransitionGroup
           >
         </aside>
@@ -1241,27 +1432,34 @@ onUnmounted(() => {
       <section v-else-if="state.phase === 'FINISHED'" class="final-stage">
         <MoshArena v-if="state.mosh" :state="state" compact />
         <div v-if="ownBreakdown" class="mosh-breakdown">
-          <strong>Última rodada · {{ ownBreakdown.reason }}</strong>
+          <strong>
+            {{ t("ui.lastRound") }}
+            {{
+              ownBreakdown.reasonKey
+                ? t(ownBreakdown.reasonKey)
+                : ownBreakdown.reason
+            }}</strong
+          >
           <p>
-            {{ ownBreakdown.base.toLocaleString("pt-BR") }} da resposta ·
-            {{ ownBreakdown.bonus >= 0 ? "+" : ""
-            }}{{ ownBreakdown.bonus.toLocaleString("pt-BR") }} da carta{{
-              state.mosh?.encore ? " (BIS ×2)" : ""
-            }}
+            {{ ownBreakdown.base.toLocaleString(locale) }}
+            {{ t("ui.fromYourAnswer") }} {{ ownBreakdown.bonus >= 0 ? "+" : ""
+            }}{{ ownBreakdown.bonus.toLocaleString(locale) }}
+            {{ t("ui.fromYourCard") }}
+            {{ state.mosh?.encore ? t("ui.encore2") : "" }}
           </p>
         </div>
         <div class="confetti" aria-hidden="true">
           <i v-for="n in 18" :key="n" :style="{ '--i': n }"></i>
         </div>
         <span class="small-badge"
-          ><Sparkles :size="14" /> ESSE MOSH FOI BOM!</span
+          ><Sparkles :size="14" /> {{ t("ui.thatWasAGreatMosh") }} </span
         ><Trophy class="final-trophy" :size="52" />
         <h1>{{ winners }}</h1>
         <p class="winner-sub">
           {{
             state.ranking.filter((p) => p.rank === 1).length > 1
-              ? "Dividiram o topo do pódio!"
-              : "No topo do pódio. E das provocações."
+              ? t("ui.theyShareTheTopSpot")
+              : t("ui.topOfThePodiumFirstInBragging")
           }}
         </p>
         <div class="final-ranking">
@@ -1280,14 +1478,18 @@ onUnmounted(() => {
               }}</template></span
             ><strong
               >{{ player.nickname }}
-              <small v-if="player.id === state.you.id">você</small></strong
+              <small v-if="player.id === state.you.id">
+                {{ t("ui.you") }}
+              </small></strong
             ><b
-              >{{ player.score.toLocaleString("pt-BR") }} <small>pts</small></b
+              >{{ player.score.toLocaleString(locale) }}
+              <small> {{ t("ui.pts2") }} </small></b
             >
           </div>
         </div>
         <div v-if="state.reveal" class="final-answer">
-          <span>ÚLTIMA RODADA</span><strong>{{ state.reveal.answer }}</strong>
+          <span> {{ t("ui.lastRound2") }} </span
+          ><strong>{{ state.reveal.answer }}</strong>
           <p>{{ state.reveal.explanation }}</p>
         </div>
         <button
@@ -1296,28 +1498,32 @@ onUnmounted(() => {
           :disabled="busy || !connected || playerList.length < 2"
           @click="start"
         >
-          <RotateCcw :size="19" /> Quero revanche <ArrowRight :size="20" />
+          <RotateCcw :size="19" /> {{ t("ui.rematchPlease") }}
+          <ArrowRight :size="20" />
         </button>
-        <p v-else class="waiting-host">
-          O anfitrião pode começar uma revanche.
-        </p>
+        <p v-else class="waiting-host">{{ t("ui.theHostCanStartARematch") }}</p>
         <button class="text-button" @click="dialog = 'leave'">
-          Voltar ao início
+          {{ t("ui.backToHome") }}
         </button>
       </section>
-      <p v-if="error" class="form-error game-error" role="alert">{{ error }}</p>
+      <p v-if="error" class="form-error game-error" role="alert">
+        {{ t(error, errorArguments) }}
+      </p>
     </main>
 
     <footer>
-      <span><span class="tiny-logo">✳</span> FEITO PARA JUNTAR GENTE.</span>
+      <span
+        ><span class="tiny-logo">✳</span>
+        {{ t("ui.madeToBringPeopleTogether") }}
+      </span>
       <div>
-        <button @click="dialog = 'credits'">Créditos & assets</button><i>·</i
-        ><span>QuizMosh Arena beta 0.3</span>
+        <button @click="dialog = 'credits'">{{ t("ui.creditsAssets") }}</button
+        ><i>·</i><span> {{ t("ui.quizmoshArenaBeta04") }} </span>
       </div>
     </footer>
     <Transition name="toast"
       ><div v-if="toast" class="toast" role="status">
-        <Check :size="18" />{{ toast }}
+        <Check :size="18" />{{ t(toast) }}
       </div></Transition
     >
     <div
@@ -1332,35 +1538,33 @@ onUnmounted(() => {
         aria-modal="true"
         :aria-label="
           dialog === 'rules'
-            ? 'Como jogar'
+            ? t('ui.howToPlay')
             : dialog === 'credits'
-              ? 'Créditos'
+              ? t('ui.credits')
               : dialog === 'leave'
-                ? 'Sair da sala'
-                : 'Convidar amigos'
+                ? t('ui.leaveRoom')
+                : t('ui.inviteFriends')
         "
       >
         <button
           class="icon-button modal-close"
-          aria-label="Fechar"
+          :aria-label="t('ui.close')"
           autofocus
           @click="dialog = ''"
         >
           <X :size="22" />
         </button>
         <template v-if="dialog === 'rules'"
-          ><span class="eyebrow">O GUIA DO MOSH</span>
-          <h2>Chega junto.<br />Joga do seu jeito.</h2>
-          <p class="muted">
-            Crie uma sala, convide a turma pelo código e deixe o anfitrião dar a
-            largada. As rodadas avançam automaticamente.
-          </p>
+          ><span class="eyebrow"> {{ t("ui.theMoshGuide") }} </span>
+          <h2>
+            {{ t("ui.joinIn") }} <br />
+            {{ t("ui.playYourWay") }}
+          </h2>
+          <p class="muted">{{ t("ui.createARoomInviteYourFriendsWith") }}</p>
           <div class="mosh-rules">
             <p>
-              <strong>Mosh Arena:</strong> escolha uma carta nos bastidores
-              antes de conhecer a pergunta. Comece com 3 batidas; acerto devolve
-              1, erro devolve 2, até 5. Uma escolha confirmada não muda. Sem
-              escolha, vale “Na minha”.
+              <strong>Mosh Arena:</strong>
+              {{ t("ui.chooseACardBackstageBeforeSeeingThe") }}
             </p>
             <p v-for="card in cards" :key="card.id">
               <strong
@@ -1369,16 +1573,12 @@ onUnmounted(() => {
               {{ card.description }}
             </p>
             <p>
-              <strong>BIS:</strong> os acertos carregam a energia coletiva (até
-              40% por rodada). Ao chegar a 100%, a próxima rodada dobra apenas
-              os bônus e as perdas das cartas. No Quase lá, as duas primeiras
-              posições, incluindo empates, contam como acerto.
+              <strong> {{ t("ui.encore") }} </strong>
+              {{ t("ui.correctAnswersChargeCollectiveEnergyUpTo") }}
             </p>
             <p>
-              <strong>Controle seu personagem:</strong> clique numa plataforma
-              ou use 1–4 / setas para mover. Confirme em “Travar resposta” ou
-              Enter. Você pode trocar de plataforma antes de confirmar. Cada um
-              vê apenas a própria escolha.
+              <strong> {{ t("ui.controlYourCharacter") }} </strong>
+              {{ t("ui.clickAPlatformOrUse14Arrow") }}
             </p>
           </div>
           <div v-for="mode in modes" :key="mode.id" class="rule-row">
@@ -1391,74 +1591,67 @@ onUnmounted(() => {
             </div>
           </div>
           <p class="small-help">
-            Tempo esgotado: sem pontos pela resposta; as cartas ainda são
-            resolvidas. Os empates são mantidos no placar. Se a conexão cair,
-            recarregue esta mesma aba para voltar à partida.
+            {{ t("ui.timeUpNoPointsForYourAnswer") }}
           </p></template
         >
         <template v-else-if="dialog === 'credits'"
-          ><span class="eyebrow">GENTE QUE FAZ ACONTECER</span>
-          <h2>Créditos & assets</h2>
-          <p class="muted">
-            Os assets deste jogo são gratuitos e estão incluídos no pacote.
-          </p>
+          ><span class="eyebrow"> {{ t("ui.thePeopleBehindIt") }} </span>
+          <h2>{{ t("ui.creditsAssets") }}</h2>
+          <p class="muted">{{ t("ui.theGameSAssetsAreFreeAnd") }}</p>
           <div class="credit-row">
             <strong>Kenney · Interface Sounds</strong
-            ><span>Efeitos sonoros · CC0</span
-            ><a href="/licenses/kenney.txt" target="_blank" rel="noopener"
-              >Ver licença <ArrowRight :size="14"
+            ><span> {{ t("ui.soundEffectsCc0") }} </span
+            ><a href="/licenses/kenney.txt" target="_blank" rel="noopener">
+              {{ t("ui.viewLicense") }} <ArrowRight :size="14"
             /></a>
           </div>
           <div class="credit-row">
-            <strong>Lucide</strong><span>Ícones · ISC / MIT</span
-            ><a href="/licenses/lucide.txt" target="_blank" rel="noopener"
-              >Ver licença <ArrowRight :size="14"
+            <strong>Lucide</strong><span> {{ t("ui.iconsIscMit") }} </span
+            ><a href="/licenses/lucide.txt" target="_blank" rel="noopener">
+              {{ t("ui.viewLicense") }} <ArrowRight :size="14"
             /></a>
           </div>
           <div class="credit-row">
             <strong>Outfit</strong
-            ><span>Tipografia · SIL Open Font License</span
-            ><a href="/licenses/outfit.txt" target="_blank" rel="noopener"
-              >Ver licença <ArrowRight :size="14"
+            ><span> {{ t("ui.typographySilOpenFontLicense") }} </span
+            ><a href="/licenses/outfit.txt" target="_blank" rel="noopener">
+              {{ t("ui.viewLicense") }} <ArrowRight :size="14"
             /></a>
           </div>
           <p class="small-help">
-            Ilustrações da interface e textos das 80 perguntas criados para o
-            QuizMosh. Nomes de filmes são referências às respectivas obras.
+            {{ t("ui.interfaceIllustrationsAndQuestionTextCreatedFor") }}
           </p></template
         >
         <template v-else-if="dialog === 'invite'"
-          ><span class="eyebrow">CHAMA A TURMA</span>
-          <h2>Tem lugar no mosh.</h2>
-          <img class="invite-qr" :src="qr" alt="QR code do convite" />
+          ><span class="eyebrow"> {{ t("ui.bringYourFriends") }} </span>
+          <h2>{{ t("ui.thereSRoomInTheMosh") }}</h2>
+          <img class="invite-qr" :src="qr" :alt="t('ui.inviteQrCode')" />
           <p class="invite-code">{{ state?.code }}</p>
-          <label for="invite-link">Link da sala</label
+          <label for="invite-link"> {{ t("ui.roomLink") }} </label
           ><input
             id="invite-link"
             :value="invite"
             readonly
             @focus="($event.target as HTMLInputElement).select()"
           /><button class="primary-button" @click="copy(invite)">
-            <Copy :size="18" /> Copiar convite
+            <Copy :size="18" /> {{ t("ui.copyInvite") }}
           </button>
           <p v-if="localHost" class="small-help">
-            Este endereço funciona neste computador. Para convidar pela rede,
-            acesse primeiro pelo IP do PC.
+            {{ t("ui.thisAddressWorksOnThisComputerTo") }}
           </p></template
         >
         <template v-else-if="dialog === 'leave'"
-          ><span class="eyebrow">ATÉ O PRÓXIMO MOSH</span>
-          <h2>Sair da sala?</h2>
-          <p class="muted">
-            Você deixa esta partida. Se for o anfitrião, outro jogador assume a
-            sala.
+          ><span class="eyebrow"> {{ t("ui.untilTheNextMosh") }} </span>
+          <h2>{{ t("ui.leaveTheRoom") }}</h2>
+          <p class="muted">{{ t("ui.youWillLeaveThisMatchIfYou") }}</p>
+          <p v-if="error" class="form-error" role="alert">
+            {{ t(error, errorArguments) }}
           </p>
-          <p v-if="error" class="form-error" role="alert">{{ error }}</p>
           <div class="leave-actions">
             <button class="secondary-button" @click="dialog = ''">
-              Continuar jogando</button
+              {{ t("ui.keepPlaying") }}</button
             ><button class="primary-button" :disabled="busy" @click="leave">
-              Sair da sala <LogOut :size="18" />
+              {{ t("ui.leaveRoom") }} <LogOut :size="18" />
             </button></div
         ></template>
       </section>
