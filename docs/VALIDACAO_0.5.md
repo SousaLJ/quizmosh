@@ -17,7 +17,7 @@
 
 ## Limites de evidência
 
-Verificação local concluída em 2026-09-19. A revisão automática de permissões bloqueou o push da branch `feature/product-foundations-0.5` para `SousaLJ/quizmosh`, por não reconhecer autorização explícita para publicar o conteúdo nesse destino. Não houve push, PR, execução do CI desta versão ou deploy. A produção permanece na 0.4.0. Docker não está disponível no ambiente local; build Docker e integração PostgreSQL real permanecem pendentes no CI.
+Verificação local concluída em 2026-09-19. Após autorização explícita do proprietário, a branch `feature/product-foundations-0.5` foi publicada e o [PR #1](https://github.com/SousaLJ/quizmosh/pull/1) foi aberto. A árvore do primeiro commit remoto `d39f1fc` é idêntica à do commit local validado `0676c9b`. Não houve deploy; a produção permanece na 0.4.0. Docker não está disponível no ambiente local; o resultado de build Docker e integração PostgreSQL real deve ser consultado nos checks do PR.
 
 O teste local de persistência usa H2 em modo PostgreSQL, não prova compatibilidade integral com PostgreSQL. O workflow do GitHub constrói Docker, sobe PostgreSQL 17 e executa os três smoke tests com conta semeada somente no banco descartável do CI. Consultar o resultado do workflow associado ao commit final antes de promover.
 
