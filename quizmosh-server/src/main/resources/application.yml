@@ -1,6 +1,13 @@
 server:
   port: ${PORT:8080}
   shutdown: graceful
+  servlet:
+    session:
+      timeout: 10m
+      cookie:
+        secure: ${SECURE_COOKIES:true}
+        http-only: true
+        same-site: lax
   error:
     include-message: never
     include-stacktrace: never
@@ -13,6 +20,7 @@ spring:
     password: ${DATABASE_PASSWORD:}
     hikari:
       maximum-pool-size: 5
+      connection-timeout: 3000
   flyway:
     enabled: true
   threads:
@@ -29,8 +37,17 @@ management:
   endpoint:
     health:
       show-details: never
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: readinessState,db
 quizmosh:
   max-rooms: ${MAX_ROOMS:250}
+  secure-cookies: ${SECURE_COOKIES:true}
 logging:
+  structured:
+    format:
+      console: logstash
   level:
     io.quizmosh: INFO

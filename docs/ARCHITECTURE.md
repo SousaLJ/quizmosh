@@ -1,3 +1,5 @@
+> Atualização 0.5.0: consulte [ACCOUNTS_PRIVACY_GROWTH.md](ACCOUNTS_PRIVACY_GROWTH.md) para contas, segurança, privacidade e operação atuais. O restante descreve o funcionamento base do jogo.
+
 # Arquitetura da beta PC
 
 O core foi preservado. Room, Match, GameRound e os quatro GameMode decidem regras e pontuação. O cliente não decide acertos nem altera o placar.

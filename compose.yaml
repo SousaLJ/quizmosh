@@ -29,10 +29,17 @@ services:
       DATABASE_USER: quizmosh
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no arquivo .env}
       MAX_ROOMS: ${MAX_ROOMS:-250}
+      SECURE_COOKIES: ${SECURE_COOKIES:-false}
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost:8080}
+      SERVER_FORWARD_HEADERS_STRATEGY: framework
+      OAUTH_GOOGLE_CLIENT_ID: ${OAUTH_GOOGLE_CLIENT_ID:-}
+      OAUTH_GOOGLE_CLIENT_SECRET: ${OAUTH_GOOGLE_CLIENT_SECRET:-}
+      OAUTH_DISCORD_CLIENT_ID: ${OAUTH_DISCORD_CLIENT_ID:-}
+      OAUTH_DISCORD_CLIENT_SECRET: ${OAUTH_DISCORD_CLIENT_SECRET:-}
     depends_on:
       database:
         condition: service_healthy
-    networks: [app, database]
+    networks: [edge, app, database]
     read_only: true
     tmpfs: ["/tmp:size=128m,mode=1777"]
     security_opt: ["no-new-privileges:true"]

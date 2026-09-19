@@ -15,13 +15,25 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureMockMvc
 class HttpIntegrationTest {
     @Autowired MockMvc http;
+    @Autowired org.springframework.web.context.WebApplicationContext context;
+    @Autowired AccountSessions sessions;
+    @Autowired JdbcAccounts accounts;
+    @org.junit.jupiter.api.BeforeEach void authenticatedHost() {
+        var user=accounts.resolve(new io.quizmosh.domain.account.UserIdentity("google",java.util.UUID.randomUUID().toString())).user();
+        var response=new org.springframework.mock.web.MockHttpServletResponse();sessions.issue(user.id(),response);
+        String token=response.getHeaders("Set-Cookie").stream().filter(v->v.startsWith("QM_ACCOUNT=")).findFirst().orElseThrow().split(";",2)[0].split("=",2)[1];
+        http=org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup(context)
+            .addFilters(guard).apply(org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity())
+            .defaultRequest(get("/").cookie(new jakarta.servlet.http.Cookie("QM_ACCOUNT",token)).with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf())).build();
+    }
     @Autowired ObjectMapper json;
     @Autowired ResultArchive archive;
     @Autowired JdbcTemplate jdbc;
+    @Autowired RequestGuard guard;
     @Test void guestHttpFlowRequiresBearerAndHidesSecrets() throws Exception {
         var response=http.perform(post("/api/rooms").contentType("application/json").content("{\"nickname\":\"Teste\",\"practice\":true}"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.state.phase").value("LOBBY"))
-                .andExpect(header().string("Cache-Control","no-store")).andReturn().getResponse();
+                .andExpect(header().string("Cache-Control",org.hamcrest.Matchers.containsString("no-store"))).andReturn().getResponse();
         var value=json.readTree(response.getContentAsString());String code=value.get("code").asText(),token=value.get("token").asText();
         assertTrue(token.length()>=40);
         http.perform(get("/api/rooms/"+code)).andExpect(status().isUnauthorized());

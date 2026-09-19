@@ -1,8 +1,13 @@
 // Node 22+. Test only against a disposable development instance.
 import assert from 'node:assert/strict';
 const base=process.argv[2]||'http://127.0.0.1:8080';
+const accountToken=process.env.QUIZMOSH_SMOKE_ACCOUNT_TOKEN;
+assert(accountToken,'Set QUIZMOSH_SMOKE_ACCOUNT_TOKEN to a valid account session.');
+const bootstrap=await fetch(base+'/api/account',{headers:{Cookie:'QM_ACCOUNT='+accountToken}});
+const account=await bootstrap.json();assert(account.user,'Smoke account must be authenticated');
+const cookies=['QM_ACCOUNT='+accountToken,...bootstrap.headers.getSetCookie().map(v=>v.split(';')[0])].join('; ');
 async function post(path,body,token) {
-  const r=await fetch(base+path,{method:'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:`Bearer ${token}`}:{})},body:JSON.stringify(body)});
+  const r=await fetch(base+path,{method:'POST',headers:{'Content-Type':'application/json',...(path==='/api/rooms'?{Cookie:cookies,[account.csrfHeader]:account.csrf}:{}),...(token?{Authorization:`Bearer ${token}`}:{})},body:JSON.stringify(body)});
   assert.equal(r.status,200);return r.json();
 }
 const host=await post('/api/rooms',{nickname:'WS Host'});

@@ -1,3 +1,5 @@
+> Atualização 0.5.0: consulte [DEPLOY_0.5.md](DEPLOY_0.5.md) para contas, segurança, privacidade e operação atuais. O restante descreve o funcionamento base do jogo.
+
 # Operação
 
 | Variável | Padrão / função |

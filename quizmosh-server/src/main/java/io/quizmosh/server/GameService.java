@@ -33,6 +33,16 @@ public final class GameService {
     private final ResultArchive archive;
     private final int maxRooms;
     private volatile Consumer<String> broadcaster=ignored->{};
+    private io.quizmosh.application.account.AnalyticsPort analytics=(s,e,r,m,f)->{};
+    @org.springframework.beans.factory.annotation.Autowired
+    public void setAnalytics(io.quizmosh.application.account.AnalyticsPort analytics) {this.analytics=analytics;}
+    public boolean roomExists(String code) {return rooms.containsKey(code);}
+    public void analyticsParticipant(String code,String player,String subject) {
+        LiveRoom r=require(code);synchronized(r) {r.analyticsSubjects.put(player,subject);}
+    }
+    private void track(LiveRoom r,String event) {
+        new HashSet<>(r.analyticsSubjects.values()).forEach(subject->analytics.record(subject,event,r.room.code().value(),r.match.id().value(),null));
+    }
     public record Config(int rounds,int seconds,String category,List<String> modes,Boolean mosh,
                          String questionLanguage,String contentScope,String questionRegion) {
         public Config(int rounds,int seconds,String category,List<String> modes) {this(rounds,seconds,category,modes,false);}
@@ -62,6 +72,7 @@ public final class GameService {
         final InMemoryMatchStore matchStore=new InMemoryMatchStore();
         final QuizMoshApplicationService app;
         final Map<String,Guest> guests=new HashMap<>();
+        final Map<String,String> analyticsSubjects=new HashMap<>();
         final Set<ParticipantId> bots=new HashSet<>();
         final Map<ParticipantId,String> names=new LinkedHashMap<>();
         final Map<ParticipantId,Instant> botDue=new HashMap<>();
@@ -93,7 +104,7 @@ public final class GameService {
         this.catalog=catalog;this.archive=archive;this.maxRooms=maxRooms;this.clock=clock;
     }
     public void setBroadcaster(Consumer<String> broadcaster) {this.broadcaster=broadcaster;}
-    public Map<String,Object> metadata() {return obj("name","QuizMosh","version","0.4.0","questions",catalog.size(),"modes",MODES,
+    public Map<String,Object> metadata() {return obj("name","QuizMosh","version","0.5.0","questions",catalog.size(),"modes",MODES,
             "questionLanguages",List.of("pt-BR","en"),"questionRegions",List.of("BR"),"contentScopes",List.of("ALL","GLOBAL","REGIONAL"),
             "catalog",catalog.inventory());}
 
@@ -169,6 +180,7 @@ public final class GameService {
             r.config=config;r.phase="COUNTDOWN";r.transitionAt=clock.instant().plusSeconds(3);
             r.reveal=null;r.archived=false;changed(r);
             LOG.info("Match started: {} ({} players)",r.match.id(),r.match.players().size());
+            track(r,"MATCH_STARTED");
         }
     }
     public AnswerReceipt answer(Identity identity,AnswerRequest request) {
@@ -187,6 +199,7 @@ public final class GameService {
                 answer=new NumericAnswer(new BigDecimal(value.replace(',','.')));
             }
             AnswerReceipt receipt=r.app.submitAnswer(new SubmitAnswerCommand(r.room.id(),identity.player(),answer));
+            if(receipt.accepted()) analytics.record(r.analyticsSubjects.get(identity.player().value()),"QUESTION_ANSWERED",identity.code(),r.match.id().value(),null);
             detectClosed(r,round);changed(r);return receipt;
         }
     }
@@ -279,6 +292,7 @@ public final class GameService {
         r.transitionAt=r.phase.equals("REVEAL")?clock.instant().plusSeconds(7):null;
         if(r.phase.equals("FINISHED")) {
             LOG.info("Match finished: {}",r.match.id());
+            track(r,"MATCH_COMPLETED");
             pendingResults.put(r.match.id().value(),new PendingResult(r.match.id().value(),r.room.code().value(),
                     obj("config",r.config,"ranking",ranking(r),"rounds",r.match.history(),"mosh",moshSnapshot(r,null))));
         }

@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Real HTTP multiplayer smoke test. Run against a disposable local server."""
 import json
+import os
+import http.cookiejar
 import sys
 import time
 import urllib.error
@@ -13,14 +15,29 @@ SCOPE = sys.argv[3] if len(sys.argv) > 3 else 'ALL'
 RESOURCE = 'questions.en.json' if LANGUAGE == 'en' else 'questions.json'
 CATALOG = json.loads((Path(__file__).resolve().parents[1] / 'quizmosh-server/src/main/resources' / RESOURCE).read_text(encoding='utf-8'))
 opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+host_cookies = http.cookiejar.CookieJar()
+host_opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), urllib.request.HTTPCookieProcessor(host_cookies))
+host_csrf = None
 
 def request(path, body=None, token=None, method=None, expected=200, language=None):
+    global host_csrf
     headers = {'Content-Type': 'application/json', 'Accept-Language': language or LANGUAGE}
     if token:
         headers['Authorization'] = 'Bearer ' + token
+    active_opener = opener
+    if path == '/api/rooms' and body is not None:
+        token_account = os.environ.get('QUIZMOSH_SMOKE_ACCOUNT_TOKEN')
+        if not token_account: raise RuntimeError('Set QUIZMOSH_SMOKE_ACCOUNT_TOKEN to a valid account session; no guest host bypass exists.')
+        if host_csrf is None:
+            bootstrap = urllib.request.Request(BASE + '/api/account', headers={'Cookie':'QM_ACCOUNT='+token_account})
+            with host_opener.open(bootstrap,timeout=10) as r: host_csrf=json.load(r)
+            assert host_csrf.get('user'), 'Smoke account is not authenticated'
+        headers['Cookie']='QM_ACCOUNT='+token_account+'; '+ '; '.join(c.name+'='+c.value for c in host_cookies)
+        headers[host_csrf['csrfHeader']]=host_csrf['csrf']
+        active_opener = host_opener
     req = urllib.request.Request(BASE + path, data=None if body is None else json.dumps(body).encode(), headers=headers, method=method or ('GET' if body is None else 'POST'))
     try:
-        response = opener.open(req, timeout=10)
+        response = active_opener.open(req, timeout=10)
     except urllib.error.HTTPError as e:
         response = e
     with response:

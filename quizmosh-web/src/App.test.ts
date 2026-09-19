@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mount, flushPromises, type VueWrapper } from "@vue/test-utils";
 import App from "./App.vue";
 import { state, api, enter, connected } from "./game";
+import {account} from "./product";
 import type { State } from "./types";
 
 vi.mock("qrcode", () => ({
@@ -74,6 +75,7 @@ beforeEach(() => {
   setLocale("pt-BR");
   vi.clearAllMocks();
   state.value = null;
+  account.value={id:"test-user",nickname:"Leandro"};
   connected.value = true;
   localStorage.clear();
   vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue(undefined);
@@ -84,7 +86,7 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 describe("PC player flows", () => {
-  it("creates a room with chosen category and a nickname without an account", async () => {
+  it("creates a room with chosen category and an authenticated account", async () => {
     const result = {
       code: "ABCD",
       token: "token",
