@@ -1,6 +1,7 @@
 import { t, locale, hasMessage } from "./i18n";
 import { ref, computed } from "vue";
 import type { State, Session } from "./types";
+import { csrfHeaders } from "./product";
 
 export const state = ref<State | null>(null);
 export const connected = ref(false);
@@ -43,6 +44,7 @@ export async function api(path: string, body?: unknown, method?: string) {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     "Accept-Language": locale.value,
+    ...csrfHeaders(),
   };
   if (session.value) headers.Authorization = `Bearer ${session.value.token}`;
   const response = await fetch("/api" + path, {

@@ -20,6 +20,10 @@ jobs:
       - run: docker build -t quizmosh-ci .
       - run: POSTGRES_PASSWORD=ci-ephemeral-password docker compose config --quiet
       - run: POSTGRES_PASSWORD=ci-ephemeral-password docker compose up -d --build --wait
+      - name: Seed isolated smoke account
+        run: |
+          python3 -c "import secrets,os; open(os.environ['GITHUB_ENV'],'a').write('QUIZMOSH_SMOKE_ACCOUNT_TOKEN='+secrets.token_urlsafe(32)+'\n')"
+      - run: python3 scripts/seed-smoke-account.py | POSTGRES_PASSWORD=ci-ephemeral-password docker compose exec -T database psql -v ON_ERROR_STOP=1 -U quizmosh -d quizmosh
       - run: python3 scripts/smoke.py http://127.0.0.1:8080
       - run: python3 scripts/mosh-smoke.py http://127.0.0.1:8080 en REGIONAL
       - run: node scripts/websocket-smoke.mjs http://127.0.0.1:8080

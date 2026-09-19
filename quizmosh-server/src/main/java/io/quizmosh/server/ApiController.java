@@ -11,10 +11,11 @@ import java.util.Locale;
 @RequestMapping("/api")
 public class ApiController {
     private final GameService game;
-    public ApiController(GameService game) {this.game=game;}
+    private final ProductController product;
+    public ApiController(GameService game,ProductController product) {this.game=game;this.product=product;}
     @GetMapping("/meta") public Object meta() {return game.metadata();}
-    @PostMapping("/rooms") public Object create(@RequestBody GameService.CreateRequest request) {return game.create(request);}
-    @PostMapping("/rooms/{code}/join") public Object join(@PathVariable String code,@RequestBody GameService.JoinRequest request) {return game.join(code,request);}
+    @PostMapping("/rooms") public Object create(@RequestBody GameService.CreateRequest request,org.springframework.security.core.Authentication auth,jakarta.servlet.http.HttpServletRequest http,jakarta.servlet.http.HttpServletResponse response) {return product.create(request,auth,http,response);}
+    @PostMapping("/rooms/{code}/join") public Object join(@PathVariable String code,@RequestBody GameService.JoinRequest request,jakarta.servlet.http.HttpServletRequest http,jakarta.servlet.http.HttpServletResponse response) {var result=game.join(code,request);product.joined(result,http,response);return result;}
     @GetMapping("/rooms/{code}") public Object state(@PathVariable String code,@RequestHeader(value="Authorization",required=false) String token) {return game.state(auth(code,token));}
     @PostMapping("/rooms/{code}/start") public Object start(@PathVariable String code,@RequestHeader(value="Authorization",required=false) String token,@RequestBody(required=false) GameService.Config config) {
         var id=auth(code,token);game.start(id,config);return game.state(id);
@@ -48,6 +49,10 @@ public class ApiController {
                 default -> ex.getMessage().startsWith("error.")?ex.getMessage():"error.unavailable";
             };
             return ResponseEntity.status(ex.getMessage().equals("operation requires room owner")?403:409).body(Messages.body(message,locale,Map.of()));
+        }
+        @ExceptionHandler(org.springframework.dao.DataAccessException.class) public ResponseEntity<?> unavailable(Locale locale) {
+            org.slf4j.LoggerFactory.getLogger(Errors.class).warn("Database operation unavailable");
+            return ResponseEntity.status(503).body(Messages.body("error.unavailable",locale,Map.of()));
         }
     }
 }

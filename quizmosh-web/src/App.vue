@@ -56,6 +56,14 @@ import MoshArena from "./MoshArena.vue";
 import MoshAvatar from "./MoshAvatar.vue";
 import MoshBackstage from "./MoshBackstage.vue";
 import { cardInfo, cards } from "./mosh";
+import ProductPanels from "./ProductPanels.vue";
+import PublicPage from "./PublicPage.vue";
+import Sharing from "./Sharing.vue";
+import {initializeProduct,account,requireHost,invitedRoom,track,preferences} from "./product";
+import "./product.css";
+function goHome() { location.assign('/'); }
+const publicPage = ['privacy','terms','cookies','how-to-play'].find(p=>location.pathname==='/'+p || location.pathname==='/'+p+'/') || '';
+
 
 const modes = computed(() => [
   {
@@ -96,10 +104,10 @@ const modes = computed(() => [
   },
 ]);
 const tab = ref(
-  new URLSearchParams(location.search).has("room") ? "join" : "create",
+  invitedRoom() ? "join" : "create",
 );
 const nickname = ref(localStorage.getItem("quizmosh-name") || "");
-const code = ref(new URLSearchParams(location.search).get("room") || "");
+const code = ref(invitedRoom());
 const role = ref(
   new URLSearchParams(location.search).has("display") ? "DISPLAY" : "PLAYER",
 );
@@ -230,10 +238,18 @@ const transition = computed(
 const fraction = computed(() =>
   Math.min(100, (remaining.value / (state.value?.config.seconds || 25)) * 100),
 );
-const invite = computed(
-  () => `${location.origin}/?room=${state.value?.code || ""}`,
-);
-const displayLink = computed(() => invite.value + "&display=1");
+const invitePath = ref("");
+const invite = computed(() => location.origin + (invitePath.value || `/join/${state.value?.code || ""}`));
+async function prepareInvite() {
+  if (!state.value) return;
+  try { invitePath.value = (await api('/shares',{code:state.value.code})).path; }
+  catch { invitePath.value = `/join/${state.value.code}`; }
+}
+async function copyInvite() { await prepareInvite(); await copy(invite.value); }
+watch(()=>state.value?.code,()=>{invitePath.value="";});
+watch(()=>preferences.value.analytics,()=>{invitePath.value="";});
+watch(dialog, value=>{if(value==='invite') void prepareInvite();});
+const displayLink = computed(() => invite.value + (invite.value.includes("?") ? "&" : "?") + "display=1");
 const localHost = computed(() =>
   ["localhost", "127.0.0.1", "[::1]"].includes(location.hostname),
 );
@@ -295,6 +311,7 @@ async function perform(work: () => Promise<void>) {
   }
 }
 async function create(practice = false) {
+  if (!requireHost()) return;
   if (contentShortage.value) return;
   if (!nickname.value.trim()) {
     error.value = "ui.chooseANicknameToGetStarted";
@@ -317,6 +334,7 @@ async function create(practice = false) {
   });
 }
 async function join() {
+  void track("JOIN_GAME_CLICKED");
   await perform(async () => {
     const data = await api(`/rooms/${code.value.trim().toUpperCase()}/join`, {
       nickname: nickname.value.trim(),
@@ -393,7 +411,7 @@ async function leave() {
     dialog.value = "";
     answer.value = "";
     error.value = "";
-    history.replaceState({}, "", location.pathname);
+    history.replaceState({}, "", "/");
   });
 }
 async function copy(text: string) {
@@ -496,6 +514,7 @@ watch(
   { immediate: true },
 );
 onMounted(() => {
+  void initializeProduct();
   if (!state.value) void loadCatalog();
   void resume();
   clock = setInterval(() => (now.value = Date.now()), 150);
@@ -517,7 +536,7 @@ onUnmounted(() => {
       <a
         class="brand"
         href="/"
-        @click.prevent="state ? (dialog = 'leave') : undefined"
+        @click.prevent="state ? (dialog = 'leave') : goHome()"
         :aria-label="t('ui.quizmoshHome')"
         ><span class="brand-mark"><Zap :size="24" fill="currentColor" /></span
         >quiz<span>mosh</span><sup>β</sup></a
@@ -533,7 +552,7 @@ onUnmounted(() => {
         ><button
           class="icon-button"
           :aria-label="t('ui.copyInvite')"
-          @click="copy(invite)"
+          @click="copyInvite"
         >
           <Copy :size="16" />
         </button>
@@ -581,7 +600,8 @@ onUnmounted(() => {
     </header>
 
     <div v-if="failure" class="network-banner" role="status">{{ failure }}</div>
-    <main v-if="!state" class="home">
+    <PublicPage v-if="publicPage" :page="publicPage" />
+    <main v-else-if="!state" class="home">
       <div class="hero-grid">
         <section class="hero-copy">
           <div class="eyebrow">
@@ -597,6 +617,7 @@ onUnmounted(() => {
             <br class="desktop-break" />
             {{ t("ui.formDuetsClaimTheSpotlightAndMake") }}
           </p>
+          <div class="product-actions"><button @click="tab='join';track('JOIN_GAME_CLICKED');">{{t('product.joinGame')}}</button><button @click="tab='create';requireHost();">{{t('product.createGame')}}</button></div>
           <div class="hero-proof">
             <span><Users :size="17" /> {{ t("ui.212Players") }} </span><i></i
             ><span> {{ t("ui.noSignUp") }} </span><i></i
@@ -664,6 +685,7 @@ onUnmounted(() => {
               {{ t("ui.joinWithCode") }}
             </button>
           </div>
+          <p v-if="invitedRoom()" class="invite-context">{{t('product.invited',{code:code})}}</p>
           <form @submit.prevent="tab === 'create' ? create() : join()">
             <label for="nickname">
               {{ t("ui.whatDoYourFriendsCallYou") }}
@@ -833,13 +855,14 @@ onUnmounted(() => {
             <button
               class="primary-button"
               type="submit"
+              @click="tab === 'create' && !account ? ($event.preventDefault(), requireHost()) : undefined"
               :disabled="busy || (tab === 'create' && !!contentShortage)"
             >
               <LoaderCircle v-if="busy" class="spin" :size="20" /><span>{{
                 busy
                   ? t("ui.gettingReady")
                   : tab === "create"
-                    ? t("ui.createMyRoom")
+                    ? t(account ? "ui.createMyRoom" : "product.signIn")
                     : t("ui.joinRoom")
               }}</span
               ><ArrowRight :size="21" />
@@ -957,7 +980,7 @@ onUnmounted(() => {
             }}<button
               class="icon-button"
               :aria-label="t('ui.copyRoomLink')"
-              @click="copy(invite)"
+              @click="copyInvite"
             >
               <Copy :size="22" />
             </button>
@@ -1462,6 +1485,7 @@ onUnmounted(() => {
               : t("ui.topOfThePodiumFirstInBragging")
           }}
         </p>
+        <Sharing :code="state.code" :ranking="state.ranking" />
         <div class="final-ranking">
           <div
             v-for="player in state.ranking"
@@ -1511,6 +1535,9 @@ onUnmounted(() => {
       </p>
     </main>
 
+    <section v-if="!state && !publicPage" class="product-steps"><article v-for="n in 4" :key="n"><b>0{{n}}</b><p>{{t('product.step'+n)}}</p></article></section>
+    <ProductPanels />
+    <nav class="product-links" :aria-label="t('product.legalLinks')"><a href="/how-to-play">{{t('ui.howItWorks')}}</a><a href="/privacy">{{t('product.privacy')}}</a><a href="/terms">{{t('product.terms')}}</a><a href="/cookies">{{t('product.cookies')}}</a></nav>
     <footer>
       <span
         ><span class="tiny-logo">✳</span>
@@ -1625,6 +1652,7 @@ onUnmounted(() => {
         <template v-else-if="dialog === 'invite'"
           ><span class="eyebrow"> {{ t("ui.bringYourFriends") }} </span>
           <h2>{{ t("ui.thereSRoomInTheMosh") }}</h2>
+          <Sharing v-if="state" :code="state.code" />
           <img class="invite-qr" :src="qr" :alt="t('ui.inviteQrCode')" />
           <p class="invite-code">{{ state?.code }}</p>
           <label for="invite-link"> {{ t("ui.roomLink") }} </label
@@ -1633,7 +1661,7 @@ onUnmounted(() => {
             :value="invite"
             readonly
             @focus="($event.target as HTMLInputElement).select()"
-          /><button class="primary-button" @click="copy(invite)">
+          /><button class="primary-button" @click="copyInvite">
             <Copy :size="18" /> {{ t("ui.copyInvite") }}
           </button>
           <p v-if="localHost" class="small-help">

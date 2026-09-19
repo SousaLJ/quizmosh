@@ -1,8 +1,14 @@
-# QuizMosh — beta jogável para PC · 0.4.0
+# QuizMosh — beta de produto · 0.5.0
 
 Jogo para reunir amigos, com interface em português e inglês, quatro modos, 92 perguntas e salas sincronizadas pelo servidor Java. Esta entrega amplia o core original, preservando as regras nos módulos de domínio e aplicação.
 
-**Jogue no navegador do PC**, sem conta ou instalação de engine. Outros computadores e celulares podem entrar na sala. O modo de treino adiciona três bots identificados para você experimentar sozinho.
+**Jogue no navegador do PC ou celular**, sem instalação. Convidados entram com apelido; criar salas exige uma conta Google ou Discord. Outros computadores e celulares podem entrar na sala. O modo de treino adiciona três bots identificados para você experimentar sozinho.
+
+## Novidades da 0.5.0
+
+Contas Google/Discord com sessões revogáveis; persistência JDBC/Flyway; consentimento de analytics; preferências e exportação/exclusão de conta; convites `/join/CODE`, compartilhamento de resultados e cards PNG; páginas públicas pré-renderizadas, SEO e eventos de produto. Interface PT-BR/EN e gameplay preservados.
+
+**Configuração necessária:** provedores OAuth e PostgreSQL persistente precisam estar configurados antes de promover esta versão. Sem providers, novas salas não podem ser criadas. Veja [deploy e OAuth](docs/DEPLOY_0.5.md), [arquitetura e privacidade](docs/ACCOUNTS_PRIVACY_GROWTH.md) e [auditoria inicial](docs/PRODUCT_AUDIT_0.5.md). Os textos de privacidade da beta ainda exigem identificação do controlador e canal privado antes do lançamento geral.
 
 ## Idioma e conteúdo cultural
 
@@ -32,7 +38,7 @@ As regras, exemplos e o roteiro de playtest estão em [docs/MOSH_ARENA.md](docs/
 2. Instale e abra o Docker Desktop, usando containers Linux.
 3. Execute `iniciar-docker.bat`. O script cria uma senha aleatória em `.env` e inicia os serviços. Na primeira vez, baixa dependências e compila o projeto.
 4. Abra **http://localhost:8080**.
-5. Escolha um apelido e clique em **Criar minha sala** ou **Treine com bots**. No lobby, clique em **Começar o mosh**.
+5. Configure OAuth conforme [docs/DEPLOY_0.5.md](docs/DEPLOY_0.5.md), entre na conta, escolha um apelido e clique em **Criar minha sala** ou **Treine com bots**. No lobby, clique em **Começar o mosh**.
 
 Linux/macOS com Docker Compose:
 
@@ -66,10 +72,10 @@ O pacote inclui `releases/quizmosh.jar`, compilado com a interface e os assets.
 Também pode executar na raiz do projeto:
 
 ```bash
-java -jar releases/quizmosh.jar
+java -jar releases/quizmosh.jar --quizmosh.secure-cookies=false --server.servlet.session.cookie.secure=false
 ```
 
-Esse modo usa H2 local em `data/`. Depois de baixar Java e o pacote, não depende de CDN, APIs de conteúdo ou conexão externa. Deixe o servidor aberto enquanto joga. Outra porta:
+Esse modo usa H2 local em `data/`. Depois de baixar Java e o pacote, não depende de CDN nem APIs de perguntas. Criar salas agora exige login social e conexão ao provedor. Deixe o servidor aberto enquanto joga. Outra porta:
 
 ```bash
 java -jar releases/quizmosh.jar --server.port=9090
