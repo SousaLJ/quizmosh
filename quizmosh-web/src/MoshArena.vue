@@ -103,7 +103,7 @@ function position(index: number, id: string) {
             ? t("ui.backstageSecretMoves")
             : state.phase === "FINISHED"
               ? t("ui.thanksForTheShow")
-              : "MOSH LIVE"
+              : t("brand.arenaLive")
       }}
     </div>
     <div class="stage-speaker speaker-left" aria-hidden="true">

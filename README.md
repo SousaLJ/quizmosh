@@ -1,6 +1,8 @@
-# QuizMosh — beta jogável para PC · 0.4.0
+# Ludrivo — A turma faz o jogo. · beta 0.5.0
 
-Jogo para reunir amigos, com interface em português e inglês, quatro modos, 92 perguntas e salas sincronizadas pelo servidor Java. Esta entrega amplia o core original, preservando as regras nos módulos de domínio e aplicação.
+**Jogos que aproximam pessoas.** Ludrivo é a marca da plataforma; Ludrivo Trivia é a experiência disponível nesta versão, com interface em português e inglês, quatro modos, 92 perguntas e salas sincronizadas pelo servidor Java. A marca permite adicionar outros jogos no futuro. Guia de identidade: [docs/BRAND.md](docs/BRAND.md).
+
+**Your crew makes the game.** Ludrivo brings people together through games. Start with four trivia modes, invite friends with a room code, and play in English or Portuguese.
 
 **Jogue no navegador do PC**, sem conta ou instalação de engine. Outros computadores e celulares podem entrar na sala. O modo de treino adiciona três bots identificados para você experimentar sozinho.
 
@@ -14,9 +16,9 @@ Cada pergunta tem um ID canônico e versões equivalentes nos dois idiomas. O ca
 
 Guia para novas mensagens, idiomas e pacotes: [docs/INTERNACIONALIZACAO.md](docs/INTERNACIONALIZACAO.md).
 
-## Novo: Mosh Arena
+## Ludrivo Arena
 
-A partida agora acontece em um palco com personagens animados, plataformas de resposta, duetos, cartas secretas e energia coletiva. **Mosh Arena** vem ativado na criação da sala; **Quiz clássico** preserva o estilo anterior.
+A partida agora acontece em um palco com personagens animados, plataformas de resposta, duetos, cartas secretas e energia coletiva. **Ludrivo Arena** vem ativado na criação da sala; **Quiz clássico** preserva o estilo anterior.
 
 - Escolha uma carta nos bastidores: Na minha, Holofote, Dueto ou Tudo ou nada.
 - Use suas batidas para arriscar pontos ou confiar no acerto de um parceiro.
@@ -32,7 +34,7 @@ As regras, exemplos e o roteiro de playtest estão em [docs/MOSH_ARENA.md](docs/
 2. Instale e abra o Docker Desktop, usando containers Linux.
 3. Execute `iniciar-docker.bat`. O script cria uma senha aleatória em `.env` e inicia os serviços. Na primeira vez, baixa dependências e compila o projeto.
 4. Abra **http://localhost:8080**.
-5. Escolha um apelido e clique em **Criar minha sala** ou **Treine com bots**. No lobby, clique em **Começar o mosh**.
+5. Escolha um apelido e clique em **Criar minha sala** ou **Treine com bots**. No lobby, clique em **Começar a partida**.
 
 Linux/macOS com Docker Compose:
 
@@ -57,7 +59,7 @@ docker compose down
 
 ## Começar sem Docker
 
-O pacote inclui `releases/quizmosh.jar`, compilado com a interface e os assets.
+O comando de build gera `releases/ludrivo.jar`, com a interface e os assets incorporados.
 
 1. Instale **Java 25** (JDK ou JRE) e confira com `java -version`.
 2. Execute `iniciar-pc.bat` no Windows ou `bash scripts/start-pc.sh` no Linux/macOS.
@@ -66,13 +68,13 @@ O pacote inclui `releases/quizmosh.jar`, compilado com a interface e os assets.
 Também pode executar na raiz do projeto:
 
 ```bash
-java -jar releases/quizmosh.jar
+java -jar releases/ludrivo.jar
 ```
 
 Esse modo usa H2 local em `data/`. Depois de baixar Java e o pacote, não depende de CDN, APIs de conteúdo ou conexão externa. Deixe o servidor aberto enquanto joga. Outra porta:
 
 ```bash
-java -jar releases/quizmosh.jar --server.port=9090
+java -jar releases/ludrivo.jar --server.port=9090
 ```
 
 ## Jogar com amigos
@@ -88,7 +90,7 @@ java -jar releases/quizmosh.jar --server.port=9090
 | Recurso | Comportamento |
 | --- | --- |
 | Salas | Código curto; 2–12 jogadores; até 24 participantes contando espectadores e telas |
-| Conteúdo | 40 perguntas de cinema e 40 de conhecimentos gerais |
+| Conteúdo | 92 perguntas: 40 de cinema e 52 de conhecimentos gerais |
 | Configuração | Interface: 4, 8 ou 12 rodadas; 15, 25, 40 ou 60 segundos; mistura de modos ou um específico |
 | Na mosca | Múltipla escolha; acerto vale 1.000 pontos |
 | Bate-pronto | Acerto vale de 500 a 1.000 pontos conforme o tempo do servidor |
@@ -104,6 +106,8 @@ java -jar releases/quizmosh.jar --server.port=9090
 Gabaritos não são enviados durante uma rodada aberta. Respostas numéricas aceitam ponto ou vírgula. Palpites por pistas aceitam os aliases do catálogo, ignorando acentos, caixa e pontuação; não há correção aproximada de qualquer erro de digitação.
 
 ## Estrutura e desenvolvimento
+
+Os módulos, pacotes Java, contratos `mosh`, banco e chaves de preferências preservam os identificadores técnicos anteriores para manter compatibilidade. A marca exibida é Ludrivo.
 
 - `quizmosh-domain`: regras originais e modos.
 - `quizmosh-application`: casos de uso e projeções públicas.
@@ -146,7 +150,7 @@ python3 scripts/mosh-smoke.py http://127.0.0.1:8080
 node scripts/websocket-smoke.mjs http://127.0.0.1:8080
 ```
 
-Esses comandos criam salas descartáveis. Os dois primeiros jogam os quatro modos no estilo clássico e Mosh Arena, incluindo cartas e BIS; o terceiro verifica autenticação e sincronização por WebSocket.
+Esses comandos criam salas descartáveis. Os dois primeiros jogam os quatro modos no estilo clássico e Ludrivo Arena, incluindo cartas e BIS; o terceiro verifica autenticação e sincronização por WebSocket.
 
 ## Limites desta versão
 

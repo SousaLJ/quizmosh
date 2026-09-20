@@ -7,8 +7,8 @@
     <artifactId>quizmosh-core-parent</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>QuizMosh Core</name>
-    <description>Platform-neutral core for QuizMosh party quiz.</description>
+    <name>Ludrivo Core</name>
+    <description>Platform-neutral core for Ludrivo social games.</description>
     <modules>
         <module>quizmosh-domain</module>
         <module>quizmosh-application</module>

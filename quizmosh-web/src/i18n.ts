@@ -55,6 +55,20 @@ export const locale = ref<Locale>(preferred());
 export function setLocale(value: string) {
   locale.value = value === "en" ? "en" : "pt-BR";
   document.documentElement.lang = locale.value;
+  document.title = t("brand.pageTitle");
+  const metadata = {
+    'meta[name="description"]': t("brand.description"),
+    'meta[property="og:title"]': t("brand.pageTitle"),
+    'meta[property="og:description"]': t("brand.description"),
+    'meta[property="og:locale"]': locale.value === "pt-BR" ? "pt_BR" : "en_US",
+    'meta[name="twitter:title"]': t("brand.pageTitle"),
+    'meta[name="twitter:description"]': t("brand.description"),
+    'meta[property="og:image:alt"]': t("brand.socialAlt"),
+    'meta[name="twitter:image:alt"]': t("brand.socialAlt"),
+  };
+  for (const [selector, content] of Object.entries(metadata)) {
+    document.querySelector(selector)?.setAttribute("content", content);
+  }
   try {
     sessionStorage.setItem("quizmosh-locale", locale.value);
     localStorage.setItem("quizmosh-locale", locale.value);

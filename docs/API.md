@@ -25,7 +25,7 @@ Conecte a `/ws` (wss em HTTPS). Primeira mensagem: `{"code":"ABCD","token":"cred
 Tokens não aparecem em URL, convite ou broadcast. Handler exige mesma origem. Conexões anônimas expiram; até duas conexões por convidado acomodam reconexões. Cliente descarta revisões antigas e recupera o estado pela mesma credencial. O tempo do servidor decide a validade dos palpites.
 
 
-## Mosh Arena
+## Ludrivo Arena
 
 `mosh` omitido ou `true` ativa a arena; `false` preserva o fluxo clássico. Cartas: `STEADY`, `SPOTLIGHT`, `DUET`, `ALL_IN`. Exemplo de confirmação: `{"stageId":"id-da-preparacao","card":"DUET","target":"id-do-parceiro"}`. Em outras cartas, omita `target` ou envie `null`.
 

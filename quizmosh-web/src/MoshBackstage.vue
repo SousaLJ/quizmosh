@@ -34,7 +34,7 @@ const modeName = computed(
       "quick-fire": t("ui.quickfire"),
       "guess-it": t("ui.whatSTheAnswer"),
       "closest-wins": t("ui.closeEnough"),
-    })[props.state.mosh?.mode || ""] || "Mosh",
+    })[props.state.mosh?.mode || ""] || t("brand.arena"),
 );
 </script>
 <template>

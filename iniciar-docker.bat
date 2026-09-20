@@ -15,6 +15,6 @@ if errorlevel 1 (
   pause
   exit /b 1
 )
-echo QuizMosh pronto em http://localhost:8080 - use a porta escolhida no .env.
+echo Ludrivo pronto em http://localhost:8080 - use a porta escolhida no .env.
 start "" "http://localhost:8080"
 pause

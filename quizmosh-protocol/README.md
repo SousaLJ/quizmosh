@@ -1,4 +1,4 @@
-# QuizMosh Protocol
+# Ludrivo Protocol
 
 Este módulo define nomes e envelopes de mensagens, mas não escolhe JSON, WebSocket, REST ou biblioteca de serialização.
 

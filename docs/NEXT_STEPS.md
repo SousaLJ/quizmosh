@@ -4,6 +4,8 @@ Entregue: servidor Java, REST/WebSocket, convidados, tempo e pistas automáticos
 
 A beta 0.4 adiciona mensagens pt-BR/en, sugestões de idioma e contexto cultural pelo navegador, 92 perguntas bilíngues e correção de avatar/placar. A próxima expansão de conteúdo deve incluir revisão cultural e pacotes de outras regiões.
 
+A beta 0.5 adota Ludrivo como marca da plataforma, com identidade visual própria, slogan em português e inglês, metadados sociais e fontes locais. Monetização permanece para uma etapa futura.
+
 Prioridade imediata: playtest com 4–6 pessoas para medir clareza, ritmo e equilíbrio das cartas (docs/MOSH_ARENA.md).
 
 Evoluções futuras:

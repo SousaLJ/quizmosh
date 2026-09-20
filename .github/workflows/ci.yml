@@ -1,4 +1,4 @@
-name: QuizMosh checks
+name: Ludrivo checks
 on: [push, pull_request]
 jobs:
   verify:
@@ -17,7 +17,7 @@ jobs:
           cache-dependency-path: quizmosh-web/package-lock.json
       - run: bash scripts/build.sh
       - run: npm test --prefix quizmosh-web
-      - run: docker build -t quizmosh-ci .
+      - run: docker build -t ludrivo-ci .
       - run: POSTGRES_PASSWORD=ci-ephemeral-password docker compose config --quiet
       - run: POSTGRES_PASSWORD=ci-ephemeral-password docker compose up -d --build --wait
       - run: python3 scripts/smoke.py http://127.0.0.1:8080

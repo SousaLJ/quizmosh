@@ -24,10 +24,11 @@ Revise fatos, indique ano/edição quando necessário e inclua aliases em portug
 | --- | --- | --- |
 | Kenney Interface Sounds | https://kenney.nl/assets/interface-sounds | CC0 1.0 |
 | Lucide | https://lucide.dev/license | ISC; derivados de Feather sob MIT |
-| Outfit | https://github.com/Outfitio/Outfit-Fonts | SIL Open Font License 1.1 |
+| Sora | https://github.com/sora-xor/sora-font | SIL Open Font License 1.1 |
+| Inter | https://github.com/rsms/inter | SIL Open Font License 1.1 |
 
-Sons utilizados: click_001.ogg, confirmation_001.ogg, error_001.ogg e bong_001.ogg. Ícones vêm de lucide-vue-next; fonte de @fontsource/outfit. Todos são servidos localmente.
+Sons utilizados: click_001.ogg, confirmation_001.ogg, error_001.ogg e bong_001.ogg. Ícones vêm de lucide-vue-next; fontes de @fontsource/sora e @fontsource/inter. Todos são servidos localmente.
 
 Licenças completas em `quizmosh-web/public/licenses/` e na tela Créditos & assets. Preserve-as ao redistribuir. As licenças dos assets não alteram a licença do restante do projeto.
 
-Logotipo SVG, personagens originais em SVG, cenário de arena em CSS e composição visual foram elaborados para esta implementação. Não é necessário comprar assets.
+Logotipo e símbolo SVG, ícones e imagem de compartilhamento em `quizmosh-web/public/brand/` seguem [BRAND.md](BRAND.md). O lettering do logo usa contornos derivados de Sora, com a licença incluída. Personagens originais em SVG, cenário de arena em CSS e composição visual foram elaborados para esta implementação. Não é necessário comprar assets.

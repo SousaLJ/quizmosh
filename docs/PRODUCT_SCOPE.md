@@ -1,8 +1,10 @@
 # Product Scope
 
-## O que é o QuizMosh
+## O que é o Ludrivo
 
-Uma plataforma de party games baseada em conhecimento, dedução, pistas e competição social.
+Uma plataforma de jogos sociais para reunir pessoas. A primeira experiência, Ludrivo Trivia, combina conhecimento, dedução, pistas e competição social; a marca permite novos tipos de jogo.
+
+Promessa: **Jogos que aproximam pessoas. / Games that bring people together.**
 
 A unidade central do produto é a **sala**.
 
@@ -53,7 +55,7 @@ As regras de acesso/licença devem ser implementadas em uma camada de entitlemen
 
 ## Identidade visual
 
-Direção: game show digital + party game + caos controlado.
+Direção: marca acolhedora e expressiva, com coral, grafite, marfim e lima. Sora nos títulos e Inter na interface. Regras e arquivos em [BRAND.md](BRAND.md).
 
 - legibilidade em TV e telas pequenas;
 - UI 2D com movimento e feedback forte;

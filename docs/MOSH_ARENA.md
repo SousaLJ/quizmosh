@@ -1,10 +1,10 @@
-# Mosh Arena · beta 0.3.0
+# Ludrivo Arena · beta 0.5.0
 
-O QuizMosh passa a tratar a partida como um show coletivo. Personagens ocupam o palco, cada resposta vira uma plataforma, parceiros formam duetos e os acertos da turma energizam a plateia. A competição continua individual, mas acertar perguntas deixa de ser a única fonte de pontos.
+O Ludrivo passa a tratar a partida como um show coletivo. Personagens ocupam o palco, cada resposta vira uma plataforma, parceiros formam duetos e os acertos da turma energizam a plateia. A competição continua individual, mas acertar perguntas deixa de ser a única fonte de pontos.
 
 ## Jogar
 
-Na criação da sala, **Mosh Arena** vem selecionado. O botão **Quiz clássico** permite jogar com as regras anteriores. Treino com bots e tela coletiva funcionam nos dois estilos.
+Na criação da sala, **Ludrivo Arena** vem selecionado. O botão **Quiz clássico** permite jogar com as regras anteriores. Treino com bots e tela coletiva funcionam nos dois estilos.
 
 1. **Bastidores:** antes de ver a pergunta, escolha uma carta. A primeira preparação dura até 25 segundos; as demais, 16. Ao confirmar, a carta fica travada. As cartas só são reveladas juntas. Se todos confirmarem, a rodada começa após um mínimo de 3 segundos de preparação.
 2. **Palco:** nas perguntas de múltipla escolha, clique numa plataforma ou use 1–4/setas. Seu personagem se move. Você pode mudar de ideia até clicar em **Travar resposta** ou pressionar Enter. Só você vê sua posição de resposta; os outros continuam em posições neutras na sua tela.
@@ -39,13 +39,13 @@ O BIS dobra apenas bônus e penalidades das cartas. Exemplo: uma resposta de 1.0
 - Movimento até as plataformas, confirmação separada e feedback de resposta travada.
 - Conexões visuais entre parceiros após a revelação das cartas.
 - Coroa para o primeiro lugar, incluindo empates; pontuação flutuante e celebração.
-- Assets gratuitos já incluídos: sons Kenney CC0, ícones Lucide e fonte Outfit. Personagens e cenário são SVG/CSS próprios; não há download de arte durante a partida.
+- Assets gratuitos já incluídos: sons Kenney CC0, ícones Lucide e fontes Sora e Inter. Personagens e cenário são SVG/CSS próprios; não há download de arte durante a partida.
 - Sem dependência de GPU 3D, CDN, conta externa ou engine nativa. Animações respeitam `prefers-reduced-motion`.
 
 ## O que ainda precisa de playtest
 
 A implementação é funcional, mas ainda não foi testada com um grupo presencial para confirmar diversão e equilíbrio. Os valores de cartas são uma primeira calibração, não uma economia competitiva homologada.
 
-Sugestão de sessão: 4–6 amigos, 8 rodadas em Mosh Arena e uma partida em Quiz clássico para comparação. Observar se todos conseguem explicar a carta escolhida, se o dueto gera interação, se o BIS acontece em momento interessante e se alguém prefere sempre a mesma carta. Ajustar números e duração a partir dessas observações.
+Sugestão de sessão: 4–6 amigos, 8 rodadas em Ludrivo Arena e uma partida em Quiz clássico para comparação. Observar se todos conseguem explicar a carta escolhida, se o dueto gera interação, se o BIS acontece em momento interessante e se alguém prefere sempre a mesma carta. Ajustar números e duração a partir dessas observações.
 
 Movimentação livre com colisões, minigames físicos, controle por gamepad, criação de avatar e versão nativa são possibilidades futuras; não estão implementados nesta beta.

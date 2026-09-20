@@ -7,12 +7,12 @@ if errorlevel 1 (
   pause
   exit /b 1
 )
-if not exist releases\quizmosh.jar (
+if not exist releases\ludrivo.jar (
   echo O executavel nao foi compilado. Veja o README ou use iniciar-docker.bat.
   pause
   exit /b 1
 )
-echo Iniciando QuizMosh. Quando aparecer Started QuizMoshServer, abra http://localhost:8080
+echo Iniciando Ludrivo. Quando aparecer Started QuizMoshServer, abra http://localhost:8080
 echo Mantenha esta janela aberta durante as partidas. Ctrl+C encerra o jogo.
-java -jar releases\quizmosh.jar
+java -jar releases\ludrivo.jar
 pause

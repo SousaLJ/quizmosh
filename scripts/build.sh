@@ -7,5 +7,5 @@ mkdir -p quizmosh-server/src/main/resources/static
 cp -R quizmosh-web/dist/. quizmosh-server/src/main/resources/static/
 ./mvnw -B -ntp clean verify
 mkdir -p releases
-cp quizmosh-server/target/quizmosh-server-0.1.0-SNAPSHOT.jar releases/quizmosh.jar
-printf '\nBuild concluido: releases/quizmosh.jar\n'
+cp quizmosh-server/target/quizmosh-server-0.1.0-SNAPSHOT.jar releases/ludrivo.jar
+printf '\nBuild concluido: releases/ludrivo.jar\n'

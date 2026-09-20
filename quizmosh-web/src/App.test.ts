@@ -130,7 +130,7 @@ describe("PC player flows", () => {
   it("blocks starting alone and enables start when a friend arrives", async () => {
     state.value = lobby();
     wrapper = mount(App);
-    expect(button("Começar o mosh").attributes("disabled")).toBeDefined();
+    expect(button("Começar a partida").attributes("disabled")).toBeDefined();
     state.value.players.push({
       id: "p2",
       nickname: "Amigo",
@@ -140,7 +140,7 @@ describe("PC player flows", () => {
       online: true,
     });
     await flushPromises();
-    expect(button("Começar o mosh").attributes("disabled")).toBeUndefined();
+    expect(button("Começar a partida").attributes("disabled")).toBeUndefined();
   });
   it("sends a round-bound answer and prevents double submissions while pending", async () => {
     const s = lobby();

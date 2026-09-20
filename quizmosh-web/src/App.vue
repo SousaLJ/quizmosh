@@ -7,6 +7,7 @@ import {
   preferredContentScope,
 } from "./i18n";
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { version } from "../package.json";
 import {
   Zap,
   ArrowRight,
@@ -64,7 +65,7 @@ const modes = computed(() => [
     tag: t("ui.classicTrivia"),
     description: t("ui.fourOptionsOneRightAnswerShowWhat"),
     icon: Brain,
-    color: "purple",
+    color: "blue",
     rule: t("ui.oneAnswerPerRoundEachCorrectAnswer"),
   },
   {
@@ -490,7 +491,7 @@ watch(
     qr.value = await QRCode.toDataURL(url, {
       width: 220,
       margin: 1,
-      color: { dark: "#191b26", light: "#ffffff" },
+      color: { dark: "#181b24", light: "#ffffff" },
     });
   },
   { immediate: true },
@@ -518,9 +519,15 @@ onUnmounted(() => {
         class="brand"
         href="/"
         @click.prevent="state ? (dialog = 'leave') : undefined"
-        :aria-label="t('ui.quizmoshHome')"
-        ><span class="brand-mark"><Zap :size="24" fill="currentColor" /></span
-        >quiz<span>mosh</span><sup>β</sup></a
+        :aria-label="t('brand.home')"
+        ><img
+          class="brand-logo"
+          src="/brand/ludrivo-logo.svg"
+          alt=""
+          width="192"
+          height="40"
+        />
+        <sup>β</sup></a
       >
       <nav v-if="!state" class="top-nav" :aria-label="t('ui.mainNavigation')">
         <span class="active-nav"> {{ t("ui.play") }} </span
@@ -588,14 +595,14 @@ onUnmounted(() => {
             <span class="live-dot"></span> {{ t("ui.thePartyStartsHere") }}
           </div>
           <h1>
-            {{ t("ui.yourFriendsTogether") }} <br />
-            {{ t("ui.theChaos") }} <span> {{ t("ui.isGuaranteed") }} </span
+            {{ t("brand.heroLead") }}
+            <span>{{ t("brand.heroEnd") }}</span
             ><Sparkles class="headline-star" :size="36" />
           </h1>
           <p class="hero-description">
-            {{ t("ui.oneStageYourFriendsNobodyPlaysAlone") }}
+            {{ t("brand.promise") }}
             <br class="desktop-break" />
-            {{ t("ui.formDuetsClaimTheSpotlightAndMake") }}
+            {{ t("brand.currentGame") }}
           </p>
           <div class="hero-proof">
             <span><Users :size="17" /> {{ t("ui.212Players") }} </span><i></i
@@ -616,8 +623,12 @@ onUnmounted(() => {
               <div class="mascot-mouth"></div>
               <span class="mascot-cheek"></span>
             </div>
-            <div class="mascot mascot-purple">
-              <Zap :size="42" fill="currentColor" />
+            <div class="mascot mascot-coral">
+              <img
+                class="mascot-symbol"
+                src="/brand/ludrivo-symbol-dark.svg"
+                alt=""
+              />
               <div class="mascot-eyes"><b></b><b></b></div>
             </div>
             <div class="score-sticker">
@@ -764,7 +775,7 @@ onUnmounted(() => {
                   :aria-pressed="config.mosh"
                   @click="config.mosh = true"
                 >
-                  <Sparkles :size="16" /> Mosh Arena
+                  <Sparkles :size="16" /> {{ t("brand.arena") }}
                 </button>
                 <button
                   type="button"
@@ -795,7 +806,7 @@ onUnmounted(() => {
                   {{ t("ui.gameMode") }}
                   <select v-model="selectedMode">
                     <option value="mix">
-                      {{ t("ui.fullMoshAllFourModes") }}
+                      {{ t("ui.allFourModes") }}
                     </option>
                     <option
                       v-for="mode in modes"
@@ -902,7 +913,7 @@ onUnmounted(() => {
               ? t("ui.meetingPoint")
               : state.phase === "FINISHED"
                 ? t("ui.matchOver")
-                : t("ui.moshInProgress")
+                : t("ui.matchInProgress")
           }}</span
         ><button class="text-button" @click="dialog = 'rules'">
           <HelpCircle :size="16" /> {{ t("ui.rules") }}
@@ -941,7 +952,7 @@ onUnmounted(() => {
             <span class="live-dot"></span> {{ t("ui.almostEveryoneIsHere") }}
           </div>
           <h1>
-            {{ t("ui.theMoshStarts") }} <br />
+            {{ t("ui.theMatchStarts") }} <br />
             {{ t("ui.with") }} <span> {{ t("ui.yourFriends") }} </span>
           </h1>
           <p class="muted">
@@ -1065,7 +1076,7 @@ onUnmounted(() => {
             :disabled="busy || playerList.length < 2 || !connected"
             @click="start"
           >
-            <Play :size="19" fill="currentColor" /> {{ t("ui.startTheMosh") }}
+            <Play :size="19" fill="currentColor" /> {{ t("ui.startMatch") }}
             <ArrowRight :size="20" />
           </button>
           <p v-else class="waiting-host">
@@ -1085,7 +1096,7 @@ onUnmounted(() => {
       <section v-else-if="state.phase === 'COUNTDOWN'" class="countdown-stage">
         <div class="eyebrow">{{ t("ui.everyoneReady") }}</div>
         <h1>
-          {{ t("ui.letThe") }} <br /><span> {{ t("ui.moshBegin") }} </span>
+          {{ t("ui.letThe") }} <br /><span> {{ t("ui.matchBegin") }} </span>
         </h1>
         <div class="countdown-number" :key="transition">
           {{ transition || t("ui.go") }}
@@ -1452,7 +1463,7 @@ onUnmounted(() => {
           <i v-for="n in 18" :key="n" :style="{ '--i': n }"></i>
         </div>
         <span class="small-badge"
-          ><Sparkles :size="14" /> {{ t("ui.thatWasAGreatMosh") }} </span
+          ><Sparkles :size="14" /> {{ t("ui.thatWasAGreatMatch") }} </span
         ><Trophy class="final-trophy" :size="52" />
         <h1>{{ winners }}</h1>
         <p class="winner-sub">
@@ -1513,12 +1524,18 @@ onUnmounted(() => {
 
     <footer>
       <span
-        ><span class="tiny-logo">✳</span>
-        {{ t("ui.madeToBringPeopleTogether") }}
+        ><img
+          class="tiny-logo"
+          src="/brand/ludrivo-symbol.svg"
+          alt=""
+          width="24"
+          height="24"
+        />
+        {{ t("brand.tagline") }}
       </span>
       <div>
         <button @click="dialog = 'credits'">{{ t("ui.creditsAssets") }}</button
-        ><i>·</i><span> {{ t("ui.quizmoshArenaBeta04") }} </span>
+        ><i>·</i><span> {{ t("brand.release", { version }) }} </span>
       </div>
     </footer>
     <Transition name="toast"
@@ -1555,7 +1572,7 @@ onUnmounted(() => {
           <X :size="22" />
         </button>
         <template v-if="dialog === 'rules'"
-          ><span class="eyebrow"> {{ t("ui.theMoshGuide") }} </span>
+          ><span class="eyebrow"> {{ t("ui.theGameGuide") }} </span>
           <h2>
             {{ t("ui.joinIn") }} <br />
             {{ t("ui.playYourWay") }}
@@ -1563,7 +1580,7 @@ onUnmounted(() => {
           <p class="muted">{{ t("ui.createARoomInviteYourFriendsWith") }}</p>
           <div class="mosh-rules">
             <p>
-              <strong>Mosh Arena:</strong>
+              <strong>{{ t("brand.arena") }}:</strong>
               {{ t("ui.chooseACardBackstageBeforeSeeingThe") }}
             </p>
             <p v-for="card in cards" :key="card.id">
@@ -1612,9 +1629,16 @@ onUnmounted(() => {
             /></a>
           </div>
           <div class="credit-row">
-            <strong>Outfit</strong
+            <strong>Sora</strong
             ><span> {{ t("ui.typographySilOpenFontLicense") }} </span
-            ><a href="/licenses/outfit.txt" target="_blank" rel="noopener">
+            ><a href="/licenses/sora.txt" target="_blank" rel="noopener">
+              {{ t("ui.viewLicense") }} <ArrowRight :size="14"
+            /></a>
+          </div>
+          <div class="credit-row">
+            <strong>Inter</strong
+            ><span> {{ t("ui.typographySilOpenFontLicense") }} </span
+            ><a href="/licenses/inter.txt" target="_blank" rel="noopener">
               {{ t("ui.viewLicense") }} <ArrowRight :size="14"
             /></a>
           </div>
@@ -1624,7 +1648,7 @@ onUnmounted(() => {
         >
         <template v-else-if="dialog === 'invite'"
           ><span class="eyebrow"> {{ t("ui.bringYourFriends") }} </span>
-          <h2>{{ t("ui.thereSRoomInTheMosh") }}</h2>
+          <h2>{{ t("ui.thereSRoomForYou") }}</h2>
           <img class="invite-qr" :src="qr" :alt="t('ui.inviteQrCode')" />
           <p class="invite-code">{{ state?.code }}</p>
           <label for="invite-link"> {{ t("ui.roomLink") }} </label
@@ -1641,7 +1665,7 @@ onUnmounted(() => {
           </p></template
         >
         <template v-else-if="dialog === 'leave'"
-          ><span class="eyebrow"> {{ t("ui.untilTheNextMosh") }} </span>
+          ><span class="eyebrow"> {{ t("ui.untilTheNextMatch") }} </span>
           <h2>{{ t("ui.leaveTheRoom") }}</h2>
           <p class="muted">{{ t("ui.youWillLeaveThisMatchIfYou") }}</p>
           <p v-if="error" class="form-error" role="alert">

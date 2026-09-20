@@ -1,4 +1,23 @@
-# Validação da beta PC 0.4.0
+# Validação Ludrivo · beta 0.5.0
+
+Verificação local realizada em 20/09/2026, antes da publicação do rebranding. A versão do produto e de `/api/meta` é `0.5.0`; os módulos Maven continuam em `0.1.0-SNAPSHOT`.
+
+| Verificação | Resultado |
+| --- | --- |
+| Maven verify em Java 25 | 31 testes aprovados, zero falhas, erros ou testes ignorados |
+| Vue/Vitest | 18 testes aprovados |
+| TypeScript e build Vite de produção | Aprovados, incluindo fontes locais e novos assets |
+| Partida clássica por HTTP real | Quatro modos, dois jogadores e display, permissões, respostas, reconexão, revanche e transferência de anfitrião aprovados |
+| Ludrivo Arena por HTTP real | Inglês + pacote Brasil, quatro modos, cartas, dueto, BIS, sigilo e pontuação aprovados |
+| WebSocket real | Autenticação, broadcast personalizado e rejeição de sessão inválida aprovados |
+| Metadados e assets no JAR | Nome/versão, logo, favicon, imagem social, manifesto e licenças respondem corretamente |
+| Navegador Chromium real | PT/EN, título/descrição, preferências anteriores, criação com bots, lobby, bastidores e confirmação de resposta na Arena aprovados |
+| Layout | Home PT/EN em 1440 e 390 px e EN em 320 px; lobby em 1440, 390 e 320 px; Arena em 1440 e 390 px, sem rolagem horizontal |
+| Console e rede do navegador | Nenhum erro de JavaScript ou recurso com HTTP 4xx/5xx no fluxo verificado |
+
+O teste local usou H2 em memória. Docker/Compose/PostgreSQL são cobertos pelo workflow do repositório; esta tabela não antecipa o resultado desse workflow nem do deploy Railway. Não foram executados testes de carga, Windows, Safari ou playtest com pessoas nesta atualização. O rebranding mantém contratos de jogo, armazenamento de preferências e identificadores técnicos compatíveis.
+
+## Histórico: beta PC 0.4.0
 
 Verificação local realizada em 17/09/2026. A branch prepara uma atualização da beta 0.3; este relatório não representa homologação da nova versão no Railway.
 

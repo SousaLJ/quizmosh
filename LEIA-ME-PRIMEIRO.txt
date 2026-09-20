@@ -1,4 +1,4 @@
-QUIZMOSH — BETA PC 0.4.0
+LUDRIVO — A TURMA FAZ O JOGO. — BETA 0.5.0
 
 Jogo para PC pelo navegador. Interface em português e inglês, 92 perguntas, quatro modos,
 salas multiplayer, treino com bots e tela coletiva.
@@ -9,7 +9,7 @@ Ao criar a sala, escolha o idioma das perguntas e conteúdo global, brasileiro
 ou misto. Todos disputam as mesmas perguntas, mesmo usando interfaces diferentes.
 Detalhes: docs/INTERNACIONALIZACAO.md.
 
-NOVO: MOSH ARENA
+LUDRIVO ARENA
 Palco animado, personagens, plataformas, cartas secretas e duetos.
 Escolha uma carta nos bastidores; na arena, mova com 1–4/setas ou clique
 numa plataforma. Depois use Enter ou Travar resposta para confirmar.
@@ -25,10 +25,10 @@ OPÇÃO B — SEM DOCKER
 1. Instale Java 25.
 2. Execute iniciar-pc.bat.
 3. Após a mensagem Started QuizMoshServer, abra http://localhost:8080.
-   O arquivo releases/quizmosh.jar já está compilado.
+   O arquivo releases/ludrivo.jar é gerado pelo build (veja README.md).
 
 Escolha um apelido. Para experimentar sozinho, clique em Treine com bots.
-Depois, no lobby, clique em Começar o mosh.
+Depois, no lobby, clique em Começar a partida.
 
 Para convidar pela rede, abra pelo IPv4 do PC em vez de localhost.
 Exemplo: http://192.168.1.20:8080 (substitua pelo IP real do seu PC).

@@ -93,7 +93,7 @@ public final class GameService {
         this.catalog=catalog;this.archive=archive;this.maxRooms=maxRooms;this.clock=clock;
     }
     public void setBroadcaster(Consumer<String> broadcaster) {this.broadcaster=broadcaster;}
-    public Map<String,Object> metadata() {return obj("name","QuizMosh","version","0.4.0","questions",catalog.size(),"modes",MODES,
+    public Map<String,Object> metadata() {return obj("name","Ludrivo","version","0.5.0","questions",catalog.size(),"modes",MODES,
             "questionLanguages",List.of("pt-BR","en"),"questionRegions",List.of("BR"),"contentScopes",List.of("ALL","GLOBAL","REGIONAL"),
             "catalog",catalog.inventory());}
 

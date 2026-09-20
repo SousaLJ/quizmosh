@@ -1,6 +1,6 @@
 {
-  "name": "quizmosh-web",
-  "version": "0.4.0",
+  "name": "ludrivo-web",
+  "version": "0.5.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,10 +10,11 @@
     "test": "vitest run --environment jsdom"
   },
   "dependencies": {
-    "@fontsource/outfit": "5.2.8",
     "lucide-vue-next": "0.468.0",
     "qrcode": "1.5.4",
-    "vue": "3.5.22"
+    "vue": "3.5.22",
+    "@fontsource/sora": "5.3.0",
+    "@fontsource/inter": "5.3.0"
   },
   "devDependencies": {
     "@types/qrcode": "1.5.5",

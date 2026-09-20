@@ -9,4 +9,4 @@ if [ ! -e .env ]; then
   printf 'POSTGRES_PASSWORD=%s\nHTTP_PORT=8080\nHTTPS_PORT=8443\nSITE_ADDRESS=:80\nMAX_ROOMS=250\n' "$password" > .env
 fi
 docker compose up -d --build --wait
-printf '\nQuizMosh pronto. Abra http://localhost:8080 (ou a porta escolhida no .env).\n'
+printf '\nLudrivo pronto. Abra http://localhost:8080 (ou a porta escolhida no .env).\n'

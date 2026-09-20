@@ -1,6 +1,6 @@
 /* Original vector stage and characters. Public asset licenses remain in /licenses. */
 .mosh-game {
-  background: radial-gradient(ellipse at 50% 10%, #43276635, transparent 60%);
+  background: radial-gradient(ellipse at 50% 10%, #ff654a0c, transparent 60%);
 }
 .mosh-game .header {
   height: 78px;
@@ -11,8 +11,8 @@
 }
 .mosh-game .question-area {
   padding: 24px;
-  background: #171827;
-  border: 1px solid #3d3554;
+  background: #1c2029;
+  border: 1px solid #3b404d;
   border-radius: 24px;
   box-shadow: 0 20px 80px #0003;
 }
@@ -29,7 +29,7 @@
   margin-bottom: 18px;
 }
 .mosh-game .scoreboard {
-  background: #181925;
+  background: #181b24;
   border-radius: 20px;
 }
 .mosh-game .question-area .question-foot {
@@ -79,17 +79,17 @@
 }
 .mosh-game .answer-form {
   padding: 17px 22px 22px;
-  background: #222138;
-  border: 1px solid #696085;
-  border-bottom: 5px solid #443c60;
+  background: #272c36;
+  border: 1px solid #686e7d;
+  border-bottom: 5px solid #404654;
   border-radius: 16px;
 }
 .mosh-game .answer-form label {
   margin-top: 0;
 }
 .mosh-game .clue {
-  background: linear-gradient(100deg, #352e50, #25273c);
-  border-left: 3px solid var(--purple);
+  background: linear-gradient(100deg, #42302f, #252a34);
+  border-left: 3px solid var(--mode-blue);
   animation: clue-arrive 0.4s ease-out;
 }
 .mosh-game .clue p {
@@ -97,7 +97,7 @@
 }
 .mosh-game .reveal-card {
   border-radius: 24px;
-  background: radial-gradient(at 50% 0, #3d334c, #20212f 70%);
+  background: radial-gradient(at 50% 0, #453331, #222630 70%);
 }
 .mosh-game .lobby-stage > .arena {
   margin: 20px 0;
@@ -108,8 +108,8 @@
   gap: 16px;
   padding: 13px 20px;
   margin: 0 0 22px;
-  border: 1px solid #4a3e62;
-  background: linear-gradient(110deg, #2c233f, #202233);
+  border: 1px solid #56423e;
+  background: linear-gradient(110deg, #372b2c, #222630);
   border-radius: 14px;
 }
 .mosh-meter > span {
@@ -117,19 +117,19 @@
   font-size: 12px;
   letter-spacing: 1.5px;
   white-space: nowrap;
-  color: #d6c5ff;
+  color: #ffc4ad;
 }
 .mosh-meter-track {
   flex: 1;
   height: 10px;
   border-radius: 20px;
-  background: #121320;
+  background: #14171e;
   overflow: hidden;
 }
 .mosh-meter-track i {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, #9e7dff, #f4a1c7, #ffde81);
+  background: linear-gradient(90deg, #ff806a, #f2adc3, #ffde81);
   transition: width 0.8s ease;
   border-radius: inherit;
 }
@@ -151,9 +151,9 @@
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  border: 1px solid #47405c;
+  border: 1px solid #4b4141;
   border-radius: 20px;
-  background: radial-gradient(ellipse at 50% 60%, #3e3266, #151426 80%);
+  background: radial-gradient(ellipse at 50% 60%, #533732, #181b24 80%);
   min-height: 284px;
 }
 .arena-sky {
@@ -169,7 +169,7 @@
   left: 5%;
   width: 45%;
   height: 400px;
-  background: linear-gradient(#b89aff35, #9870ff00);
+  background: linear-gradient(#ff654a29, #ff654a00);
   clip-path: polygon(48% 0, 52% 0, 100% 100%, 0 100%);
   transform-origin: 50% 0;
   animation: stage-light 9s ease-in-out infinite alternate;
@@ -189,7 +189,7 @@
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background: #dcc8ff;
+  background: #ffe0d1;
   opacity: 0.5;
   animation: star-pulse 3s var(--delay) ease-in-out infinite;
 }
@@ -205,12 +205,12 @@
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 3px;
-  color: #ddd5f4;
-  border: 1px solid #7b668e;
+  color: #fff8ee;
+  border: 1px solid #8d746d;
   padding: 9px 15px;
   border-radius: 7px;
-  background: #211c35dd;
-  box-shadow: 0 0 30px #b397ff17;
+  background: #222630dd;
+  box-shadow: 0 0 30px #ff654a14;
 }
 .arena-floor {
   position: absolute;
@@ -222,18 +222,18 @@
   transform: perspective(250px) rotateX(48deg);
   transform-origin: 50% 0;
   background:
-    repeating-linear-gradient(90deg, transparent 0 79px, #c5a8ff15 80px 81px),
-    repeating-linear-gradient(0deg, transparent 0 47px, #c5a8ff15 48px 49px),
-    linear-gradient(#342c4c, #211c38);
-  border-top: 2px solid #b298e657;
+    repeating-linear-gradient(90deg, transparent 0 79px, #ff654a15 80px 81px),
+    repeating-linear-gradient(0deg, transparent 0 47px, #ff654a15 48px 49px),
+    linear-gradient(#43322f, #222630);
+  border-top: 2px solid #ff806a57;
 }
 .stage-speaker {
   width: 41px;
   height: 96px;
   position: absolute;
   top: 87px;
-  border: 2px solid #4d425f;
-  background: #121321;
+  border: 2px solid #544540;
+  background: #14171e;
   border-radius: 7px;
   z-index: -1;
   transform: rotate(-6deg);
@@ -244,8 +244,8 @@
 .stage-speaker i {
   height: 26px;
   width: 26px;
-  border: 5px solid #353145;
-  box-shadow: 0 0 0 1px #665575;
+  border: 5px solid #353a46;
+  box-shadow: 0 0 0 1px #766159;
   border-radius: 50%;
 }
 .speaker-left {
@@ -324,10 +324,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  background: #111122cc;
+  background: #181b24cc;
   padding: 4px 5px;
   border-radius: 5px;
-  border: 1px solid #504467;
+  border: 1px solid #5d4a43;
 }
 .own-avatar {
   z-index: 4;
@@ -340,7 +340,7 @@
   opacity: 0.45;
 }
 .player-ready .avatar-shadow {
-  fill: #c4f36b;
+  fill: #d9f56b;
   opacity: 0.6;
 }
 .player-ready .arena-name:after {
@@ -356,11 +356,11 @@
   display: grid;
   place-items: center;
   background: #f9f1de;
-  color: #2a213c;
+  color: #332929;
   border-radius: 50%;
   font-size: 21px;
   font-weight: 800;
-  box-shadow: 0 4px 0 #100e2344;
+  box-shadow: 0 4px 0 #14171e44;
 }
 .arena-crowd {
   height: 30px;
@@ -378,13 +378,13 @@
   max-width: 26px;
   height: 23px;
   border-radius: 12px 12px 0 0;
-  background: #0e1020;
-  box-shadow: 0 -2px 0 #bc95e226;
+  background: #13161e;
+  box-shadow: 0 -2px 0 #ff654a26;
   animation: crowd-jump 1.4s var(--delay) ease-in-out infinite alternate;
 }
 .arena.encore {
   border-color: #ecd17e;
-  background: radial-gradient(ellipse at 50% 40%, #67502f, #24172c 80%);
+  background: radial-gradient(ellipse at 50% 40%, #67502f, #2d2529 80%);
 }
 .encore .beam {
   background: linear-gradient(#ffdf743f, #f0b87100);
@@ -421,11 +421,11 @@
   padding: 16px 8px 12px;
   background: linear-gradient(
     160deg,
-    color-mix(in srgb, var(--pad-color) 18%, #272238),
-    #211c32
+    color-mix(in srgb, var(--pad-color) 18%, #262b35),
+    #222630
   );
-  border: 2px solid color-mix(in srgb, var(--pad-color) 40%, #343041);
-  border-bottom: 7px solid color-mix(in srgb, var(--pad-color) 40%, #242031);
+  border: 2px solid color-mix(in srgb, var(--pad-color) 40%, #353a46);
+  border-bottom: 7px solid color-mix(in srgb, var(--pad-color) 40%, #242933);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -443,7 +443,7 @@
   overflow-wrap: anywhere;
 }
 .answer-platform small {
-  color: #bdb3d0;
+  color: #c6beb6;
   letter-spacing: 1px;
   font-size: 8px;
   margin-top: auto;
@@ -455,7 +455,7 @@
   height: 22px;
   border-radius: 7px;
   background: var(--pad-color);
-  color: #231f34;
+  color: #242933;
   font-size: 11px;
   font-weight: 800;
 }
@@ -464,8 +464,8 @@
   box-shadow: 0 0 25px color-mix(in srgb, var(--pad-color) 25%, transparent);
   background: linear-gradient(
     160deg,
-    color-mix(in srgb, var(--pad-color) 34%, #282337),
-    #2e263c
+    color-mix(in srgb, var(--pad-color) 34%, #2a303a),
+    #303640
   );
   transform: translateY(-5px);
 }
@@ -484,7 +484,7 @@
 }
 .arena-controller p {
   font-size: 12px;
-  color: #c5bdd6;
+  color: #ccc5bd;
   max-width: 260px;
   line-height: 1.4;
 }
@@ -510,11 +510,11 @@
   font-variant-numeric: tabular-nums;
   padding: 2px 6px;
   border-radius: 8px;
-  background: #171627e6;
+  background: #181b24e6;
   color: var(--lime);
   font-size: 21px;
   font-weight: 900;
-  text-shadow: 0 3px 0 #171627;
+  text-shadow: 0 3px 0 #181b24;
   animation: score-pop 0.65s ease-out;
 }
 .floating-score.loss {
@@ -551,7 +551,7 @@
   margin: 8px 0;
 }
 .backstage-heading p {
-  color: #b5aec6;
+  color: #b8b9c2;
   font-size: 15px;
 }
 .backstage-clock {
@@ -560,7 +560,7 @@
   width: 78px;
   height: 78px;
   flex-shrink: 0;
-  border: 2px solid #c4adff;
+  border: 2px solid #ffad95;
   border-radius: 50%;
   font-size: 29px;
   font-weight: 800;
@@ -592,7 +592,7 @@
   letter-spacing: 1px;
 }
 .energy-line b {
-  color: #d8c6ff;
+  color: #ffcfbd;
   margin-left: 8px;
 }
 .energy-line small {
@@ -636,9 +636,9 @@
   min-height: 218px;
 }
 .tactic-card.selected {
-  border-color: #c4f36b;
+  border-color: #d9f56b;
   box-shadow:
-    0 0 0 1px #c4f36b,
+    0 0 0 1px #d9f56b,
     0 8px 30px #b6f37615;
   transform: translateY(-5px);
 }
@@ -780,7 +780,7 @@
 .game-flavor button.active {
   color: var(--lime);
   border-color: var(--lime);
-  background: #c4f36b0c;
+  background: #d9f56b0c;
 }
 .numeric-dial {
   display: flex;
