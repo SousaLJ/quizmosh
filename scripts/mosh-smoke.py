@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Real multiplayer Mosh match: tactics, secrets, all four modes, BIS, and rematch."""
-from smoke import request, wait_state, CATALOG, LANGUAGE, SCOPE
+from smoke import request, wait_state, LANGUAGE, SCOPE, question_entry
 
 h = request('/api/rooms', {'nickname': 'Arena host', 'config': {'rounds': 4, 'seconds': 15, 'category': 'all', 'modes': ['classic-trivia', 'quick-fire', 'guess-it', 'closest-wins'], 'mosh': True, 'questionLanguage': LANGUAGE, 'contentScope': SCOPE, 'questionRegion': 'BR'}})
 code, token = h['code'], h['token']
@@ -30,7 +30,7 @@ for index, card in enumerate(['DUET', 'SPOTLIGHT', 'ALL_IN', 'ALL_IN']):
     if SCOPE == 'REGIONAL': assert q['regions'] == ['BR']
     alternate = request(f'/api/rooms/{code}', token=g['token'], language='pt-BR' if LANGUAGE == 'en' else 'en')
     assert alternate['round'] == q
-    entry = next(x for x in CATALOG if x['prompt'] == q['prompt'] and (q['type'] != 'guess' or x['clues'][0] == q['clues'][0]))
+    entry = question_entry(code, token, q)
     value = chr(65+entry['correctIndex']) if q['type'] == 'choice' else entry['answers'][0] if q['type'] == 'guess' else str(entry['value'])
     request(f'/api/rooms/{code}/answer', {'roundId': q['id'], 'value': value}, token)
     state = request(f'/api/rooms/{code}/answer', {'roundId': q['id'], 'value': value}, g['token'])['state']

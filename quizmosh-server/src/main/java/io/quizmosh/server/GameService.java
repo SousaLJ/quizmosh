@@ -93,9 +93,9 @@ public final class GameService {
         this.catalog=catalog;this.archive=archive;this.maxRooms=maxRooms;this.clock=clock;
     }
     public void setBroadcaster(Consumer<String> broadcaster) {this.broadcaster=broadcaster;}
-    public Map<String,Object> metadata() {return obj("name","Ludrivo","version","0.5.0","questions",catalog.size(),"modes",MODES,
+    public Map<String,Object> metadata() {return obj("name","Ludrivo","version","0.6.0","questions",catalog.size(),"modes",MODES,
             "questionLanguages",List.of("pt-BR","en"),"questionRegions",List.of("BR"),"contentScopes",List.of("ALL","GLOBAL","REGIONAL"),
-            "catalog",catalog.inventory());}
+            "categories",catalog.categories(),"catalog",catalog.inventory());}
 
     public synchronized Map<String,Object> create(CreateRequest request) {
         if(rooms.size()>=maxRooms) throw new ApiException(503,"error.roomsBusy");
@@ -227,7 +227,7 @@ public final class GameService {
         if(config==null) config=new Config(8,25,"all",MODES,true);
         if(config.rounds()<4 || config.rounds()>12) throw new ApiException(400,"error.rounds");
         if(config.seconds()<15 || config.seconds()>60) throw new ApiException(400,"error.duration");
-        if(!Set.of("all","cinema","geral").contains(config.category()==null?"":config.category())) throw new ApiException(400,"error.category");
+        if(!catalog.supportsCategory(config.category())) throw new ApiException(400,"error.category");
         if(config.modes()==null || config.modes().isEmpty() || config.modes().size()>4 || !MODES.containsAll(config.modes()) || new HashSet<>(config.modes()).size()!=config.modes().size())
             throw new ApiException(400,"error.modes");
         String language=config.questionLanguage()==null?"pt-BR":config.questionLanguage();

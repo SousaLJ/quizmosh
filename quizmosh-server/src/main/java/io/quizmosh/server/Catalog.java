@@ -7,11 +7,16 @@ import io.quizmosh.domain.common.*;
 import io.quizmosh.domain.game.*;
 import io.quizmosh.domain.quiz.*;
 import org.springframework.stereotype.Component;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 import java.math.BigDecimal;
 
 /** Private canonical questions with complete, validated language variants. */
 @Component
+@DependsOnDatabaseInitialization
 public final class Catalog implements QuestionCatalog {
     public record Entry(String id,String category,String type,String prompt,List<String> options,
                         Integer correctIndex,List<String> clues,List<String> answers,
@@ -20,20 +25,47 @@ public final class Catalog implements QuestionCatalog {
     }
     private final Map<String,Map<QuestionId,Entry>> entries=new LinkedHashMap<>();
     private final Map<String,Map<QuestionId,QuestionDefinition>> definitions=new LinkedHashMap<>();
-    public Catalog(ObjectMapper mapper) throws Exception {
+    public record Category(String id,Map<String,String> names) {}
+    private final List<Category> categories;
+
+    /** Flyway completes before this snapshot is loaded; the database is the only runtime source. */
+    public Catalog(JdbcTemplate jdbc,ObjectMapper mapper) {
+        var names=new LinkedHashMap<String,Map<String,String>>();
+        jdbc.query("""
+                SELECT c.id,t.language,t.name FROM quiz_categories c
+                LEFT JOIN quiz_category_texts t ON t.category_id=c.id
+                WHERE c.enabled=TRUE ORDER BY c.sort_order,c.id,t.language
+                """,(org.springframework.jdbc.core.RowCallbackHandler)rs -> {
+            var localized=names.computeIfAbsent(rs.getString("id"),key->new LinkedHashMap<>());
+            if(rs.getString("language")!=null) localized.put(rs.getString("language"),rs.getString("name"));
+        });
+        names.forEach((id,translations)-> {
+            if(id.equals("all") || !translations.keySet().containsAll(List.of("pt-BR","en"))
+                    || translations.values().stream().anyMatch(String::isBlank))
+                throw new IllegalStateException("Incomplete category: "+id);
+        });
+        categories=names.entrySet().stream().map(e->new Category(e.getKey(),Map.copyOf(e.getValue()))).toList();
+        if(categories.isEmpty()) throw new IllegalStateException("No active quiz categories in database");
+        Map<String,List<String>> regions=new LinkedHashMap<>();
+        jdbc.query("SELECT question_id,region FROM quiz_question_regions ORDER BY question_id,region",
+                (org.springframework.jdbc.core.RowCallbackHandler)rs -> regions.computeIfAbsent(rs.getString(1),key->new ArrayList<>()).add(rs.getString(2)));
         for(String language:List.of("pt-BR","en")) {
-            String resource=language.equals("pt-BR")?"/questions.json":"/questions.en.json";
-            try(var stream=getClass().getResourceAsStream(resource)) {
-                if(stream==null) throw new IllegalStateException("Missing "+resource);
-                Map<QuestionId,Entry> translated=new LinkedHashMap<>();
-                for(Entry entry:mapper.readValue(stream,new TypeReference<List<Entry>>() {})) {
-                    if(entry.prompt()==null || entry.prompt().isBlank() || entry.explanation()==null || entry.explanation().isBlank())
-                        throw new IllegalStateException("Incomplete question: "+entry.id());
-                    if(!entry.regions().stream().allMatch("BR"::equals)) throw new IllegalStateException("Unknown region: "+entry.id());
-                    if(translated.put(QuestionId.of(entry.id()),entry)!=null) throw new IllegalStateException("Duplicate question: "+entry.id());
-                }
-                entries.put(language,translated);
-            }
+            Map<QuestionId,Entry> translated=new LinkedHashMap<>();
+            jdbc.query("""
+                    SELECT q.id,q.category_id,q.question_type,q.correct_index,q.numeric_value,
+                           t.prompt,t.explanation,t.options_json,t.clues_json,t.answers_json,t.unit
+                    FROM quiz_questions q JOIN quiz_categories c ON c.id=q.category_id
+                    LEFT JOIN quiz_question_texts t ON t.question_id=q.id AND t.language=?
+                    WHERE q.enabled=TRUE AND c.enabled=TRUE ORDER BY c.sort_order,q.id
+                    """,(org.springframework.jdbc.core.RowCallbackHandler)rs -> {
+                Entry entry=new Entry(rs.getString("id"),rs.getString("category_id"),rs.getString("question_type"),
+                        rs.getString("prompt"),strings(rs,"options_json",mapper),rs.getObject("correct_index",Integer.class),
+                        strings(rs,"clues_json",mapper),strings(rs,"answers_json",mapper),rs.getBigDecimal("numeric_value"),
+                        rs.getString("unit"),rs.getString("explanation"),regions.getOrDefault(rs.getString("id"),List.of()));
+                validateEntry(entry);
+                if(translated.put(QuestionId.of(entry.id()),entry)!=null) throw new IllegalStateException("Duplicate question: "+entry.id());
+            },language);
+            entries.put(language,Collections.unmodifiableMap(translated));
         }
         var canonical=entries.get("pt-BR");
         if(!canonical.keySet().equals(entries.get("en").keySet())) throw new IllegalStateException("Every question must have both language variants");
@@ -69,6 +101,34 @@ public final class Catalog implements QuestionCatalog {
             definitions.put(language,content);
         });
     }
+    private static List<String> strings(ResultSet rs,String column,ObjectMapper mapper) throws SQLException {
+        String value=rs.getString(column);
+        if(value==null) return List.of();
+        try {return List.copyOf(mapper.readValue(value,new TypeReference<List<String>>() {}));}
+        catch(Exception e) {throw new IllegalStateException("Invalid "+column+" for "+rs.getString("id"),e);}
+    }
+    private static void validateEntry(Entry entry) {
+        if(entry.prompt()==null || entry.prompt().isBlank() || entry.explanation()==null || entry.explanation().isBlank())
+            throw new IllegalStateException("Incomplete question: "+entry.id());
+        if(!entry.regions().stream().allMatch("BR"::equals)) throw new IllegalStateException("Unknown region: "+entry.id());
+        boolean valid=switch(entry.type()) {
+            case "choice" -> entry.options().size()==4 && new HashSet<>(entry.options()).size()==4
+                    && entry.options().stream().noneMatch(String::isBlank)
+                    && entry.correctIndex()!=null && entry.correctIndex()>=0 && entry.correctIndex()<4;
+            case "guess" -> entry.clues().size()==4 && new HashSet<>(entry.clues()).size()==4
+                    && entry.clues().stream().noneMatch(String::isBlank) && !entry.answers().isEmpty()
+                    && entry.answers().stream().noneMatch(String::isBlank);
+            case "numeric" -> entry.value()!=null && entry.unit()!=null && !entry.unit().isBlank();
+            default -> false;
+        };
+        if(!valid) throw new IllegalStateException("Invalid question content: "+entry.id());
+    }
+    public List<Category> categories() {return categories;}
+    public boolean supportsCategory(String id) {return "all".equals(id)||categories.stream().anyMatch(c->c.id().equals(id));}
+    public List<String> categoryIdsWithAll() {
+        List<String> ids=new ArrayList<>(List.of("all"));categories.forEach(c->ids.add(c.id()));return List.copyOf(ids);
+    }
+    Set<QuestionId> questionIds() {return entries.get("pt-BR").keySet();}
     private List<QuestionDefinition> candidates(QuestionQuery query) {
         return definitions.getOrDefault(query.language(),Map.of()).values().stream()
                 .filter(q->q.supports(query.modeId()))
@@ -100,7 +160,7 @@ public final class Catalog implements QuestionCatalog {
     }
     public List<Map<String,Object>> inventory() {
         List<Map<String,Object>> result=new ArrayList<>();
-        for(String language:entries.keySet()) for(String category:List.of("all","cinema","geral")) for(String scope:List.of("ALL","GLOBAL","REGIONAL")) {
+        for(String language:entries.keySet()) for(String category:categoryIdsWithAll()) for(String scope:List.of("ALL","GLOBAL","REGIONAL")) {
             Map<String,Integer> counts=new LinkedHashMap<>(Map.of("choice",0,"guess",0,"numeric",0));
             entries.get(language).values().stream().filter(e->category.equals("all")||category.equals(e.category()))
                     .filter(e->matches(e,scope,"BR")).forEach(e->counts.merge(e.type(),1,Integer::sum));

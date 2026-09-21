@@ -1,6 +1,5 @@
 package io.quizmosh.server;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,7 +11,7 @@ class MoshGameServiceTest {
     GameService.Identity host,guest,screen;
     String code;
     @BeforeEach void setup() throws Exception {
-        clock=new GameServiceTest.MutableClock();game=new GameService(new Catalog(new ObjectMapper()),mock(ResultArchive.class),20,clock);
+        clock=new GameServiceTest.MutableClock();game=new GameService(CatalogTestSupport.catalog(),mock(ResultArchive.class),20,clock);
         var h=game.create(new GameService.CreateRequest("Host",false,new GameService.Config(4,15,"all",List.of("classic-trivia"),true)));
         code=(String)h.get("code");host=game.authenticate(code,(String)h.get("token"));
         guest=join("Guest","PLAYER");screen=join("TV","DISPLAY");

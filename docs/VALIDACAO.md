@@ -1,4 +1,30 @@
-# Validação Ludrivo · beta 0.5.0
+# Validação Ludrivo · beta 0.6.0
+
+Verificação de setembro de 2026 para o catálogo persistente. Produto e `/api/meta`: `0.6.0`; módulos Maven: `0.1.0-SNAPSHOT`.
+
+| Verificação | Resultado local |
+| --- | --- |
+| `scripts/catalog.py --check` | 600 perguntas, 100 por categoria, PT/EN equivalentes e SQL reproduzível |
+| Maven verify em Java 25 | 35 testes aprovados, zero falhas/erros |
+| Vue/Vitest | 19 testes aprovados |
+| TypeScript e Vite | Build de produção aprovado |
+| Migração V1 → V3 | Resultado anterior preservado, 600 perguntas e 1.200 traduções |
+| Segunda aplicação do Flyway | Zero migrações reaplicadas; nenhuma duplicação ou sobrescrita da revisão de teste |
+| Leitura do banco | Alterações em texto, ativação de perguntas e categorias são respeitadas após nova leitura |
+| Conteúdo inválido | Tradução ausente ou lista de alternativas inválida impede o carregamento |
+| Catálogo e partidas | Mix de 12 rodadas sem repetição nas seis categorias, nos dois idiomas e nos três filtros |
+| Metadados públicos | Seis categorias, nomes traduzidos e 42 linhas de inventário; nenhum gabarito |
+| Interface | Novas categorias selecionáveis; nomes traduzidos sem perder a escolha; categoria adicional vinda do servidor funciona |
+| HTTP real clássico | Quatro modos, dois jogadores e display; respostas, reconexão, revanche e permissões aprovados |
+| HTTP real Arena | Inglês + Brasil; quatro modos, cartas, dueto, BIS, sigilo e pontuação aprovados |
+| WebSocket real | Autenticação, broadcast personalizado e rejeição de sessão inválida aprovados |
+
+O workflow executa também build Docker, inicialização com PostgreSQL 17, contagens diretamente no banco, reinício sem perda de dados e partidas reais HTTP/WebSocket. Consulte o resultado do workflow no commit publicado para a validação desses passos. O ambiente local desta execução não fornece Docker; os testes locais de migração usam H2 em modo PostgreSQL. Não houve nova inspeção visual em navegador real nesta versão.
+
+Para reproduzir a validação editorial: `python3 scripts/catalog.py --check`. Para o fluxo Docker completo, execute o workflow do repositório; `catalog-db-smoke.py` é restrito à instalação descartável de CI e reinicia o serviço de jogo.
+
+## Histórico: beta 0.5.0
+
 
 Verificação local realizada em 20/09/2026, antes da publicação do rebranding. A versão do produto e de `/api/meta` é `0.5.0`; os módulos Maven continuam em `0.1.0-SNAPSHOT`.
 

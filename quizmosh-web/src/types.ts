@@ -106,3 +106,8 @@ export type CatalogInventory = {
   region: string;
   counts: Record<"choice" | "guess" | "numeric", number>;
 };
+
+export type CatalogCategory = {
+  id: string;
+  names: Record<string, string>;
+};

@@ -26,6 +26,9 @@ import {
   Brain,
   Lightbulb,
   Film,
+  Music2,
+  CircleDot,
+  Tv,
   Globe2,
   Trophy,
   LogOut,
@@ -52,7 +55,7 @@ import {
   forget,
   resume,
 } from "./game";
-import type { Config, Tactic, CatalogInventory } from "./types";
+import type { Config, Tactic, CatalogInventory, CatalogCategory } from "./types";
 import MoshArena from "./MoshArena.vue";
 import MoshAvatar from "./MoshAvatar.vue";
 import MoshBackstage from "./MoshBackstage.vue";
@@ -126,6 +129,16 @@ watch(
 );
 const selectedMode = ref("mix");
 const inventory = ref<CatalogInventory[]>([]);
+const categories = ref<CatalogCategory[]>([]);
+const categoryIcons: Record<string, typeof Film> = {
+  cinema: Film, geral: Globe2, futebol: CircleDot,
+  videogames: Gamepad2, "cultura-pop": Tv, musica: Music2,
+};
+function categoryName(id?: string) {
+  if (!id || id === "all") return t("ui.aBitOfEverything");
+  const category = categories.value.find((item) => item.id === id);
+  return category?.names[locale.value] || category?.names["pt-BR"] || id;
+}
 const catalogUnavailable = ref(false);
 const availableContent = computed(() =>
   inventory.value.find(
@@ -168,7 +181,10 @@ async function loadCatalog() {
   try {
     const metadata = await api("/meta");
     inventory.value = metadata?.catalog || [];
-    catalogUnavailable.value = !inventory.value.length;
+    categories.value = metadata?.categories || [];
+    catalogUnavailable.value = !inventory.value.length || !categories.value.length;
+    if (config.value.category !== "all" && !categories.value.some((c) => c.id === config.value.category))
+      config.value.category = "all";
   } catch {
     catalogUnavailable.value = true;
   }
@@ -497,7 +513,7 @@ watch(
   { immediate: true },
 );
 onMounted(() => {
-  if (!state.value) void loadCatalog();
+  void loadCatalog();
   void resume();
   clock = setInterval(() => (now.value = Date.now()), 150);
   document.addEventListener("keydown", keyboard);
@@ -692,25 +708,25 @@ onUnmounted(() => {
             </div>
             <template v-if="tab === 'create'">
               <label class="field-label"> {{ t("ui.whatSInTheMix") }} </label>
-              <div class="category-options">
+              <div class="category-options" role="group" :aria-label="t('ui.whatSInTheMix')">
                 <button
                   type="button"
                   :class="{ chosen: config.category === 'all' }"
+                  :aria-pressed="config.category === 'all'"
                   @click="config.category = 'all'"
                 >
-                  <Sparkles :size="16" /> {{ t("ui.aBitOfEverything") }}</button
-                ><button
+                  <Sparkles :size="16" /> {{ t("ui.aBitOfEverything") }}
+                </button>
+                <button
+                  v-for="category in categories"
+                  :key="category.id"
                   type="button"
-                  :class="{ chosen: config.category === 'cinema' }"
-                  @click="config.category = 'cinema'"
+                  :class="{ chosen: config.category === category.id }"
+                  :aria-pressed="config.category === category.id"
+                  @click="config.category = category.id"
                 >
-                  <Film :size="16" /> {{ t("ui.movies") }}</button
-                ><button
-                  type="button"
-                  :class="{ chosen: config.category === 'geral' }"
-                  @click="config.category = 'geral'"
-                >
-                  <Globe2 :size="16" /> {{ t("ui.general") }}
+                  <component :is="categoryIcons[category.id] || Sparkles" :size="16" />
+                  <span>{{ categoryName(category.id) }}</span>
                 </button>
               </div>
               <div class="content-settings">
@@ -988,11 +1004,7 @@ onUnmounted(() => {
             <span
               ><Sparkles :size="16" />
               {{
-                state.config.category === "all"
-                  ? t("ui.aBitOfEverything")
-                  : state.config.category === "cinema"
-                    ? t("ui.movies")
-                    : t("ui.generalKnowledge")
+                categoryName(state.config.category)
               }}</span
             ><span>{{ state.config.rounds }} {{ t("ui.rounds") }} </span
             ><span>{{ state.config.seconds }} {{ t("ui.seconds") }} </span>
@@ -1137,9 +1149,7 @@ onUnmounted(() => {
           <div class="question-heading">
             <div>
               <span class="question-category">{{
-                state.round.category === "cinema"
-                  ? t("ui.lightsCameraGuess")
-                  : t("ui.aBitOfEverything2")
+                categoryName(state.round.category)
               }}</span>
               <h1>{{ state.round.prompt }}</h1>
             </div>

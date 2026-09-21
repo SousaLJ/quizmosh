@@ -27,6 +27,18 @@ Use uma réplica game. HTTPS protege os tokens. Não exponha PostgreSQL nem o Vi
 
 Partidas ativas e tokens ficam em memória. Um restart encerra as salas. Avise os jogadores antes de atualizar. Falha no arquivo de resultados não deve impedir mostrar o placar; confira os logs da aplicação.
 
+## Atualizar o catálogo e a aplicação
+
+```bash
+git pull --ff-only
+docker compose up -d --build --wait
+docker compose logs --tail=80 game
+```
+
+O serviço aguarda o PostgreSQL ficar saudável e o Flyway terminar as migrações antes de carregar o catálogo. A versão 0.6 adiciona as tabelas de categorias/perguntas e a carga de 600 perguntas com traduções. A tabela `flyway_schema_history` registra o que já foi aplicado: reinícios comuns não repetem os inserts. O volume existente e `match_results` são preservados. Não use `down -v` para atualizar.
+
+`/api/meta` permite conferir `questions: 600`, seis `categories` e as contagens por idioma, categoria e filtro cultural. O catálogo fica em memória após a leitura do banco; correções SQL passam a valer após reiniciar o serviço. Instruções editoriais e exemplos de novas migrações: [CATALOGO_BANCO.md](CATALOGO_BANCO.md).
+
 ## Backup
 
 ```bash

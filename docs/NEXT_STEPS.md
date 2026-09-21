@@ -6,6 +6,8 @@ A beta 0.4 adiciona mensagens pt-BR/en, sugestões de idioma e contexto cultural
 
 A beta 0.5 adota Ludrivo como marca da plataforma, com identidade visual própria, slogan em português e inglês, metadados sociais e fontes locais. Monetização permanece para uma etapa futura.
 
+A beta 0.6 expande para seis categorias com 100 perguntas cada, mantém PT/EN, carrega perguntas do banco e aplica schema/carga por migrações automáticas. A instalação Docker usa PostgreSQL persistente, preparada para hospedagem própria.
+
 Prioridade imediata: playtest com 4–6 pessoas para medir clareza, ritmo e equilíbrio das cartas (docs/MOSH_ARENA.md).
 
 Evoluções futuras:
@@ -13,7 +15,7 @@ Evoluções futuras:
 1. Novos pacotes, revisão editorial e editor de perguntas.
 2. Histórico na interface e promoção de espectador para jogador.
 3. Recuperação de partidas ativas e múltiplas réplicas, após teste de carga.
-4. Cliente nativo Godot/Steam.
+4. Distribuição desktop na Microsoft Store, com empacotamento e testes próprios.
 5. Mobile/PWA instalável, casting, descoberta LAN/Bluetooth.
 6. Timeline, Risk It e Bluff como extensões de GameMode.
 7. Pacotes premium, cosméticos e entitlements fora das regras de pontuação.

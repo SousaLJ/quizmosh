@@ -1,4 +1,4 @@
-# Idiomas e contexto cultural · beta 0.4
+# Idiomas e contexto cultural · beta 0.6
 
 ## Comportamento para jogadores
 
@@ -26,17 +26,17 @@ Novas mensagens exigem entradas correspondentes nos dois idiomas. Os testes veri
 
 ## Catálogo
 
-Os dois JSONs privados do servidor contêm 92 IDs iguais. `regions: []` marca conhecimentos de alcance global; `regions: ["BR"]` marca conteúdo brasileiro. Tradução não muda a região. Nesta edição “global” significa conhecimento geral e cultura popular internacional; a classificação deve continuar recebendo revisão editorial.
+A carga editorial contém 600 IDs canônicos iguais em português e inglês. As 1.200 traduções são inseridas por SQL em `quiz_question_texts`; o servidor lê o catálogo do banco. `regions: []` marca conhecimentos de alcance global; `regions: ["BR"]` marca conteúdo brasileiro. Tradução não muda a região. Nesta edição “global” significa conhecimento geral e cultura popular internacional; a classificação deve continuar recebendo revisão editorial.
 
 O servidor valida correspondência estrutural: IDs, tipo, categoria, região, índice correto, valor numérico e quantidade de pistas/alternativas. Isso não substitui revisão humana de fatos e equivalência cultural. O primeiro alias é a resposta exibida; aliases de ambos os idiomas são aceitos, com a normalização do core.
 
 | Conjunto | Alternativas | Pistas | Estimativas | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Global | 29 | 24 | 23 | 76 |
-| Brasil | 7 | 4 | 5 | 16 |
-| Global + Brasil | 36 | 28 | 28 | 92 |
+| Global | 205 | 101 | 113 | 419 |
+| Brasil | 89 | 50 | 42 | 181 |
+| Global + Brasil | 294 | 151 | 155 | 600 |
 
-Todos os conjuntos suportam 12 rodadas no mix padrão com todas as categorias. Nem toda combinação de categoria e modo isolado tem essa capacidade; a criação mostra a falta e o servidor também recusa, evitando esgotamento no meio da partida.
+Cada categoria e cada conjunto suportam 12 rodadas no mix padrão. Os conjuntos Global e Global + Brasil também suportam 12 rodadas de qualquer modo isolado em cada categoria. Nem toda combinação de categoria e modo isolado tem essa capacidade; a criação mostra a falta e o servidor também recusa, evitando esgotamento no meio da partida.
 
 ## Adicionar um idioma ou região
 

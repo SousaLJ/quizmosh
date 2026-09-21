@@ -18,6 +18,19 @@ class HttpIntegrationTest {
     @Autowired ObjectMapper json;
     @Autowired ResultArchive archive;
     @Autowired JdbcTemplate jdbc;
+    @Test void metadataPublishesCategoriesAndCountsWithoutQuestionAnswers() throws Exception {
+        var response=http.perform(get("/api/meta")).andExpect(status().isOk())
+            .andExpect(jsonPath("$.questions").value(600))
+            .andExpect(jsonPath("$.categories.length()").value(6))
+            .andExpect(jsonPath("$.catalog.length()").value(42))
+            .andExpect(jsonPath("$.categories[2].id").value("futebol"))
+            .andExpect(jsonPath("$.categories[2].names.en").value("Football (soccer)"))
+            .andReturn().getResponse().getContentAsString();
+        assertFalse(response.contains("correctIndex"));assertFalse(response.contains("answers"));
+        assertFalse(response.contains("prompt"));assertFalse(response.contains("numeric_value"));
+        http.perform(get("/questions.json")).andExpect(status().isNotFound());
+        http.perform(get("/questions.en.json")).andExpect(status().isNotFound());
+    }
     @Test void guestHttpFlowRequiresBearerAndHidesSecrets() throws Exception {
         var response=http.perform(post("/api/rooms").contentType("application/json").content("{\"nickname\":\"Teste\",\"practice\":true}"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.state.phase").value("LOBBY"))
@@ -58,6 +71,6 @@ class HttpIntegrationTest {
         var insufficient=new GameService.Config(12,25,"cinema",java.util.List.of("guess-it"),true,"en","REGIONAL","BR");
         http.perform(post("/api/rooms").header("Accept-Language","en").contentType("application/json").content(json.writeValueAsString(new GameService.CreateRequest("Blocked",true,insufficient))))
             .andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("error.catalogCapacity"))
-            .andExpect(jsonPath("$.arguments.available").value(0)).andExpect(jsonPath("$.arguments.required").value(12));
+            .andExpect(jsonPath("$.arguments.available").value(8)).andExpect(jsonPath("$.arguments.required").value(12));
     }
 }

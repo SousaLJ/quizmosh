@@ -523,7 +523,8 @@ kbd {
   padding-left: 44px;
 }
 .category-options {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 7px;
 }
 .category-options button {
@@ -533,9 +534,18 @@ kbd {
   border: 1px solid #40424e;
   border-radius: 7px;
   flex: 1;
-  white-space: nowrap;
+  white-space: normal;
+  min-height: 44px;
+  min-width: 0;
   gap: 6px;
+  line-height: 1.3;
   color: #b9bbca;
+}
+.category-options button:first-child {
+  grid-column: 1 / -1;
+}
+.category-options svg {
+  flex-shrink: 0;
 }
 .category-options button.chosen {
   background: #d9f56b10;
@@ -1969,9 +1979,6 @@ footer i {
   }
   .hero-copy {
     overflow: hidden;
-  }
-  .category-options {
-    flex-wrap: wrap;
   }
   .category-options button {
     font-size: 10px;

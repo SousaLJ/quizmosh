@@ -1,6 +1,5 @@
 package io.quizmosh.server;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quizmosh.application.port.QuestionCatalog.QuestionQuery;
 import io.quizmosh.domain.common.*;
 import io.quizmosh.domain.game.*;
@@ -12,15 +11,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CatalogLocaleTest {
     Catalog catalog;
-    @BeforeEach void setup() throws Exception { catalog=new Catalog(new ObjectMapper()); }
+    @BeforeEach void setup() throws Exception { catalog=CatalogTestSupport.catalog(); }
     @Test void everyFilteredMixCanDrawTwelveUniqueQuestionsInBothLanguages() {
-        for(String language:List.of("pt-BR","en")) for(String scope:List.of("ALL","GLOBAL","REGIONAL")) {
+        for(String category:catalog.categoryIdsWithAll()) for(String language:List.of("pt-BR","en")) for(String scope:List.of("ALL","GLOBAL","REGIONAL")) {
             var modes=List.of(CoreGameModes.CLASSIC_TRIVIA,CoreGameModes.QUICK_FIRE,CoreGameModes.GUESS_IT,CoreGameModes.CLOSEST_WINS);
-            var settings=new MatchSettings(12,Set.of(),modes,Duration.ofSeconds(25),language,scope,"BR");
+            Set<CategoryId> selected=category.equals("all")?Set.of():Set.of(CategoryId.of(category));
+            var settings=new MatchSettings(12,selected,modes,Duration.ofSeconds(25),language,scope,"BR");
             assertDoesNotThrow(()->catalog.validateCapacity(settings));
             Set<QuestionId> seen=new HashSet<>();
             for(int round=0;round<12;round++) {
-                var q=catalog.next(new QuestionQuery(settings.modeForRound(round),Set.of(),seen,language,scope,"BR")).orElseThrow();
+                var q=catalog.next(new QuestionQuery(settings.modeForRound(round),selected,seen,language,scope,"BR")).orElseThrow();
                 assertTrue(seen.add(q.id()));
                 var entry=catalog.entry(q.id(),language);
                 assertEquals(entry.prompt(),q.prompt());
@@ -30,18 +30,19 @@ class CatalogLocaleTest {
             }
         }
     }
-    @Test void choiceModesShareCapacityAndRegionalCinemaCannotStartIncomplete() {
-        var shared=new MatchSettings(12,Set.of(),List.of(CoreGameModes.CLASSIC_TRIVIA,CoreGameModes.QUICK_FIRE),Duration.ofSeconds(25),"en","REGIONAL","BR");
+    @Test void choiceModesShareCapacityAndInsufficientPoolsAreRejected() {
+        // Regional videogames has seven choices: the two choice modes share those IDs.
+        var shared=new MatchSettings(8,Set.of(CategoryId.of("videogames")),List.of(CoreGameModes.CLASSIC_TRIVIA,CoreGameModes.QUICK_FIRE),Duration.ofSeconds(25),"en","REGIONAL","BR");
         var error=assertThrows(ApiException.class,()->catalog.validateCapacity(shared));
         assertEquals("error.catalogCapacity",error.getMessage());
         assertEquals(7L,error.arguments().get("available"));
-        assertEquals(12,error.arguments().get("required"));
-        var cinema=new MatchSettings(4,Set.of(CategoryId.of("cinema")),List.of(CoreGameModes.CLASSIC_TRIVIA),Duration.ofSeconds(25),"pt-BR","REGIONAL","BR");
+        assertEquals(8,error.arguments().get("required"));
+        var cinema=new MatchSettings(12,Set.of(CategoryId.of("cinema")),List.of(CoreGameModes.GUESS_IT),Duration.ofSeconds(25),"pt-BR","REGIONAL","BR");
         assertThrows(ApiException.class,()->catalog.validateCapacity(cinema));
     }
     @Test void localizedRevealKeepsAliasesFromBothLanguagesAndCanonicalExclusions() {
-        Set<QuestionId> excluded=new HashSet<>();
-        for(int i=57;i<=68;i++) if(i!=59) excluded.add(QuestionId.of("geral-"+String.format("%03d",i)));
+        Set<QuestionId> excluded=new HashSet<>(catalog.questionIds());
+        excluded.remove(QuestionId.of("geral-059"));
         var en=catalog.next(new QuestionQuery(CoreGameModes.GUESS_IT,Set.of(CategoryId.of("geral")),excluded,"en","GLOBAL","BR")).orElseThrow();
         assertEquals(QuestionId.of("geral-059"),en.id());
         assertEquals("Moon",catalog.answer(en));

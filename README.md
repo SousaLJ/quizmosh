@@ -1,6 +1,6 @@
-# Ludrivo — A turma faz o jogo. · beta 0.5.0
+# Ludrivo — A turma faz o jogo. · beta 0.6.0
 
-**Jogos que aproximam pessoas.** Ludrivo é a marca da plataforma; Ludrivo Trivia é a experiência disponível nesta versão, com interface em português e inglês, quatro modos, 92 perguntas e salas sincronizadas pelo servidor Java. A marca permite adicionar outros jogos no futuro. Guia de identidade: [docs/BRAND.md](docs/BRAND.md).
+**Jogos que aproximam pessoas.** Ludrivo é a marca da plataforma; Ludrivo Trivia é a experiência disponível nesta versão, com interface em português e inglês, quatro modos, 600 perguntas e salas sincronizadas pelo servidor Java. A marca permite adicionar outros jogos no futuro. Guia de identidade: [docs/BRAND.md](docs/BRAND.md).
 
 **Your crew makes the game.** Ludrivo brings people together through games. Start with four trivia modes, invite friends with a room code, and play in English or Portuguese.
 
@@ -12,7 +12,7 @@ A interface sugere um idioma a partir das preferências do navegador; o seletor 
 
 Ao criar a sala, o anfitrião escolhe o idioma das perguntas e o conteúdo: global, global + Brasil ou regional brasileiro. Navegadores cuja preferência principal indica BR recebem a sugestão global + Brasil; os demais começam em global. Não há consulta por IP, GPS ou permissão de localização. A escolha cultural manual é lembrada. Um navegador pt-PT usa a tradução portuguesa disponível, mas começa no pacote global.
 
-Cada pergunta tem um ID canônico e versões equivalentes nos dois idiomas. O catálogo inclui 76 perguntas globais e 16 brasileiras. Todos recebem a mesma pergunta, no idioma da sala, independentemente da interface individual. As quantidades por tipo aparecem na criação, e o servidor recusa combinações sem conteúdo suficiente antes de começar.
+Cada pergunta tem um ID canônico e versões equivalentes nos dois idiomas. O catálogo inclui 419 perguntas globais e 181 brasileiras. Todos recebem a mesma pergunta, no idioma da sala, independentemente da interface individual. As quantidades por tipo aparecem na criação, e o servidor recusa combinações sem conteúdo suficiente antes de começar.
 
 Guia para novas mensagens, idiomas e pacotes: [docs/INTERNACIONALIZACAO.md](docs/INTERNACIONALIZACAO.md).
 
@@ -47,6 +47,8 @@ Para configurar manualmente, copie `.env.example` para `.env`, substitua a senha
 ```bash
 docker compose up -d --build --wait
 ```
+
+O PostgreSQL inicia com volume persistente. Antes de aceitar partidas, o serviço aplica as migrações SQL e insere automaticamente as seis categorias e as 600 perguntas (1.200 versões de texto). A mesma atualização funciona sobre volumes existentes, preservando resultados; reiniciar não duplica perguntas. Detalhes em [docs/CATALOGO_BANCO.md](docs/CATALOGO_BANCO.md).
 
 Os scripts preservam um `.env` existente. Para acompanhar e encerrar:
 
@@ -90,7 +92,7 @@ java -jar releases/ludrivo.jar --server.port=9090
 | Recurso | Comportamento |
 | --- | --- |
 | Salas | Código curto; 2–12 jogadores; até 24 participantes contando espectadores e telas |
-| Conteúdo | 92 perguntas: 40 de cinema e 52 de conhecimentos gerais |
+| Conteúdo | 600 perguntas: 100 por categoria — Cinema, Conhecimentos gerais, Futebol, Videogames, Cultura pop e Música |
 | Configuração | Interface: 4, 8 ou 12 rodadas; 15, 25, 40 ou 60 segundos; mistura de modos ou um específico |
 | Na mosca | Múltipla escolha; acerto vale 1.000 pontos |
 | Bate-pronto | Acerto vale de 500 a 1.000 pontos conforme o tempo do servidor |
@@ -101,7 +103,7 @@ java -jar releases/ludrivo.jar --server.port=9090
 | Reconexão | Recarregar a mesma aba recupera a identidade e a partida enquanto a sala existir |
 | Anfitrião | Saída transfere a sala; após 45 segundos de ausência, um humano conectado pode assumir |
 | Acessibilidade | Atalhos 1–4/setas, Enter para confirmar na arena, foco visível, som opcional e movimento reduzido |
-| Persistência | Resultados concluídos no PostgreSQL (Docker) ou H2 (JAR direto) |
+| Persistência | Categorias, perguntas, traduções e resultados no PostgreSQL (Docker) ou H2 (JAR direto) |
 
 Gabaritos não são enviados durante uma rodada aberta. Respostas numéricas aceitam ponto ou vírgula. Palpites por pistas aceitam os aliases do catálogo, ignorando acentos, caixa e pontuação; não há correção aproximada de qualquer erro de digitação.
 

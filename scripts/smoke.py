@@ -5,13 +5,12 @@ import sys
 import time
 import urllib.error
 import urllib.request
-from pathlib import Path
+from catalog import load_questions
 
 BASE = (sys.argv[1] if len(sys.argv) > 1 else 'http://127.0.0.1:8080').rstrip('/')
 LANGUAGE = sys.argv[2] if len(sys.argv) > 2 else 'pt-BR'
 SCOPE = sys.argv[3] if len(sys.argv) > 3 else 'ALL'
-RESOURCE = 'questions.en.json' if LANGUAGE == 'en' else 'questions.json'
-CATALOG = json.loads((Path(__file__).resolve().parents[1] / 'quizmosh-server/src/main/resources' / RESOURCE).read_text(encoding='utf-8'))
+CATALOG = load_questions(LANGUAGE)
 opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
 
 def request(path, body=None, token=None, method=None, expected=200, language=None):
@@ -37,11 +36,30 @@ def wait_state(code, token, phase, timeout=8):
         time.sleep(.15)
     raise AssertionError('Timed out waiting for ' + phase)
 
+def question_entry(code, token, question):
+    # Early clues may intentionally fit several answers. Wait for enough public
+    # clues instead of choosing the first private fixture with the same prompt.
+    deadline = time.monotonic() + 12
+    while True:
+        candidates = [x for x in CATALOG if x['category'] == question['category']
+                      and x['type'] == question['type'] and x['prompt'] == question['prompt']
+                      and (question['type'] != 'guess' or x['clues'][:len(question['clues'])] == question['clues'])]
+        assert candidates, ('No fixture matches the public question', question)
+        if len(candidates) == 1:
+            return candidates[0]
+        assert time.monotonic() < deadline, 'Clues never identify a unique fixture'
+        time.sleep(.2)
+        current = request(f'/api/rooms/{code}', token=token)
+        assert current['phase'] == 'ROUND', 'Round expired before clues disambiguated the fixture'
+        question = current['round']
+
 def run():
     assert request('/actuator/health')['status'] == 'UP'
     metadata = request('/api/meta')
     assert metadata['questionLanguages'] == ['pt-BR', 'en']
-    assert len(metadata['catalog']) == 18
+    assert len(metadata['categories']) == 6
+    assert metadata['questions'] == 600
+    assert len(metadata['catalog']) == 2 * 7 * 3
     assert not any(key in json.dumps(metadata) for key in ['correctIndex','answers','explanation'])
     h = request('/api/rooms', {'nickname': 'Host smoke', 'config': {'rounds': 4, 'seconds': 15, 'category': 'all', 'modes': ['classic-trivia', 'quick-fire', 'guess-it', 'closest-wins'], 'mosh': False, 'questionLanguage': LANGUAGE, 'contentScope': SCOPE, 'questionRegion': 'BR'}})
     code, token = h['code'], h['token']
@@ -60,7 +78,7 @@ def run():
         other_ui = request(f'/api/rooms/{code}', token=p['token'], language='en' if LANGUAGE == 'pt-BR' else 'pt-BR')
         assert other_ui['round'] == q
         assert not any(key in json.dumps(q) for key in ['correctOptionId', 'acceptedAnswers', 'correctValue'])
-        entry = next(x for x in CATALOG if x['prompt'] == q['prompt'] and (q['type'] != 'guess' or x['clues'][0] == q['clues'][0]))
+        entry = question_entry(code, token, q)
         if q['type'] == 'choice':
             value = chr(65 + entry['correctIndex'])
         elif q['type'] == 'guess':

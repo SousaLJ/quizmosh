@@ -4,6 +4,12 @@ import { mount, flushPromises, type VueWrapper } from "@vue/test-utils";
 import App from "./App.vue";
 import { state, api, enter, connected } from "./game";
 import type { State } from "./types";
+const categories = [
+  ["cinema", "Cinema", "Movies"], ["geral", "Conhecimentos gerais", "General knowledge"],
+  ["futebol", "Futebol", "Football (soccer)"], ["videogames", "Videogames", "Video games"],
+  ["cultura-pop", "Cultura pop", "Pop culture"], ["musica", "Música", "Music"],
+].map(([id, pt, en]) => ({ id, names: { "pt-BR": pt, en } }));
+const catalogMetadata = { categories, catalog: [{ language: "pt-BR", category: "all", scope: "ALL", region: "BR", counts: { choice: 294, guess: 151, numeric: 155 } }] };
 
 vi.mock("qrcode", () => ({
   default: {
@@ -91,8 +97,9 @@ describe("PC player flows", () => {
       playerId: "p1",
       state: lobby(),
     };
-    vi.mocked(api).mockResolvedValue(result);
+    vi.mocked(api).mockImplementation(async (path) => path === "/meta" ? catalogMetadata : result);
     wrapper = mount(App);
+    await flushPromises();
     await wrapper.get("#nickname").setValue("Leandro");
     await button("Cinema").trigger("click");
     await wrapper.get("form").trigger("submit");
@@ -109,6 +116,24 @@ describe("PC player flows", () => {
       }),
     );
     expect(enter).toHaveBeenCalledWith(result);
+  });
+  it("uses server categories for selection and translates their names without changing the selection", async () => {
+    const metadata = { ...catalogMetadata, categories: [...categories, { id: "natureza", names: { "pt-BR": "Natureza", en: "Nature" } }] };
+    vi.mocked(api).mockImplementation(async (path) => path === "/meta" ? metadata : { code: "ABCD", state: lobby() });
+    wrapper = mount(App);
+    await flushPromises();
+    expect(wrapper.findAll(".category-options button")).toHaveLength(8);
+    for (const name of ["Futebol", "Videogames", "Cultura pop", "Música"])
+      expect(button(name)).toBeDefined();
+    await button("Natureza").trigger("click");
+    setLocale("en");
+    await flushPromises();
+    expect(button("Nature").attributes("aria-pressed")).toBe("true");
+    expect(button("Football (soccer)")).toBeDefined();
+    await wrapper.get("#nickname").setValue("Player");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+    expect(api).toHaveBeenCalledWith("/rooms", expect.objectContaining({ config: expect.objectContaining({ category: "natureza" }) }));
   });
   it("supports joining as a shared display and shows API errors", async () => {
     vi.mocked(api).mockRejectedValue(new Error("Sala não encontrada."));
@@ -176,7 +201,7 @@ describe("PC player flows", () => {
     wrapper = mount(App);
     await button("Resposta A").trigger("click");
     await button("Resposta A").trigger("click");
-    expect(api).toHaveBeenCalledTimes(1);
+    expect(vi.mocked(api).mock.calls.filter(([path]) => path.endsWith("/answer"))).toHaveLength(1);
     expect(api).toHaveBeenCalledWith("/rooms/ABCD/answer", {
       roundId: "round-1",
       value: "A",
@@ -267,7 +292,7 @@ describe("PC player flows", () => {
     wrapper = mount(App);
     document.dispatchEvent(new KeyboardEvent("keydown", { key: "2" }));
     await flushPromises();
-    expect(api).not.toHaveBeenCalled();
+    expect(vi.mocked(api).mock.calls.filter(([path]) => path.endsWith("/answer"))).toHaveLength(0);
     expect(wrapper.get('[data-choice="B"]').attributes("aria-pressed")).toBe(
       "true",
     );
@@ -297,6 +322,7 @@ describe("PC player flows", () => {
   });
   it("shows catalog shortages and prevents starting an impossible mix", async () => {
     vi.mocked(api).mockResolvedValue({
+      categories,
       catalog: [
         {
           language: "pt-BR",

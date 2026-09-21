@@ -24,7 +24,7 @@ class GameServiceTest {
     GameService.Identity host,guest;
     String code;
     @BeforeEach void setup() throws Exception {
-        clock=new MutableClock();catalog=new Catalog(new ObjectMapper());archive=mock(ResultArchive.class);
+        clock=new MutableClock();catalog=CatalogTestSupport.catalog();archive=mock(ResultArchive.class);
         game=new GameService(catalog,archive,20,clock);
     }
     GameService.Config config(String mode){return new GameService.Config(4,15,"all",List.of(mode));}
@@ -106,8 +106,9 @@ class GameServiceTest {
         assertTrue(game.answer(host,new GameService.AnswerRequest(rid,"incorreto")).accepted());
     }
     @Test void allSupportedContentConfigurationsHaveCapacity() {
-        assertEquals(92,catalog.size());
-        for(String category:List.of("all","cinema","geral"))for(String mode:List.of("classic-trivia","quick-fire","guess-it","closest-wins")) {
+        assertEquals(600,catalog.size());
+        game=new GameService(catalog,archive,40,clock);
+        for(String category:catalog.categoryIdsWithAll())for(String mode:List.of("classic-trivia","quick-fire","guess-it","closest-wins")) {
             var h=game.create(new GameService.CreateRequest("Player",true,new GameService.Config(12,25,category,List.of(mode))));
             var id=game.authenticate((String)h.get("code"),(String)h.get("token"));assertDoesNotThrow(()->game.start(id,null));
         }

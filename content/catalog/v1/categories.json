@@ -1,0 +1,8 @@
+[
+  {"id":"cinema","names":{"pt-BR":"Cinema","en":"Movies"}},
+  {"id":"geral","names":{"pt-BR":"Conhecimentos gerais","en":"General knowledge"}},
+  {"id":"futebol","names":{"pt-BR":"Futebol","en":"Football (soccer)"}},
+  {"id":"videogames","names":{"pt-BR":"Videogames","en":"Video games"}},
+  {"id":"cultura-pop","names":{"pt-BR":"Cultura pop","en":"Pop culture"}},
+  {"id":"musica","names":{"pt-BR":"Música","en":"Music"}}
+]
